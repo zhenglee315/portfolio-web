@@ -1,0 +1,55 @@
+/* Shared bounded-loading controls; errors and retries remain inside their owning section. */
+.pagination-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+.load-page,
+.skills-load-more,
+.detail-retry {
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-card);
+  padding: 10px 16px;
+  min-height: var(--control-size);
+  background: var(--control-surface);
+  color: var(--accent);
+}
+.load-page:hover,
+.skills-load-more:hover,
+.detail-retry:hover {
+  background: var(--control-hover);
+}
+.load-page:disabled,
+.skills-load-more:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.load-error {
+  color: var(--muted);
+  font-size: 14px;
+}
+.skills-load-more {
+  font: 11px var(--mono);
+}
+.skills-load-more[hidden],
+.skills-error[hidden] {
+  display: none;
+}
+.skills-error {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--muted);
+}
+#startup-status {
+  position: fixed;
+  inset: 12px 12px auto auto;
+  padding: 16px;
+  z-index: 100;
+  background: var(--panel);
+  color: var(--text);
+}
+#startup-status[hidden] {
+  display: none;
+}

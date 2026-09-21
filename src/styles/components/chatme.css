@@ -1,0 +1,277 @@
+/* Chatme disclosure, responsive positioning and idle fade. */
+.chatme-toggle,
+.mobile-header .chatme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--control-size);
+  width: var(--control-size);
+  height: var(--control-size);
+  padding: 4px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  border-radius: 0;
+}
+/* Keep the hit area transparent; feedback follows the Bootstrap SVG silhouette. */
+.chatme-toggle:is(:hover, :focus-visible, :active),
+.mobile-header .chatme-toggle:is(:hover, :focus-visible, :active) {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  color: var(--text);
+}
+.chatme-toggle svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+  shape-rendering: auto;
+  animation: icon-breathe var(--duration-chat-pulse) ease-in-out infinite;
+}
+.chatme-toggle:is(:hover, :focus-visible, :active) svg {
+  animation: none;
+  filter: drop-shadow(0 0 2px var(--accent))
+    drop-shadow(0 0 7px var(--glow-bright));
+}
+.chatme-bubble {
+  position: relative;
+  margin-top: 17px;
+  filter: drop-shadow(3px 4px 0 var(--chat-shadow));
+  animation: chatme-note-breathe var(--duration-chat-pulse) ease-in-out infinite;
+}
+.chatme-bubble::before {
+  content: none;
+}
+.chatme-bubble[hidden] {
+  display: none;
+}
+.chatme-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 11px;
+  color: var(--chat-text);
+  font: 12px/1.55 var(--sans);
+}
+.chatme-copy {
+  min-width: 0;
+}
+.chatme-icon {
+  display: block;
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+}
+.chatme-eyebrow {
+  display: block;
+  font: 9px/1.6 var(--mono);
+  letter-spacing: 0.6px;
+  color: var(--chat-muted);
+}
+.chatme-content strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.55;
+  margin-top: 5px;
+}
+.chatme-content p {
+  margin: 7px 0;
+}
+.chatme-content a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--chat-divider);
+  padding-top: 8px;
+  margin-top: 10px;
+  min-height: 34px;
+  font-weight: 600;
+  color: var(--chat-link);
+}
+.chatme-content a:hover {
+  text-decoration: underline;
+}
+.chatme-content a:focus-visible {
+  outline-color: var(--chat-link);
+  outline-offset: 2px;
+}
+@keyframes chatme-note-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(3px 4px 0 var(--chat-shadow));
+  }
+  50% {
+    filter: drop-shadow(3px 4px 0 var(--chat-shadow))
+      drop-shadow(0 0 4px var(--glow-medium));
+  }
+}
+@media (max-width: 760px) {
+  .mobile-header .chatme-bubble {
+    position: absolute;
+    top: 61px;
+    left: 20px;
+    margin: 0;
+    z-index: 45;
+  }
+  .mobile-header .chatme-content {
+    font-size: 14px;
+  }
+  .mobile-header .chatme-content strong {
+    font-size: 15px;
+  }
+  .mobile-header .chatme-content a {
+    min-height: var(--control-size);
+  }
+  .mobile-header .chatme-eyebrow {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chatme-toggle svg,
+  .chatme-bubble {
+    animation: none;
+  }
+}
+#chatme-desktop {
+  position: fixed;
+  left: 214px;
+  top: 38px;
+  width: 410px;
+  max-width: calc(100vw - 28px);
+  margin: 0;
+  z-index: 45;
+}
+#chatme-desktop .chatme-tail {
+  left: -24px;
+  top: var(--chat-tail-top, 19px);
+  transform: rotate(90deg);
+}
+.mobile-header .chatme-tail {
+  left: var(--chat-tail-left, 123px);
+  top: -24px;
+  transform: scaleY(-1);
+}
+#chatme-desktop .chatme-content {
+  padding: 15px 17px;
+  font-size: 13px;
+}
+#chatme-desktop .chatme-content strong {
+  font-size: 14px;
+}
+@media (max-width: 760px) {
+  #chatme-desktop {
+    display: none;
+  }
+}
+.chatme-close,
+.mobile-header .chatme-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--chat-text);
+  font: 25px/1 var(--sans);
+  cursor: pointer;
+}
+.mobile-header .chatme-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chatme-close:hover,
+.mobile-header .chatme-close:hover {
+  background: transparent;
+  color: var(--chat-link-hover);
+}
+.chatme-close:focus-visible {
+  outline: 2px solid var(--chat-link);
+  outline-offset: 1px;
+}
+.chatme-bubble {
+  opacity: 1;
+  transition: opacity var(--chatme-fade-duration) ease-out;
+}
+.chatme-bubble.is-fading {
+  opacity: 0;
+}
+/* First appearance starts after the shared page entrance; idle timing follows this fade. */
+.chatme-bubble.is-appearing {
+  animation:
+    chatme-enter var(--chatme-fade-duration) ease-out both,
+    chatme-note-breathe var(--duration-chat-pulse) ease-in-out infinite;
+}
+@keyframes chatme-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.chatme-bubble .pixel-shell {
+  background: transparent;
+  box-shadow: inset 0 0 0 6px var(--chat-outline);
+}
+.chatme-bubble .pixel-content {
+  background: linear-gradient(
+    135deg,
+    var(--chat-gradient-start),
+    var(--chat-gradient-end)
+  );
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow:
+    inset 6px 6px var(--chat-bevel-light),
+    inset -6px -6px var(--chat-bevel-dark);
+}
+.brand-heading .chatme-toggle {
+  margin-left: 0;
+}
+@media (max-width: 760px) {
+  .mobile-header .chatme-toggle {
+    margin-left: 0;
+  }
+  .mobile-header .chatme-close {
+    width: var(--control-size);
+    height: var(--control-size);
+    top: 4px;
+    right: 4px;
+  }
+  .mobile-header .chatme-bubble {
+    width: min(380px, calc(100vw - 40px));
+  }
+  .mobile-header .chatme-content {
+    grid-template-columns: minmax(0, 1fr) 80px;
+    gap: 12px;
+    padding: 20px 14px 14px;
+  }
+  .chatme-icon {
+    width: 80px;
+    height: 80px;
+  }
+  .mobile-header .chatme-eyebrow {
+    padding-right: 0;
+  }
+}
+@media (max-width: 380px) {
+  .mobile-header .chatme-content {
+    grid-template-columns: minmax(0, 1fr) 64px;
+    gap: 10px;
+  }
+  .chatme-icon {
+    width: 64px;
+    height: 64px;
+  }
+}
+.chatme-close .bi {
+  width: 12px;
+  height: 12px;
+}

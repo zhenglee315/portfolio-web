@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zheng Lee — Software & AI Platform Engineer</title>
+    <meta
+      name="description"
+      content="Zheng Lee's engineering journey from Taiwan to London. Software platforms, distributed systems and applied AI."
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230e171a'/%3E%3Cpath d='M11 12h18L11 28h18' fill='none' stroke='%2381d8d0' stroke-width='3'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Scripts are emitted from config/build.json; classic defer preserves file:// support. -->
+    <!-- build:scripts -->
+  </head>
+  <body>
+    <div id="startup-status" role="status" hidden>
+      <span data-i18n="ui.loading">Loading…</span>
+    </div>
+    <a class="skip" href="#main"
+      ><span data-i18n="ui.skip">Skip to content</span></a
+    >
+    <!-- Mobile navigation and the chatme trigger share desktop feature modules. -->
+    <header class="mobile-header">
+      <a
+        data-section-link="overview"
+        class="wordmark"
+        aria-label="Zheng Lee — Wilson home"
+        data-profile-home
+        >ZL<span>.</span><span class="wordmark-alias">WILSON</span></a
+      ><button
+        class="chatme-toggle"
+        type="button"
+        aria-label="Show internship chatme"
+        aria-expanded="false"
+        aria-controls="chatme-mobile"
+      >
+        <span data-icon="chat-dots-fill" aria-hidden="true"></span>
+      </button>
+      <div class="chatme-bubble" id="chatme-mobile" hidden></div>
+      <button
+        id="menu-toggle"
+        aria-label="Open navigation"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <span data-icon="list" aria-hidden="true"></span>
+      </button>
+    </header>
+    <div id="menu-backdrop" hidden></div>
+    <!-- Navigation links and the journey endpoints are derived from shared data. -->
+    <aside id="sidebar" class="sidebar">
+      <button
+        id="sidebar-toggle"
+        class="sidebar-toggle"
+        type="button"
+        aria-label="Collapse sidebar"
+        aria-expanded="true"
+        aria-controls="sidebar"
+      >
+        <span data-icon="chevron-double-left" aria-hidden="true"></span>
+      </button>
+      <div class="brand-heading">
+        <a
+          data-section-link="overview"
+          class="wordmark"
+          aria-label="Zheng Lee — Wilson home"
+          data-profile-home
+          >ZL<span>.</span><span class="wordmark-alias">WILSON</span></a
+        ><button
+          class="chatme-toggle"
+          type="button"
+          aria-label="Show internship chatme"
+          aria-expanded="false"
+          aria-controls="chatme-desktop"
+        >
+          <span data-icon="chat-dots-fill" aria-hidden="true"></span>
+        </button>
+      </div>
+      <nav
+        data-section-menu
+        aria-label="Main navigation"
+        data-i18n-aria-label="ui.navigation"
+      ></nav>
+      <div class="sidebar-foot">
+        <span class="mono" id="journey-endpoints"></span>
+        <p>
+          <span data-i18n="ui.sidebarLine1">Building across</span><br /><span
+            data-i18n="ui.sidebarLine2"
+            >systems and borders.</span
+          >
+        </p>
+        <small id="sidebar-copyright"></small>
+      </div>
+    </aside>
+    <div class="chatme-bubble" id="chatme-desktop" hidden></div>
+    <!-- Section shells remain stable while feature modules replace their content. -->
+    <main id="main">
+      <section data-section="overview" class="intro section">
+        <nav
+          class="social-links"
+          aria-label="Social and contact links"
+          data-i18n-aria-label="ui.contacts"
+        >
+          <a
+            class="social-link"
+            data-social="linkedin"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn — Zheng Lee (opens in a new tab)"
+            data-i18n-aria-label="ui.linkedin"
+            title="LinkedIn · Zheng Lee"
+            ><span data-icon="linkedin" aria-hidden="true"></span
+          ></a>
+          <a
+            class="social-link"
+            data-social="github"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub — zhenglee315 (opens in a new tab)"
+            data-i18n-aria-label="ui.github"
+            title="GitHub · zhenglee315"
+            ><span data-icon="github" aria-hidden="true"></span
+          ></a>
+          <a
+            class="social-link"
+            data-social="medium"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Medium — WilsonLeee (opens in a new tab)"
+            data-i18n-aria-label="ui.medium"
+            data-i18n-title="ui.medium"
+            title="Medium — WilsonLeee (opens in a new tab)"
+            ><span data-icon="medium" aria-hidden="true"></span
+          ></a>
+          <a
+            class="social-link"
+            data-social="email"
+            aria-label="Email — zhenglee315@gmail.com"
+            title="Email · zhenglee315@gmail.com"
+            ><span data-icon="envelope-fill" aria-hidden="true"></span
+          ></a>
+          <div class="language-switch">
+            <button
+              id="language-toggle"
+              class="social-link language-toggle"
+              type="button"
+              aria-label="Change language"
+              data-i18n-aria-label="ui.language"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-controls="language-menu"
+            >
+              <span data-icon="translate" aria-hidden="true"></span
+              ><span class="language-code" id="language-code" aria-hidden="true"
+                >EN</span
+              >
+            </button>
+            <div
+              id="language-menu"
+              class="language-menu"
+              role="menu"
+              aria-label="Website language"
+              data-i18n-aria-label="ui.languageMenu"
+              hidden
+            ></div>
+          </div>
+          <div class="appearance-switch">
+            <button
+              id="appearance-toggle"
+              class="social-link"
+              type="button"
+              aria-label="Background settings"
+              data-i18n-aria-label="ui.appearance"
+              aria-expanded="false"
+              aria-controls="appearance-panel"
+            >
+              <span data-icon="palette-fill" aria-hidden="true"></span>
+            </button>
+            <div
+              id="appearance-panel"
+              class="appearance-panel"
+              role="region"
+              aria-label="Background settings"
+              data-i18n-aria-label="ui.appearance"
+              hidden
+            ></div>
+          </div>
+        </nav>
+        <div class="eyebrow">
+          <span class="tiny-line"></span>
+          <span data-site="profile.introContent"
+            >SOFTWARE · PLATFORMS · APPLIED AI</span
+          >
+        </div>
+        <h1>
+          <span class="greeting" data-i18n="ui.hello">Hello, I'm </span
+          ><span data-profile-name>Zheng Lee.</span>
+        </h1>
+        <div class="intro-bottom">
+          <div class="intro-profile">
+            <p data-site="profile.content">
+              Senior software engineer with over five years of experience
+              designing and building Python backends and manufacturing data
+              platforms at Delta Electronics and Foxconn. Worked on systems used
+              in daily production across 48+ plants and 100+ production lines,
+              including analytics supporting Apple product manufacturing. Main
+              areas of work include shared backend services, database
+              performance optimisation, data pipeline development, asynchronous
+              processing and machine-learning deployment.
+            </p>
+          </div>
+          <a class="text-link" data-section-link="projects"
+            ><span data-i18n="ui.exploreWork">Explore my work</span>
+            <span data-icon="arrow-down-right" aria-hidden="true"></span
+          ></a>
+        </div>
+        <div class="intro-meta">
+          <span id="work-tenure"></span><i></i
+          ><span><span id="education-summary"></span></span>
+        </div>
+      </section>
+      <section data-section="journey" class="section journey-section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow"
+              ><span data-i18n="ui.journeyEyebrow"
+                >01 / ACROSS BORDERS</span
+              ></span
+            >
+            <h2>
+              <span data-i18n="ui.journeyTitle">A journey in engineering</span
+              ><span>.</span>
+            </h2>
+          </div>
+          <span class="section-note" id="journey-summary"
+            >One continuing story.</span
+          >
+        </div>
+        <div class="map-panel">
+          <div class="map-top">
+            <span class="map-caption"
+              ><span class="status-dot"></span>
+              <span data-i18n="ui.careerJourney">CAREER JOURNEY</span>
+              <span id="loop-label">/ LOOPING</span></span
+            >
+            <div class="map-controls">
+              <button
+                id="restart"
+                aria-label="Restart journey"
+                data-i18n-aria-label="ui.restartJourney"
+                title="Restart journey"
+                data-i18n-title="ui.restartJourney"
+              >
+                <span
+                  data-icon="arrow-counterclockwise"
+                  aria-hidden="true"
+                ></span></button
+              ><button id="play" aria-label="Pause journey">
+                <span
+                  id="play-icon"
+                  data-icon="pause-fill"
+                  aria-hidden="true"
+                ></span
+                ><span id="play-text">Pause</span>
+              </button>
+            </div>
+          </div>
+          <div class="map-stage" id="map-stage">
+            <svg
+              id="journey-map"
+              viewBox="0 0 1080 490"
+              role="img"
+              aria-label="Career route from New Taipei to Shenzhen, Chengdu, Suzhou, Taoyuan and London"
+            ></svg>
+            <div class="map-coordinate mono">
+              <span id="map-coordinate-value"></span
+              ><span><span id="map-next-chapter"></span></span>
+            </div>
+            <div class="map-compass" aria-hidden="true">
+              N<br /><span data-icon="arrow-up" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="journey-status">
+            <span class="step-index mono" id="step-index">01 / 06</span>
+            <div>
+              <span id="stop-date" class="mono">Sep 2017 — Jul 2019</span>
+              <h3 id="stop-organization-name">Fu Jen Catholic University</h3>
+              <p id="stop-summary">
+                MS Information Management · New Taipei, Taiwan
+              </p>
+            </div>
+            <span id="route-label" class="route-label"
+              >NEW TAIPEI → SHENZHEN</span
+            >
+          </div>
+          <div class="stops-carousel">
+            <button
+              class="stops-arrow stops-previous"
+              type="button"
+              data-slide="previous"
+              aria-controls="stops"
+              aria-label="Show earlier destinations"
+              data-i18n-aria-label="ui.earlierDestinations"
+              hidden
+              disabled
+            >
+              <span data-icon="arrow-right" aria-hidden="true"></span>
+            </button>
+            <div
+              class="stops"
+              id="stops"
+              role="group"
+              aria-label="Select a career destination"
+              data-i18n-aria-label="ui.chooseCity"
+            ></div>
+            <button
+              class="stops-arrow stops-next"
+              type="button"
+              data-slide="next"
+              aria-controls="stops"
+              aria-label="Show later destinations"
+              data-i18n-aria-label="ui.laterDestinations"
+              hidden
+            >
+              <span data-icon="arrow-right" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <p class="map-hint"><span id="map-hint"></span></p>
+      </section>
+      <section data-section="experience" class="section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow"
+              ><span data-i18n="ui.experienceEyebrow"
+                >02 / THE EXPERIENCE</span
+              ></span
+            >
+            <h2>
+              <span data-i18n="ui.experienceTitle"
+                >Systems built. Lessons carried</span
+              ><span>.</span>
+            </h2>
+          </div>
+          <span class="section-note" id="experience-range"></span>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+      <section data-section="projects" class="section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow"
+              ><span data-i18n="ui.projectsEyebrow"
+                >03 / SELECTED WORK</span
+              ></span
+            >
+            <h2>
+              <span data-i18n="ui.projectsTitle"
+                >From architecture to application</span
+              ><span>.</span>
+            </h2>
+          </div>
+          <span class="section-note"
+            ><span data-i18n="ui.projectsNote"
+              >A closer look at what I build</span
+            ></span
+          >
+        </div>
+        <div class="project-timeline" id="project-grid"></div>
+      </section>
+      <section data-section="skills" class="section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow"
+              ><span data-i18n="ui.skillsEyebrow"
+                >04 / ENGINEERING SKILLS</span
+              ></span
+            >
+            <h2>
+              <span data-i18n="ui.skillsTitle">The skills behind the work</span
+              ><span>.</span>
+            </h2>
+          </div>
+        </div>
+        <div class="toolkit" id="toolkit"></div>
+      </section>
+      <footer>
+        <div>
+          <span class="wordmark"
+            >ZL<span>.</span><span class="wordmark-alias">WILSON</span></span
+          >
+          <p>
+            <span data-site="profile.footerContent"
+              >Software. Systems. A little curiosity.</span
+            >
+          </p>
+        </div>
+        <a class="text-link" data-social="email"
+          ><span data-i18n="ui.connect">Let's connect</span
+          ><span data-icon="arrow-up-right" aria-hidden="true"></span></a
+        ><small><span id="footer-copyright"></span></small>
+      </footer>
+    </main>
+    <!-- Native dialog provides modal focus behavior; the projects module supplies content. -->
+    <dialog id="project-dialog" aria-labelledby="dialog-title">
+      <button
+        class="dialog-close"
+        aria-label="Close project details"
+        data-i18n-aria-label="ui.closeProject"
+      >
+        <span data-icon="x-lg" aria-hidden="true"></span>
+      </button>
+      <div id="dialog-content"></div>
+    </dialog>
+  </body>
+</html>

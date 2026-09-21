@@ -1,0 +1,250 @@
+/* Shared stepped shell and tail, plus map tooltip content. */
+.pixel-bubble {
+  position: absolute;
+  z-index: 12;
+  color: var(--bubble-text);
+  filter: drop-shadow(5px 6px 0 var(--shadow-medium));
+  font-family: var(--mono);
+}
+.pixel-bubble[hidden] {
+  display: none;
+}
+.pixel-shell {
+  position: relative;
+  background: var(--bubble-outline);
+  padding: 6px;
+  clip-path: polygon(
+    18px 0,
+    calc(100% - 18px) 0,
+    calc(100% - 18px) 6px,
+    calc(100% - 6px) 6px,
+    calc(100% - 6px) 18px,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 6px) calc(100% - 18px),
+    calc(100% - 6px) calc(100% - 6px),
+    calc(100% - 18px) calc(100% - 6px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    18px calc(100% - 6px),
+    6px calc(100% - 6px),
+    6px calc(100% - 18px),
+    0 calc(100% - 18px),
+    0 18px,
+    6px 18px,
+    6px 6px,
+    18px 6px
+  );
+}
+.pixel-content {
+  background: var(--bubble-surface);
+  box-shadow:
+    inset 6px 6px var(--bubble-bevel-light),
+    inset -6px -6px var(--bubble-bevel-dark);
+  clip-path: polygon(
+    12px 0,
+    calc(100% - 12px) 0,
+    calc(100% - 12px) 6px,
+    calc(100% - 6px) 6px,
+    calc(100% - 6px) 12px,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 6px) calc(100% - 12px),
+    calc(100% - 6px) calc(100% - 6px),
+    calc(100% - 12px) calc(100% - 6px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    12px calc(100% - 6px),
+    6px calc(100% - 6px),
+    6px calc(100% - 12px),
+    0 calc(100% - 12px),
+    0 12px,
+    6px 12px,
+    6px 6px,
+    12px 6px
+  );
+}
+.pixel-city {
+  font-weight: 600;
+  line-height: 1.5;
+}
+.pixel-city span {
+  font-weight: 400;
+  color: var(--bubble-muted);
+}
+.pixel-date {
+  line-height: 1.6;
+  border-bottom: 2px dashed var(--bubble-divider);
+  font-weight: 500;
+}
+.journey-organization-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.journey-organization-title {
+  font-weight: 500;
+}
+.journey-detail {
+  border-left: 4px solid var(--bubble-ta-border);
+}
+.journey-detail strong,
+.journey-detail span {
+  display: block;
+}
+.journey-detail span {
+  color: var(--bubble-muted);
+  font-size: 11px;
+}
+.pixel-close {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  background: transparent;
+  border: 0;
+  color: var(--bubble-ta-text);
+  font-size: 23px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+}
+.pixel-close:hover {
+  background: var(--accent);
+  color: var(--bubble-outline);
+}
+.pixel-close:focus-visible {
+  outline-color: var(--bubble-close);
+  outline-offset: 0;
+}
+.pixel-tail {
+  position: absolute;
+  left: var(--tail-x, 50%);
+  top: calc(100% - 6px);
+  width: 30px;
+  height: 30px;
+  background: var(--bubble-outline);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 12px,
+    24px 12px,
+    24px 18px,
+    18px 18px,
+    18px 24px,
+    6px 24px,
+    6px 30px,
+    0 30px
+  );
+}
+.pixel-tail::after {
+  content: "";
+  position: absolute;
+  inset: 0 6px 6px;
+  background: var(--bubble-close-hover);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 6px,
+    12px 6px,
+    12px 12px,
+    6px 12px,
+    6px 18px,
+    0 18px
+  );
+}
+.pixel-bubble.below .pixel-tail {
+  top: auto;
+  bottom: calc(100% - 6px);
+  transform: scaleY(-1);
+}
+@media (max-width: 760px) {
+  .pixel-content {
+    padding: 15px 16px 17px;
+  }
+  .journey-organization-name {
+    font-size: 14px;
+  }
+  .journey-organization-title {
+    font-size: 13px;
+  }
+  .pixel-date {
+    font-size: 12px;
+  }
+  .journey-detail {
+    margin-top: 10px;
+  }
+}
+.pixel-bubble.over-point .pixel-tail {
+  display: none;
+}
+@media (max-width: 360px) {
+  .pixel-bubble {
+    width: calc(100% - 24px);
+  }
+}
+.pixel-bubble {
+  width: min(320px, calc(100% - 24px));
+  pointer-events: none;
+}
+.pixel-content {
+  padding: 13px 15px 15px;
+}
+.pixel-city {
+  font-size: 11px;
+  padding-right: 0;
+}
+.pixel-date {
+  font-size: 12px;
+  margin-top: 4px;
+  padding-bottom: 8px;
+}
+.journey-organization-name {
+  font-size: 14px;
+  line-height: 1.45;
+  margin-top: 9px;
+}
+.journey-organization-title {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.journey-detail {
+  margin-top: 9px;
+  padding-left: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.journey-detail span {
+  margin-top: 2px;
+}
+@media (hover: none) {
+  .pixel-bubble {
+    pointer-events: auto;
+  }
+  .pixel-close {
+    display: block;
+    top: 8px;
+    right: 10px;
+  }
+  .pixel-city {
+    padding-right: 23px;
+  }
+}
+
+.pixel-close .bi {
+  width: 12px;
+  height: 12px;
+}
+
+/* Share category icons with Experience while inheriting the tooltip foreground. */
+.journey-organization-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.journey-organization-name .category-icon {
+  flex: 0 0 1.2em;
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0.1em;
+  color: inherit;
+}

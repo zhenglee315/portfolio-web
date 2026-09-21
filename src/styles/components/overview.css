@@ -1,0 +1,220 @@
+/* Profile typography and contact shortcuts. */
+.intro {
+  padding-top: 62px;
+  padding-bottom: 37px;
+}
+.tiny-line {
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+}
+h1 {
+  font-size: clamp(36px, 4.3vw, 69px);
+  font-weight: 500;
+  letter-spacing: -2.5px;
+  line-height: 1.15;
+  margin: 23px 0 21px;
+}
+h1 span {
+  color: var(--accent);
+}
+.intro-bottom {
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.intro-bottom p {
+  color: var(--profile-copy);
+  line-height: 1.8;
+  margin: 0;
+  font-size: 17px;
+}
+.intro-meta {
+  margin-top: 27px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--mono);
+}
+.intro-meta i {
+  height: 3px;
+  width: 3px;
+  background: var(--accent);
+}
+@media (max-width: 1150px) {
+  .intro-bottom p {
+    font-size: 16px;
+  }
+  .intro-bottom .text-link {
+    display: none;
+  }
+  .intro-meta {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+@media (max-width: 760px) {
+  h1 {
+    font-size: 43px;
+    letter-spacing: -1.8px;
+    max-width: 400px;
+  }
+  .intro-bottom p {
+    font-size: 15px;
+  }
+  .intro-meta {
+    font-size: 10px;
+    gap: 8px;
+  }
+  .intro-meta i {
+    display: none;
+  }
+  .intro-meta > span {
+    display: block;
+    flex-basis: 100%;
+  }
+}
+.intro-bottom {
+  min-width: 0;
+}
+@media (min-width: 1700px) {
+  .intro {
+    padding-top: 62px;
+    padding-bottom: 32px;
+  }
+}
+@media (min-width: 2200px) {
+  h1 {
+    font-size: clamp(64px, 3.4vw, 88px);
+  }
+  .intro-bottom p {
+    font-size: 19px;
+  }
+}
+@media (max-width: 1150px) {
+  .intro-meta {
+    line-height: 1.8;
+  }
+}
+@media (max-width: 760px) {
+  .intro {
+    padding-bottom: 25px;
+  }
+}
+.intro {
+  position: relative;
+}
+.social-links {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-size);
+  height: var(--control-size);
+  padding: 0;
+  flex-shrink: 0;
+  border: 1px solid var(--social-border);
+  border-radius: 50%;
+  background: var(--card-active);
+  color: var(--social-icon);
+  transition:
+    background var(--duration-hover),
+    color var(--duration-hover),
+    border-color var(--duration-hover),
+    transform var(--duration-hover);
+}
+.social-link svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+.social-link:hover,
+.social-link:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  transform: translateY(-2px);
+}
+.intro > .eyebrow {
+  min-height: 18px;
+}
+@media (min-width: 1700px) {
+  .social-links {
+    top: 40px;
+  }
+}
+@media (max-width: 1150px) {
+  .social-links {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 18px;
+  }
+}
+@media (max-width: 760px) {
+  .social-links {
+    margin-bottom: 20px;
+    /* Keep six full-size controls inside narrow screens without shrinking hit areas. */
+    gap: clamp(4px, 1.7vw, 9px);
+    flex-wrap: wrap;
+  }
+  .intro {
+    padding-top: 20px;
+  }
+}
+.intro-profile {
+  max-width: none;
+  width: 100%;
+  min-width: 0;
+}
+.intro-bottom {
+  display: block;
+}
+.intro-bottom > .text-link {
+  display: table;
+  margin: 16px 0 0 auto;
+}
+@media (max-width: 1150px) {
+  .intro-bottom > .text-link {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .intro-profile p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+}
+.intro > .eyebrow {
+  padding-right: calc(6 * var(--control-size) + 70px);
+}
+@media (max-width: 1150px) {
+  .intro > .eyebrow {
+    padding-right: 0;
+  }
+}
+html:lang(zh-Hant) h1,
+html:lang(zh-Hans) h1 {
+  letter-spacing: -1px;
+}
+html:lang(zh-Hant) .intro-profile,
+html:lang(zh-Hans) .intro-profile {
+  line-height: 1.9;
+}
+h1 .greeting {
+  color: var(--text);
+}
+.social-link svg.bi {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  stroke: none;
+}

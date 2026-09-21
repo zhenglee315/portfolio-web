@@ -1,0 +1,42 @@
+{
+  "chatme": {
+    "idleMs": 3000,
+    "fadeMs": 400
+  },
+  "skills": {
+    "previewFraction": 0.75
+  },
+  "journey": {
+    "flightMs": 5200,
+    "holdMs": 1500,
+    "arrivalMs": 500,
+    "finalHoldMs": 3000,
+    "viewBox": [
+      0,
+      0,
+      1080,
+      490
+    ],
+    "projection": {
+      "scale": 365,
+      "center": [
+        58,
+        34
+      ],
+      "translate": [
+        540,
+        245
+      ]
+    }
+  },
+  "categoryIcons": {
+    "education": "mortarboard-fill",
+    "work": "building-fill"
+  },
+  "pagination": {
+    "experiences": 6,
+    "projects": 6,
+    "categories": 12,
+    "skills": 12
+  }
+}

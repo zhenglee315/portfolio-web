@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "title": "ZL",
+    "titleSub": "WILSON",
+    "copyrightYear": 2026
+  },
+  "profile": {
+    "firstName": "Zheng",
+    "familyName": "Lee",
+    "nickName": "Wilson",
+    "content": "資深軟體工程師，擁有超過五年的工作經驗，曾於台達電子與富士康設計及開發 Python 後端與製造資料平台。參與打造的系統用於 48 座以上工廠、100 條以上產線的日常生產作業，包含支援 Apple 產品製造的分析系統。主要工作涵蓋共用後端服務、資料庫效能最佳化、資料管線開發、非同步處理與機器學習部署。",
+    "eduCode": "UCL",
+    "program": "軟體系統工程碩士（MSc）",
+    "introContent": "軟體 · 平台 · AI 應用",
+    "footerContent": "軟體、系統，還有一點好奇心。"
+  },
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/zhenglee315",
+    "github": "https://github.com/zhenglee315",
+    "medium": "https://medium.com/@WilsonLeee",
+    "email": "zhenglee315@gmail.com"
+  },
+  "chatme": {
+    "title": "倫敦 · 每週 20 小時",
+    "titleSub": "尋找實習機會",
+    "content": "我目前就讀 UCL 軟體系統工程碩士，正在尋找有薪軟體工程實習，希望發揮專長，同時支應留學期間的生活費。\n專注於後端系統與 AI Agent 應用開發。",
+    "icon": "assets/icons/cow-engineer.svg"
+  }
+}

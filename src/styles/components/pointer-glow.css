@@ -1,0 +1,25 @@
+/* A non-interactive viewport layer; the radial gradient has no external asset dependency. */
+.pointer-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle var(--pointer-glow-radius) at var(--pointer-glow-x, 50%)
+      var(--pointer-glow-y, 50%),
+    var(--pointer-glow-color),
+    transparent 75%
+  );
+  transition: opacity var(--duration-hover) ease-out;
+}
+.pointer-glow.is-visible {
+  opacity: 1;
+}
+/* Avoid simulated hover on touchscreens and respect live motion-preference changes. */
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .pointer-glow {
+    display: none;
+  }
+}

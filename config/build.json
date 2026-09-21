@@ -1,0 +1,62 @@
+{
+  "scripts": [
+    "core/registry.js",
+    "core/appearance-settings.js",
+    "core/i18n.js",
+    "api/mock-transport.js",
+    "api/client.js",
+    "core/icons.js",
+    "core/dates.js",
+    "core/map-geometry.js",
+    "core/category-icon.js",
+    "core/data-contracts.js",
+    "core/store.js",
+    "features/navigation.js",
+    "features/sidebar-rail.js",
+    "features/stop-carousel.js",
+    "features/skill-layout.js",
+    "features/pagination.js",
+    "features/collection-disclosure.js",
+    "features/render.js",
+    "features/site-content.js",
+    "features/chatme.js",
+    "features/mobile-menu.js",
+    "features/journey.js",
+    "features/projects.js",
+    "features/city-bubble.js",
+    "features/language-menu.js",
+    "features/pointer-glow.js",
+    "features/appearance.js",
+    "features/background-field.js",
+    "app.js"
+  ],
+  "styles": "styles/index.css",
+  "assets": "assets",
+  "mock": {
+    "revision": "portfolio-2026-09-21-projects",
+    "files": [
+      "site/en",
+      "site/zh-Hans",
+      "site/zh-Hant",
+      "journey/en",
+      "journey/zh-Hans",
+      "journey/zh-Hant",
+      "experiences/en",
+      "experiences/zh-Hans",
+      "experiences/zh-Hant",
+      "projects/en",
+      "projects/zh-Hans",
+      "projects/zh-Hant",
+      "skills",
+      "locales/en",
+      "locales/zh-Hans",
+      "locales/zh-Hant"
+    ]
+  },
+  "frontend": {
+    "runtime": "config/runtime.json",
+    "navigation": "config/navigation.json",
+    "localization": "config/localization.json",
+    "map": "assets/maps/world.svg"
+  }
+}

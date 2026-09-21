@@ -1,0 +1,133 @@
+/* Skill chips, responsive measurement and expansion controls. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+}
+.tag {
+  font: 11px/1.5 var(--mono);
+  padding: 5px 9px;
+  background: var(--tag-surface);
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
+  border-radius: 4px;
+  transition: var(--duration-hover);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.tag:hover {
+  color: var(--project-open-hover);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toolkit {
+  border-top: 1px solid var(--border);
+}
+.toolkit-row {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 30px;
+  padding: 23px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.toolkit-row h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 4px 0;
+}
+.toolkit-row .tags {
+  margin: 0;
+}
+.toolkit-row .tag {
+  background: transparent;
+  font-size: 12px;
+}
+.toolkit-row .tag:hover {
+  background: var(--accent);
+}
+@media (max-width: 760px) {
+  .toolkit-row {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  .toolkit-row .tag {
+    font-size: 11px;
+  }
+}
+@media (min-width: 2200px) {
+  .toolkit-row {
+    grid-template-columns: 220px 1fr;
+  }
+}
+.extra-skills,
+.skill-preview {
+  display: contents;
+}
+.tags[data-skill-preview] {
+  min-width: 0;
+}
+.tags[data-skill-preview] .tag {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.tags[data-skill-preview] > .skills-toggle[aria-expanded="false"] {
+  max-width: var(--skill-preview-width);
+  white-space: normal;
+}
+.tags[data-skill-preview] > .skills-toggle[hidden] {
+  display: none;
+}
+.skills-measure {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+.skills-measure-row {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+}
+.tags[data-skill-preview] .skills-measure .tag {
+  max-width: none;
+  flex: none;
+  white-space: nowrap;
+}
+.extra-skills[hidden] {
+  display: none;
+}
+.tag.skills-toggle {
+  color: var(--accent);
+  background: transparent;
+  border: 1px dashed var(--skill-toggle-border);
+  min-height: 32px;
+  white-space: nowrap;
+}
+.tag.skills-toggle:hover,
+.tag.skills-toggle[aria-expanded="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-style: solid;
+}
+@media (max-width: 760px) {
+  .tag.skills-toggle {
+    min-height: var(--control-size);
+    padding: 9px 12px;
+  }
+}
+.skills-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.skills-toggle .bi {
+  /* Keep Bootstrap plus-lg and dash-lg aligned in every shared chip row. */
+  width: 16px;
+  height: 16px;
+}

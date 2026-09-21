@@ -1,0 +1,34 @@
+[
+  {
+    "key": "overview",
+    "icon": "house-door-fill",
+    "aliases": ["intro"],
+    "slug": "overview",
+    "labelKey": "ui.overview"
+  },
+  {
+    "key": "journey",
+    "icon": "airplane-fill",
+    "slug": "journey",
+    "labelKey": "ui.journey"
+  },
+  {
+    "key": "experience",
+    "icon": "briefcase-fill",
+    "slug": "experience",
+    "labelKey": "ui.experience"
+  },
+  {
+    "key": "projects",
+    "icon": "award-fill",
+    "slug": "projects",
+    "labelKey": "ui.projects"
+  },
+  {
+    "key": "skills",
+    "icon": "braces-asterisk",
+    "aliases": ["stack", "toolkit"],
+    "slug": "skills",
+    "labelKey": "ui.skills"
+  }
+]

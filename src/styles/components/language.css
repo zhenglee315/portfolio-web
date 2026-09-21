@@ -1,0 +1,75 @@
+/* Language selector and checked state. */
+.language-switch {
+  position: relative;
+}
+.language-toggle {
+  position: relative;
+  cursor: pointer;
+}
+.language-toggle svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.language-code {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  font: 9px var(--mono);
+  line-height: 1;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--accent);
+}
+.language-menu {
+  position: absolute;
+  right: 0;
+  top: 54px;
+  min-width: 170px;
+  padding: 6px;
+  background: var(--control-surface);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-menu);
+  box-shadow: 0 12px 32px var(--shadow-medium);
+  z-index: 55;
+}
+.language-menu[hidden] {
+  display: none;
+}
+/* Keep failed language loads actionable without replacing the current page. */
+.language-error {
+  margin: 8px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.language-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  min-height: var(--control-size);
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+}
+.language-menu button:hover,
+.language-menu button:focus-visible {
+  background: var(--control-hover);
+}
+.language-menu button[aria-checked="true"] {
+  color: var(--accent);
+}
+.language-menu button [data-icon] {
+  visibility: hidden;
+}
+.language-menu button[aria-checked="true"] [data-icon] {
+  visibility: visible;
+}

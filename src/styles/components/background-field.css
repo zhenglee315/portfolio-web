@@ -1,0 +1,191 @@
+/* Decorative viewport field stays behind the UI and never intercepts input. */
+body {
+  isolation: isolate;
+}
+.background-field {
+  position: fixed;
+  inset: 0 0 0 var(--rail-width);
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--accent);
+}
+.field-signals {
+  width: 100%;
+  height: 100%;
+  opacity: var(--field-brightness, 0.8);
+}
+.field-grid {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.06;
+}
+.field-cross {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.75;
+  opacity: 0.15;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.field-ambient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 72% 40%,
+    var(--field-ambient),
+    transparent 65%
+  );
+}
+.field-frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: var(--bg);
+}
+.field-top {
+  top: 0;
+  border-bottom: 1px solid var(--field-line);
+}
+.field-bottom {
+  bottom: 0;
+  border-top: 1px solid var(--field-line);
+}
+.field-ruler {
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  width: 5px;
+  opacity: 0.32;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--accent) 0 1px,
+    transparent 1px 8px
+  );
+}
+.field-left {
+  left: 8px;
+}
+.field-right {
+  right: 8px;
+}
+/* Frame placement finishes before one brief, low-contrast content flicker. */
+.field-entering .field-top {
+  animation: field-top-in 0.65s ease-out both;
+}
+.field-entering .field-bottom {
+  animation: field-bottom-in 0.65s ease-out both;
+}
+.field-entering .field-left {
+  animation: field-left-in 0.65s 0.1s ease-out both;
+}
+.field-entering .field-right {
+  animation: field-right-in 0.65s 0.1s ease-out both;
+}
+.field-entering .field-signals {
+  animation: field-reveal 0.8s ease-out both;
+}
+.field-entering main > * {
+  animation: field-content-in 0.45s 0.75s ease-out backwards;
+}
+/* Hide the entire navigation surface, not just its children, before the frame settles. */
+html:not([data-ready="true"]) .sidebar,
+html:not([data-ready="true"]) .mobile-header {
+  visibility: hidden;
+}
+.field-entering .sidebar,
+.field-entering .mobile-header {
+  animation: field-navigation-in 0.45s 0.8s ease-out backwards;
+}
+@keyframes field-navigation-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes field-top-in {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes field-bottom-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes field-left-in {
+  from {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.32;
+  }
+}
+@keyframes field-right-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.32;
+  }
+}
+@keyframes field-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: var(--field-brightness, 0.8);
+  }
+}
+@keyframes field-content-in {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.88;
+  }
+  65% {
+    opacity: 0.66;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@media (max-width: 760px) {
+  .background-field {
+    top: 64px;
+  }
+  .field-frame {
+    height: 6px;
+  }
+  .field-ruler {
+    width: 3px;
+  }
+  .field-left {
+    left: 4px;
+  }
+  .field-right {
+    right: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-entering * {
+    animation: none !important;
+  }
+}

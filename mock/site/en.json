@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "title": "ZL",
+    "titleSub": "WILSON",
+    "copyrightYear": 2026
+  },
+  "profile": {
+    "firstName": "Zheng",
+    "familyName": "Lee",
+    "nickName": "Wilson",
+    "content": "Senior software engineer with over five years of experience designing and building Python backends and manufacturing data platforms at Delta Electronics and Foxconn. Worked on systems used in daily production across 48+ plants and 100+ production lines, including analytics supporting Apple product manufacturing. Main areas of work include shared backend services, database performance optimisation, data pipeline development, asynchronous processing and machine-learning deployment.",
+    "eduCode": "UCL",
+    "program": "MSc Software Systems Engineering",
+    "introContent": "SOFTWARE · PLATFORMS · APPLIED AI",
+    "footerContent": "Software. Systems. A little curiosity."
+  },
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/zhenglee315",
+    "github": "https://github.com/zhenglee315",
+    "medium": "https://medium.com/@WilsonLeee",
+    "email": "zhenglee315@gmail.com"
+  },
+  "chatme": {
+    "title": "London · 20 hours/week",
+    "titleSub": "OPEN TO INTERNSHIPS",
+    "content": "I’m an MSc Software Systems Engineering student at UCL, seeking a paid software engineering internship to contribute my skills and help cover my living costs.\nI specialise in backend systems and AI agent application development.",
+    "icon": "assets/icons/cow-engineer.svg"
+  }
+}

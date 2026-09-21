@@ -1,0 +1,6 @@
+# Keep authored and generated text stable across Windows and Unix checkouts.
+* text=auto eol=lf
+# Preserve supplier bytes and their provenance checksums without newline conversion.
+src/assets/** -text -whitespace
+dist/assets/** -text -whitespace
+*.woff2 binary

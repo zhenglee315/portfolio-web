@@ -1,0 +1,2350 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Zheng Lee Portfolio API",
+    "version": "1.0.0",
+    "description": "Backend handoff for a currently offline mock-driven website. Four endpoints approved; two skills endpoints await review. No production HTTP adapter or authentication is implemented. Text is plain and localized, never HTML."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Planned HTTP base path; not a deployed backend."
+    }
+  ],
+  "paths": {
+    "/site": {
+      "get": {
+        "operationId": "getSite",
+        "summary": "get Site",
+        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "x-contract-status": "confirmed",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteResponse"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "data": {
+                        "brand": {
+                          "title": "ZL",
+                          "titleSub": "WILSON",
+                          "copyrightYear": 2026
+                        },
+                        "profile": {
+                          "firstName": "Zheng",
+                          "familyName": "Lee",
+                          "nickName": "Wilson",
+                          "content": "Senior software engineer with over five years of experience designing and building Python backends and manufacturing data platforms at Delta Electronics and Foxconn. Worked on systems used in daily production across 48+ plants and 100+ production lines, including analytics supporting Apple product manufacturing. Main areas of work include shared backend services, database performance optimisation, data pipeline development, asynchronous processing and machine-learning deployment.",
+                          "eduCode": "UCL",
+                          "program": "MSc Software Systems Engineering",
+                          "introContent": "SOFTWARE · PLATFORMS · APPLIED AI",
+                          "footerContent": "Software. Systems. A little curiosity."
+                        },
+                        "social": {
+                          "linkedin": "https://www.linkedin.com/in/zhenglee315",
+                          "github": "https://github.com/zhenglee315",
+                          "medium": "https://medium.com/@WilsonLeee",
+                          "email": "zhenglee315@gmail.com"
+                        },
+                        "chatme": {
+                          "title": "London · 20 hours/week",
+                          "titleSub": "OPEN TO INTERNSHIPS",
+                          "content": "I’m an MSc Software Systems Engineering student at UCL, seeking a paid software engineering internship to contribute my skills and help cover my living costs.\nI specialise in backend systems and AI agent application development.",
+                          "icon": "assets/icons/cow-engineer.svg"
+                        }
+                      },
+                      "included": {
+                        "organizations": [],
+                        "countries": [],
+                        "locations": [],
+                        "skills": [],
+                        "translations": {
+                          "en": {}
+                        }
+                      },
+                      "page": null,
+                      "meta": {
+                        "apiVersion": 1,
+                        "revision": "portfolio-2026-09-21-projects",
+                        "locale": "en"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/journey": {
+      "get": {
+        "operationId": "getJourney",
+        "summary": "get Journey",
+        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "x-contract-status": "confirmed",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JourneyResponse"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "countryCode": "TWN",
+                          "countryName": "Taiwan",
+                          "city": "New Taipei",
+                          "latitude": 25.03,
+                          "longitude": 121.432,
+                          "type": "education",
+                          "startMonth": "2017-09",
+                          "endMonth": "2019-07",
+                          "expected": false,
+                          "organizationName": "Fu Jen Catholic University",
+                          "organizationCode": "Fu Jen University",
+                          "organizationTitle": "MS Information Management",
+                          "detail": {
+                            "startMonth": "2017-09",
+                            "endMonth": "2019-06",
+                            "content": "Python Instructor / Teaching Assistant"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Shenzhen",
+                          "latitude": 22.543,
+                          "longitude": 114.058,
+                          "type": "work",
+                          "startMonth": "2020-08",
+                          "endMonth": "2021-07",
+                          "expected": false,
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationCode": "Foxconn",
+                          "organizationTitle": "Data Analysis Engineer",
+                          "detail": null
+                        },
+                        {
+                          "id": 3,
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Chengdu",
+                          "latitude": 30.572,
+                          "longitude": 104.067,
+                          "type": "work",
+                          "startMonth": "2021-08",
+                          "endMonth": "2023-08",
+                          "expected": false,
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationCode": "Foxconn",
+                          "organizationTitle": "System Design & Data Analysis Engineer",
+                          "detail": null
+                        },
+                        {
+                          "id": 4,
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Suzhou · Wujiang",
+                          "latitude": 31.138,
+                          "longitude": 120.645,
+                          "type": "work",
+                          "startMonth": "2023-08",
+                          "endMonth": "2026-03",
+                          "endDay": 14,
+                          "expected": false,
+                          "organizationName": "Delta Electronics",
+                          "organizationCode": "Delta Electronics",
+                          "organizationTitle": "Senior Software Design Engineer",
+                          "detail": null
+                        },
+                        {
+                          "id": 5,
+                          "countryCode": "TWN",
+                          "countryName": "Taiwan",
+                          "city": "Taoyuan",
+                          "latitude": 24.993,
+                          "longitude": 121.301,
+                          "type": "work",
+                          "startMonth": "2026-04",
+                          "endMonth": "2026-09",
+                          "expected": false,
+                          "organizationName": "The Gospel as Revealed to Me",
+                          "organizationCode": "AI Publishing",
+                          "organizationTitle": "Senior Agent Platform Engineer",
+                          "detail": null
+                        },
+                        {
+                          "id": 6,
+                          "countryCode": "GBR",
+                          "countryName": "United Kingdom",
+                          "city": "London",
+                          "latitude": 51.5246,
+                          "longitude": -0.134,
+                          "type": "education",
+                          "startMonth": "2026-09",
+                          "endMonth": "2027-08",
+                          "expected": true,
+                          "organizationName": "University College London",
+                          "organizationCode": "UCL",
+                          "organizationTitle": "MSc Software Systems Engineering",
+                          "detail": null
+                        }
+                      ],
+                      "included": {
+                        "organizations": [],
+                        "countries": [],
+                        "locations": [],
+                        "skills": [],
+                        "translations": {
+                          "en": {}
+                        }
+                      },
+                      "page": null,
+                      "meta": {
+                        "apiVersion": 1,
+                        "revision": "portfolio-2026-09-21-projects",
+                        "locale": "en"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/experiences": {
+      "get": {
+        "operationId": "getExperiences",
+        "summary": "get Experiences",
+        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "x-contract-status": "confirmed",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperiencesPage"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "total": 6,
+                      "pages": 1,
+                      "page": 1,
+                      "size": 6,
+                      "items": [
+                        {
+                          "id": 6,
+                          "order": 5,
+                          "type": "education",
+                          "countryCode": "GBR",
+                          "countryName": "United Kingdom",
+                          "city": "London",
+                          "organizationCode": "UCL",
+                          "organizationName": "University College London",
+                          "organizationTitle": "MSc Software Systems Engineering",
+                          "startMonth": "2026-09",
+                          "endMonth": "2027-08",
+                          "expected": true,
+                          "content": "A new chapter focused on software systems engineering, distributed systems and architecture. Bringing production engineering experience into advanced study at UCL.",
+                          "skills": [
+                            "Software architecture",
+                            "Distributed systems",
+                            "Requirements engineering",
+                            "Validation & verification",
+                            "Engineering for data analysis",
+                            "Applied deep learning"
+                          ],
+                          "detail": null
+                        },
+                        {
+                          "id": 5,
+                          "order": 4,
+                          "type": "work",
+                          "countryCode": "TWN",
+                          "countryName": "Taiwan",
+                          "city": "Taoyuan",
+                          "organizationCode": "AI Publishing",
+                          "organizationName": "The Gospel as Revealed to Me",
+                          "organizationTitle": "Senior Agent Platform Engineer",
+                          "startMonth": "2026-04",
+                          "endMonth": "2026-09",
+                          "content": "Designed an AI-assisted Bible translation and publishing workflow, combining domain-specific prompts, reviewer-approved translations and human review. Built asynchronous services for chapter extraction, translation, revision and publication export.",
+                          "skills": [
+                            "Python",
+                            "RAG",
+                            "FastAPI",
+                            "Celery",
+                            "Redis",
+                            "Ollama",
+                            "RustFS",
+                            "Prompt engineering",
+                            "Human-in-the-loop review",
+                            "Slack"
+                          ],
+                          "detail": null
+                        },
+                        {
+                          "id": 4,
+                          "order": 3,
+                          "type": "work",
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Suzhou · Wujiang",
+                          "organizationCode": "Delta Electronics",
+                          "organizationName": "Delta Electronics",
+                          "organizationTitle": "Senior Software Design Engineer",
+                          "startMonth": "2023-08",
+                          "endMonth": "2026-03",
+                          "endDay": 14,
+                          "content": "Designed and developed manufacturing platform services, asynchronous workflows and model-training infrastructure. Connected manufacturing APIs to AI agents through MCP.",
+                          "skills": [
+                            "Python",
+                            "FastAPI",
+                            "MCP",
+                            "FastMCP",
+                            "gRPC",
+                            "PostgreSQL",
+                            "Redis",
+                            "Celery",
+                            "Kafka",
+                            "Kubernetes",
+                            "Flask",
+                            "REST",
+                            "RabbitMQ",
+                            "Apache NiFi",
+                            "Airflow",
+                            "Prometheus",
+                            "Groovy",
+                            "GitLab",
+                            "Jenkins CI/CD",
+                            "S3-compatible storage",
+                            "RustFS",
+                            "XGBoost",
+                            "SQL",
+                            "Training orchestration",
+                            "HTML",
+                            "SMTP"
+                          ],
+                          "detail": null
+                        },
+                        {
+                          "id": 3,
+                          "order": 2,
+                          "type": "work",
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Chengdu",
+                          "organizationCode": "Foxconn",
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationTitle": "System Design & Data Analysis Engineer",
+                          "startMonth": "2021-08",
+                          "endMonth": "2023-08",
+                          "content": "Worked on shared analytics platforms, data pipelines and equipment monitoring. Designed backend services and helped teams turn production data into operational insight.",
+                          "skills": [
+                            "Python",
+                            "Django REST Framework",
+                            "PostgreSQL",
+                            "Redis",
+                            "SQL",
+                            "Docker",
+                            "Linux",
+                            "Vue 3",
+                            "LSTM",
+                            "Oracle GoldenGate",
+                            "Django",
+                            "Tableau",
+                            "Tableau Prep Builder",
+                            "ECharts",
+                            "Ubuntu",
+                            "Red Hat Linux",
+                            "Lasso",
+                            "PSO",
+                            "Pearson correlation",
+                            "ETL"
+                          ],
+                          "detail": null
+                        },
+                        {
+                          "id": 2,
+                          "order": 1,
+                          "type": "work",
+                          "countryCode": "CHN",
+                          "countryName": "China",
+                          "city": "Shenzhen",
+                          "organizationCode": "Foxconn",
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationTitle": "Data Analysis Engineer",
+                          "startMonth": "2020-08",
+                          "endMonth": "2021-07",
+                          "content": "Developed manufacturing data services, reporting integrations and access controls. Built the foundations for shared analytics across factory teams.",
+                          "skills": [
+                            "Python",
+                            "Django",
+                            "SQL",
+                            "RBAC",
+                            "Oracle GoldenGate",
+                            "Tableau",
+                            "Tableau Prep Builder",
+                            "ECharts",
+                            "ETL"
+                          ],
+                          "detail": null
+                        },
+                        {
+                          "id": 1,
+                          "order": 0,
+                          "type": "education",
+                          "countryCode": "TWN",
+                          "countryName": "Taiwan",
+                          "city": "New Taipei",
+                          "organizationCode": "Fu Jen University",
+                          "organizationName": "Fu Jen Catholic University",
+                          "organizationTitle": "MS Information Management",
+                          "startMonth": "2017-09",
+                          "endMonth": "2019-07",
+                          "content": "Studied machine learning and information management, with a dissertation on multiclass classification. Supported Python teaching and hands-on programming exercises.",
+                          "skills": [
+                            "Python",
+                            "XGBoost",
+                            "Random forest",
+                            "SVM",
+                            "AdaBoost",
+                            "ANN",
+                            "Ensemble methods",
+                            "Feature selection",
+                            "Class-imbalance handling",
+                            "Data structures",
+                            "Web scraping",
+                            "Debugging",
+                            "Google Translate"
+                          ],
+                          "detail": {
+                            "startMonth": "2017-09",
+                            "endMonth": "2019-06",
+                            "content": "Python Instructor / Teaching Assistant"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "getProjects",
+        "summary": "get Projects",
+        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "x-contract-status": "confirmed",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectsPage"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "total": 15,
+                      "pages": 3,
+                      "page": 1,
+                      "size": 6,
+                      "items": [
+                        {
+                          "id": 4,
+                          "organizationName": "The Gospel as Revealed to Me",
+                          "organizationCode": "AI Publishing",
+                          "organizationTitle": "Senior Agent Platform Engineer",
+                          "startMonth": "2026-04",
+                          "endMonth": "2026-09",
+                          "projectName": "AI-assisted publishing",
+                          "projectTitle": "APPLIED AI WORKFLOWS",
+                          "intro": "An LLM-assisted translation and publishing workflow that keeps reviewer-approved translations in context and people in the review process.",
+                          "detail": {
+                            "workflowDescription": "Source chapters pass through extraction, translation, revision and publication export. Domain-specific prompts and reviewer-approved translations provide context for subsequent translation and revision. Human review remains part of the workflow through Slack, while storage retains the generated artefacts for later steps.",
+                            "flow": [
+                              "Source chapters",
+                              "Translation & review",
+                              "Publication export"
+                            ],
+                            "technicalDescription": "Domain-specific prompts and approved translations provide context for subsequent work. Slack supports review, while object storage holds workflow artefacts.",
+                            "contribution": "Designed the RAG workflow and asynchronous architecture for extraction, translation, revision and export.",
+                            "outcome": "Reduced turnaround per volume from 18 to 3 months and required translation staffing from 7 to 2 people."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "Python",
+                            "RAG",
+                            "FastAPI",
+                            "Celery",
+                            "Redis",
+                            "Ollama",
+                            "RustFS",
+                            "Prompt engineering",
+                            "Human-in-the-loop review",
+                            "Slack"
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "organizationName": "Delta Electronics",
+                          "organizationCode": "Delta Electronics",
+                          "organizationTitle": "Senior Software Design Engineer",
+                          "startMonth": "2025-09",
+                          "endMonth": "2026-01",
+                          "projectName": "Manufacturing AI tools",
+                          "projectTitle": "AGENT & MCP INTEGRATION",
+                          "intro": "Connecting AI agents to real manufacturing data through a tool layer for production metrics, equipment status and operational calculations.",
+                          "detail": {
+                            "workflowDescription": "An AI agent calls manufacturing tools through an MCP integration layer. Each tool delegates queries and calculations to existing manufacturing APIs, then returns production or equipment metrics to the agent. The workflow covers output, yield, scrap counts, equipment status, failure counts and utilisation.",
+                            "flow": [
+                              "AI agent",
+                              "MCP tools",
+                              "Manufacturing APIs"
+                            ],
+                            "technicalDescription": "Exposed tools for production output, yield, scrap counts, equipment status, failure counts and utilisation. Existing backend services perform the underlying queries and calculations.",
+                            "contribution": "Designed and implemented the MCP integration layer around existing manufacturing APIs.",
+                            "outcome": "Integrated 46 existing manufacturing APIs as MCP tools."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "MCP",
+                            "FastMCP",
+                            "Python",
+                            "FastAPI",
+                            "AI agent integration"
+                          ]
+                        },
+                        {
+                          "id": 1,
+                          "organizationName": "Delta Electronics",
+                          "organizationCode": "Delta Electronics",
+                          "organizationTitle": "Senior Software Design Engineer",
+                          "startMonth": "2025-03",
+                          "endMonth": "2026-02",
+                          "projectName": "HolmesBase",
+                          "projectTitle": "SHARED MANUFACTURING PLATFORM",
+                          "intro": "A reusable backend foundation for manufacturing analytics, bringing cross-plant data access, calculations and scheduling into one platform.",
+                          "detail": {
+                            "workflowDescription": "Factory data is accessed through shared platform services, where reusable manufacturing calculations prepare information for downstream analytics. Engineering teams use the same data-access and scheduling capabilities across factory applications, with development, maintenance and updates managed centrally.\n\nREST and gRPC interfaces make those capabilities available to client applications. Monitoring collects API metrics across service instances so teams can observe the shared services running in multiple Kubernetes namespaces.",
+                            "flow": [
+                              "Factory data",
+                              "Data preprocessing",
+                              "Shared services",
+                              "Analytics teams"
+                            ],
+                            "technicalDescription": "A common FastAPI framework supports 25 controller modules, with REST and gRPC interfaces exposing cross-plant data access and reusable manufacturing calculations. Prometheus client metrics use shared Redis storage for API monitoring across service instances in multiple Kubernetes namespaces.",
+                            "contribution": "Designed and developed shared platform services, including reusable data access, manufacturing calculations, background tasks and API monitoring.",
+                            "outcome": "Deployed across 28+ plants and 100+ production lines in China, Thailand and Taiwan."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "Python",
+                            "FastAPI",
+                            "gRPC",
+                            "REST",
+                            "PostgreSQL",
+                            "Redis",
+                            "Kubernetes",
+                            "Prometheus"
+                          ]
+                        },
+                        {
+                          "id": 3,
+                          "organizationName": "Delta Electronics",
+                          "organizationCode": "Delta Electronics",
+                          "organizationTitle": "Senior Software Design Engineer",
+                          "startMonth": "2025-03",
+                          "endMonth": "2025-09",
+                          "projectName": "Model training & delivery",
+                          "projectTitle": "ML PLATFORM ENGINEERING",
+                          "intro": "A platform workflow for registering datasets and scripts, dispatching training jobs and delivering model artefacts to edge applications.",
+                          "detail": {
+                            "workflowDescription": "Algorithm teams register datasets and training scripts, then submit jobs for background execution. The platform dispatches work to training workers and tracks execution states. Produced model artefacts are stored for delivery to Edge applications, with a GitLab-triggered Jenkins workflow supporting deployment.",
+                            "flow": [
+                              "Datasets & scripts",
+                              "Training workers",
+                              "Edge delivery"
+                            ],
+                            "technicalDescription": "The platform tracks execution through task states and manages model artefacts in S3-compatible storage. Queues separate long-running training from interactive API requests.",
+                            "contribution": "Designed and developed training services and contributed to the CI/CD workflow for model delivery.",
+                            "outcome": "Contributed to reducing model-deployment lead time from 7 days to approximately 10 hours."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "Python",
+                            "Training orchestration",
+                            "Celery",
+                            "RabbitMQ",
+                            "Redis",
+                            "S3-compatible storage",
+                            "RustFS",
+                            "GitLab",
+                            "Jenkins CI/CD"
+                          ]
+                        },
+                        {
+                          "id": 5,
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationCode": "Foxconn",
+                          "organizationTitle": "System Design & Data Analysis Engineer",
+                          "startMonth": "2022-10",
+                          "endMonth": "2023-07",
+                          "projectName": "Enterprise data analytics platform",
+                          "projectTitle": "PLATFORM ARCHITECTURE",
+                          "intro": "A shared analytics platform connecting manufacturing, inventory, equipment and business data through reusable APIs and a central warehouse.",
+                          "detail": {
+                            "workflowDescription": "Manufacturing, inventory, equipment and business data are integrated through shared APIs and a central warehouse. Analytical workloads run separately from production databases, allowing different business domains to reuse a common data foundation for cross-site reporting and analysis.",
+                            "flow": [
+                              "Operational systems",
+                              "Shared APIs & warehouse",
+                              "Business analytics"
+                            ],
+                            "technicalDescription": "Separated analytical workloads from production databases, with shared services supporting multiple business domains.",
+                            "contribution": "Architected the platform and led three junior developers, coordinating code integration and reviewing changes.",
+                            "outcome": "Established a reusable foundation for cross-site manufacturing and business analytics."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "Python",
+                            "Django REST Framework",
+                            "PostgreSQL",
+                            "Redis",
+                            "Vue 3",
+                            "REST",
+                            "Data warehousing"
+                          ]
+                        },
+                        {
+                          "id": 6,
+                          "organizationName": "Foxconn Technology Group",
+                          "organizationCode": "Foxconn",
+                          "organizationTitle": "System Design & Data Analysis Engineer",
+                          "startMonth": "2022-08",
+                          "endMonth": "2023-01",
+                          "projectName": "LSTM equipment anomaly detection",
+                          "projectTitle": "PREDICTIVE MAINTENANCE",
+                          "intro": "An equipment anomaly prediction pipeline combining feature selection, sequence modelling and hyperparameter optimisation.",
+                          "detail": {
+                            "workflowDescription": "Equipment signals pass through feature selection before entering the sequence-modelling pipeline. Pearson correlation and Lasso identify useful inputs, while particle swarm optimisation tunes model parameters. Predictions support early anomaly detection and inform equipment shutdown and maintenance decisions.",
+                            "flow": [
+                              "Equipment signals",
+                              "Feature selection & LSTM",
+                              "Maintenance decisions"
+                            ],
+                            "technicalDescription": "Used equipment signals to support early anomaly detection and inform shutdown and maintenance decisions.",
+                            "contribution": "Developed the prediction pipeline, including Pearson correlation and Lasso feature selection and particle swarm optimisation for hyperparameter tuning.",
+                            "outcome": "Named inventor on published patent application CN116467593A."
+                          },
+                          "expected": false,
+                          "skills": [
+                            "Python",
+                            "LSTM",
+                            "Lasso",
+                            "PSO",
+                            "Pearson correlation",
+                            "Feature selection"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/skill-categories": {
+      "get": {
+        "operationId": "getSkillCategories",
+        "summary": "get Skill Categories",
+        "description": "Current mock behavior only; do not treat this endpoint as finalized backend design until the next API discussion.",
+        "x-contract-status": "pending-review",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesResponse"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "backend-apis",
+                          "labelKey": "skillCategory.backend-apis",
+                          "skillIds": [
+                            "python",
+                            "fastapi",
+                            "django",
+                            "django-rest-framework",
+                            "flask",
+                            "rest"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 8,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6YmFja2VuZC1hcGlzIiwib2Zmc2V0Ijo2fQ"
+                          }
+                        },
+                        {
+                          "id": "ai-agents",
+                          "labelKey": "skillCategory.ai-agents",
+                          "skillIds": [
+                            "mcp",
+                            "fastmcp",
+                            "rag",
+                            "langchain",
+                            "ollama",
+                            "chroma"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 8,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6YWktYWdlbnRzIiwib2Zmc2V0Ijo2fQ"
+                          }
+                        },
+                        {
+                          "id": "platform-security",
+                          "labelKey": "skillCategory.platform-security",
+                          "skillIds": [
+                            "kubernetes",
+                            "docker",
+                            "linux",
+                            "jwt",
+                            "rbac",
+                            "sso"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 10,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6cGxhdGZvcm0tc2VjdXJpdHkiLCJvZmZzZXQiOjZ9"
+                          }
+                        },
+                        {
+                          "id": "data-storage",
+                          "labelKey": "skillCategory.data-storage",
+                          "skillIds": [
+                            "postgresql",
+                            "sql",
+                            "redis",
+                            "kafka",
+                            "apache-nifi",
+                            "sqlalchemy"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 13,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6ZGF0YS1zdG9yYWdlIiwib2Zmc2V0Ijo2fQ"
+                          }
+                        },
+                        {
+                          "id": "workflows-delivery",
+                          "labelKey": "skillCategory.workflows-delivery",
+                          "skillIds": [
+                            "celery",
+                            "rabbitmq",
+                            "airflow",
+                            "gitlab",
+                            "jenkins-ci-cd",
+                            "kettle-etl"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 7,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6d29ya2Zsb3dzLWRlbGl2ZXJ5Iiwib2Zmc2V0Ijo2fQ"
+                          }
+                        },
+                        {
+                          "id": "ml-research",
+                          "labelKey": "skillCategory.ml-research",
+                          "skillIds": [
+                            "training-orchestration",
+                            "mlflow-integration",
+                            "xgboost",
+                            "lstm",
+                            "random-forest",
+                            "svm"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 14,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6bWwtcmVzZWFyY2giLCJvZmZzZXQiOjZ9"
+                          }
+                        },
+                        {
+                          "id": "web-integrations",
+                          "labelKey": "skillCategory.web-integrations",
+                          "skillIds": [
+                            "vue-3",
+                            "echarts",
+                            "html",
+                            "smtp",
+                            "slack",
+                            "google-translate"
+                          ],
+                          "skillsPage": {
+                            "limit": 6,
+                            "total": 7,
+                            "hasMore": true,
+                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6d2ViLWludGVncmF0aW9ucyIsIm9mZnNldCI6Nn0"
+                          }
+                        }
+                      ],
+                      "included": {
+                        "organizations": [],
+                        "countries": [],
+                        "locations": [],
+                        "skills": [
+                          {
+                            "id": "python",
+                            "labelKey": "skill.python"
+                          },
+                          {
+                            "id": "fastapi",
+                            "labelKey": "skill.fastapi"
+                          },
+                          {
+                            "id": "django",
+                            "labelKey": "skill.django"
+                          },
+                          {
+                            "id": "django-rest-framework",
+                            "labelKey": "skill.django-rest-framework"
+                          },
+                          {
+                            "id": "flask",
+                            "labelKey": "skill.flask"
+                          },
+                          {
+                            "id": "rest",
+                            "labelKey": "skill.rest"
+                          },
+                          {
+                            "id": "mcp",
+                            "labelKey": "skill.mcp"
+                          },
+                          {
+                            "id": "fastmcp",
+                            "labelKey": "skill.fastmcp"
+                          },
+                          {
+                            "id": "rag",
+                            "labelKey": "skill.rag"
+                          },
+                          {
+                            "id": "langchain",
+                            "labelKey": "skill.langchain"
+                          },
+                          {
+                            "id": "ollama",
+                            "labelKey": "skill.ollama"
+                          },
+                          {
+                            "id": "chroma",
+                            "labelKey": "skill.chroma"
+                          },
+                          {
+                            "id": "kubernetes",
+                            "labelKey": "skill.kubernetes"
+                          },
+                          {
+                            "id": "docker",
+                            "labelKey": "skill.docker"
+                          },
+                          {
+                            "id": "linux",
+                            "labelKey": "skill.linux"
+                          },
+                          {
+                            "id": "jwt",
+                            "labelKey": "skill.jwt"
+                          },
+                          {
+                            "id": "rbac",
+                            "labelKey": "skill.rbac"
+                          },
+                          {
+                            "id": "sso",
+                            "labelKey": "skill.sso"
+                          },
+                          {
+                            "id": "postgresql",
+                            "labelKey": "skill.postgresql"
+                          },
+                          {
+                            "id": "sql",
+                            "labelKey": "skill.sql"
+                          },
+                          {
+                            "id": "redis",
+                            "labelKey": "skill.redis"
+                          },
+                          {
+                            "id": "kafka",
+                            "labelKey": "skill.kafka"
+                          },
+                          {
+                            "id": "apache-nifi",
+                            "labelKey": "skill.apache-nifi"
+                          },
+                          {
+                            "id": "sqlalchemy",
+                            "labelKey": "skill.sqlalchemy"
+                          },
+                          {
+                            "id": "celery",
+                            "labelKey": "skill.celery"
+                          },
+                          {
+                            "id": "rabbitmq",
+                            "labelKey": "skill.rabbitmq"
+                          },
+                          {
+                            "id": "airflow",
+                            "labelKey": "skill.airflow"
+                          },
+                          {
+                            "id": "gitlab",
+                            "labelKey": "skill.gitlab"
+                          },
+                          {
+                            "id": "jenkins-ci-cd",
+                            "labelKey": "skill.jenkins-ci-cd"
+                          },
+                          {
+                            "id": "kettle-etl",
+                            "labelKey": "skill.kettle-etl"
+                          },
+                          {
+                            "id": "training-orchestration",
+                            "labelKey": "skill.training-orchestration"
+                          },
+                          {
+                            "id": "mlflow-integration",
+                            "labelKey": "skill.mlflow-integration"
+                          },
+                          {
+                            "id": "xgboost",
+                            "labelKey": "skill.xgboost"
+                          },
+                          {
+                            "id": "lstm",
+                            "labelKey": "skill.lstm"
+                          },
+                          {
+                            "id": "random-forest",
+                            "labelKey": "skill.random-forest"
+                          },
+                          {
+                            "id": "svm",
+                            "labelKey": "skill.svm"
+                          },
+                          {
+                            "id": "vue-3",
+                            "labelKey": "skill.vue-3"
+                          },
+                          {
+                            "id": "echarts",
+                            "labelKey": "skill.echarts"
+                          },
+                          {
+                            "id": "html",
+                            "labelKey": "skill.html"
+                          },
+                          {
+                            "id": "smtp",
+                            "labelKey": "skill.smtp"
+                          },
+                          {
+                            "id": "slack",
+                            "labelKey": "skill.slack"
+                          },
+                          {
+                            "id": "google-translate",
+                            "labelKey": "skill.google-translate"
+                          }
+                        ],
+                        "translations": {
+                          "en": {
+                            "skillCategory.backend-apis": "Backend & APIs",
+                            "skillCategory.ai-agents": "AI & agents",
+                            "skillCategory.platform-security": "Platform & security",
+                            "skillCategory.data-storage": "Data & storage",
+                            "skillCategory.workflows-delivery": "Workflows & delivery",
+                            "skillCategory.ml-research": "ML & research",
+                            "skillCategory.web-integrations": "Web & integrations",
+                            "skill.python": "Python",
+                            "skill.fastapi": "FastAPI",
+                            "skill.django": "Django",
+                            "skill.django-rest-framework": "Django REST Framework",
+                            "skill.flask": "Flask",
+                            "skill.rest": "REST",
+                            "skill.mcp": "MCP",
+                            "skill.fastmcp": "FastMCP",
+                            "skill.rag": "RAG",
+                            "skill.langchain": "LangChain",
+                            "skill.ollama": "Ollama",
+                            "skill.chroma": "Chroma",
+                            "skill.kubernetes": "Kubernetes",
+                            "skill.docker": "Docker",
+                            "skill.linux": "Linux",
+                            "skill.jwt": "JWT",
+                            "skill.rbac": "RBAC",
+                            "skill.sso": "SSO",
+                            "skill.postgresql": "PostgreSQL",
+                            "skill.sql": "SQL",
+                            "skill.redis": "Redis",
+                            "skill.kafka": "Kafka",
+                            "skill.apache-nifi": "Apache NiFi",
+                            "skill.sqlalchemy": "SQLAlchemy",
+                            "skill.celery": "Celery",
+                            "skill.rabbitmq": "RabbitMQ",
+                            "skill.airflow": "Airflow",
+                            "skill.gitlab": "GitLab",
+                            "skill.jenkins-ci-cd": "Jenkins CI/CD",
+                            "skill.kettle-etl": "Kettle-ETL",
+                            "skill.training-orchestration": "Training orchestration",
+                            "skill.mlflow-integration": "MLflow integration",
+                            "skill.xgboost": "XGBoost",
+                            "skill.lstm": "LSTM",
+                            "skill.random-forest": "Random forest",
+                            "skill.svm": "SVM",
+                            "skill.vue-3": "Vue 3",
+                            "skill.echarts": "ECharts",
+                            "skill.html": "HTML",
+                            "skill.smtp": "SMTP",
+                            "skill.slack": "Slack",
+                            "skill.google-translate": "Google Translate"
+                          }
+                        }
+                      },
+                      "page": {
+                        "limit": 12,
+                        "total": 7,
+                        "hasMore": false,
+                        "nextCursor": null
+                      },
+                      "meta": {
+                        "apiVersion": 1,
+                        "revision": "portfolio-2026-09-21-projects",
+                        "locale": "en"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/StaleCursor"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/skills": {
+      "get": {
+        "operationId": "getSkills",
+        "summary": "get Skills",
+        "description": "Current mock behavior only; do not treat this endpoint as finalized backend design until the next API discussion.",
+        "x-contract-status": "pending-review",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/OwnerType"
+          },
+          {
+            "$ref": "#/components/parameters/OwnerId"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. Example is generated from the current English mock.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsResponse"
+                },
+                "examples": {
+                  "en": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "python",
+                          "labelKey": "skill.python"
+                        },
+                        {
+                          "id": "fastapi",
+                          "labelKey": "skill.fastapi"
+                        },
+                        {
+                          "id": "django",
+                          "labelKey": "skill.django"
+                        },
+                        {
+                          "id": "django-rest-framework",
+                          "labelKey": "skill.django-rest-framework"
+                        },
+                        {
+                          "id": "flask",
+                          "labelKey": "skill.flask"
+                        },
+                        {
+                          "id": "rest",
+                          "labelKey": "skill.rest"
+                        },
+                        {
+                          "id": "grpc",
+                          "labelKey": "skill.grpc"
+                        },
+                        {
+                          "id": "groovy",
+                          "labelKey": "skill.groovy"
+                        }
+                      ],
+                      "included": {
+                        "organizations": [],
+                        "countries": [],
+                        "locations": [],
+                        "skills": [
+                          {
+                            "id": "python",
+                            "labelKey": "skill.python"
+                          },
+                          {
+                            "id": "fastapi",
+                            "labelKey": "skill.fastapi"
+                          },
+                          {
+                            "id": "django",
+                            "labelKey": "skill.django"
+                          },
+                          {
+                            "id": "django-rest-framework",
+                            "labelKey": "skill.django-rest-framework"
+                          },
+                          {
+                            "id": "flask",
+                            "labelKey": "skill.flask"
+                          },
+                          {
+                            "id": "rest",
+                            "labelKey": "skill.rest"
+                          },
+                          {
+                            "id": "grpc",
+                            "labelKey": "skill.grpc"
+                          },
+                          {
+                            "id": "groovy",
+                            "labelKey": "skill.groovy"
+                          }
+                        ],
+                        "translations": {
+                          "en": {
+                            "skill.python": "Python",
+                            "skill.fastapi": "FastAPI",
+                            "skill.django": "Django",
+                            "skill.django-rest-framework": "Django REST Framework",
+                            "skill.flask": "Flask",
+                            "skill.rest": "REST",
+                            "skill.grpc": "gRPC",
+                            "skill.groovy": "Groovy"
+                          }
+                        }
+                      },
+                      "page": {
+                        "limit": 12,
+                        "total": 8,
+                        "hasMore": false,
+                        "nextCursor": null
+                      },
+                      "meta": {
+                        "apiVersion": 1,
+                        "revision": "portfolio-2026-09-21-projects",
+                        "locale": "en"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/StaleCursor"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Locale": {
+        "type": "string",
+        "enum": ["en", "zh-Hans", "zh-Hant"]
+      },
+      "PositiveId": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991,
+        "format": "int64",
+        "description": "Stable positive JSON number. Database int8 values must remain within JavaScript exact integer range."
+      },
+      "Month": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+        "description": "YYYY-MM. End month must not precede start month; compare in application validation."
+      },
+      "DisplayLabel": {
+        "type": "string",
+        "pattern": "\\S",
+        "description": "Nonblank plain text, preserving the server array order."
+      },
+      "SkillId": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9-]+$"
+      },
+      "TextKey": {
+        "type": "string",
+        "description": "Legacy skill/category translation key; not used by direct-text resources."
+      },
+      "SiteData": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Brand mark without decorative punctuation."
+              },
+              "titleSub": {
+                "type": "string",
+                "description": "Brand subtitle; independent of nickName."
+              },
+              "copyrightYear": {
+                "type": "integer",
+                "description": "Explicit display year."
+              }
+            },
+            "required": ["title", "titleSub", "copyrightYear"],
+            "additionalProperties": true
+          },
+          "profile": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "description": "Given name."
+              },
+              "familyName": {
+                "type": "string",
+                "description": "Family name."
+              },
+              "nickName": {
+                "type": "string",
+                "description": "Nickname for accessible home labels."
+              },
+              "content": {
+                "type": "string",
+                "description": "Localized biography; also supplies meta description."
+              },
+              "eduCode": {
+                "type": "string",
+                "description": "Education abbreviation, directly displayed."
+              },
+              "program": {
+                "type": "string",
+                "description": "Localized study program."
+              },
+              "introContent": {
+                "type": "string",
+                "description": "Short introduction eyebrow."
+              },
+              "footerContent": {
+                "type": "string",
+                "description": "Footer personality line."
+              }
+            },
+            "required": [
+              "firstName",
+              "familyName",
+              "nickName",
+              "content",
+              "eduCode",
+              "program",
+              "introContent",
+              "footerContent"
+            ],
+            "additionalProperties": true
+          },
+          "social": {
+            "type": "object",
+            "properties": {
+              "linkedin": {
+                "type": "string",
+                "pattern": "^(?:https?://[^\\s]+)?$",
+                "description": "Plain HTTP(S) URL; empty string hides this link. No Markdown."
+              },
+              "github": {
+                "type": "string",
+                "pattern": "^(?:https?://[^\\s]+)?$",
+                "description": "Plain HTTP(S) URL; empty string hides this link. No Markdown."
+              },
+              "medium": {
+                "type": "string",
+                "pattern": "^(?:https?://[^\\s]+)?$",
+                "description": "Plain HTTP(S) URL; empty string hides this link. No Markdown."
+              },
+              "email": {
+                "type": "string",
+                "pattern": "^(?:[^\\s@<>:]+@[^\\s@<>]+)?$",
+                "description": "Plain email address; empty string hides this link. No Markdown."
+              }
+            },
+            "required": ["linkedin", "github", "medium", "email"],
+            "additionalProperties": true
+          },
+          "chatme": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Chat heading."
+              },
+              "titleSub": {
+                "type": "string",
+                "description": "Chat eyebrow."
+              },
+              "content": {
+                "type": "string",
+                "description": "Plain multi-paragraph message. JSON serializer encodes normal line breaks."
+              },
+              "icon": {
+                "type": "string",
+                "pattern": "^assets/(?!\\.\\.(?:/|$))(?!.*?/\\.\\.(?:/|$))[a-zA-Z0-9_./-]+$",
+                "description": "Bundled local asset path; parent traversal is rejected."
+              }
+            },
+            "required": ["title", "titleSub", "content", "icon"],
+            "additionalProperties": true
+          }
+        },
+        "required": ["brand", "profile", "social", "chatme"],
+        "additionalProperties": true
+      },
+      "CareerDetail": {
+        "type": "object",
+        "properties": {
+          "startMonth": {
+            "$ref": "#/components/schemas/Month"
+          },
+          "endMonth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Month"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Optional real day in endMonth. Invalid calendar dates or null endMonth are rejected."
+          },
+          "content": {
+            "type": "string",
+            "description": "Localized secondary role or teaching detail."
+          }
+        },
+        "required": ["startMonth", "endMonth", "content"],
+        "additionalProperties": true
+      },
+      "JourneyItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/PositiveId"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["work", "education"]
+          },
+          "countryCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO alpha-3; Journey uses the local SVG country identity."
+          },
+          "countryName": {
+            "type": "string",
+            "description": "Localized country display name."
+          },
+          "city": {
+            "type": "string",
+            "description": "Localized city display name."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Localized full display name; no organization lookup request."
+          },
+          "organizationCode": {
+            "type": "string",
+            "description": "Display abbreviation; not a foreign key."
+          },
+          "organizationTitle": {
+            "type": "string",
+            "description": "Role or degree title, not the project subtitle."
+          },
+          "startMonth": {
+            "$ref": "#/components/schemas/Month"
+          },
+          "endMonth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Month"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Optional real calendar day; requires endMonth."
+          },
+          "expected": {
+            "type": "boolean",
+            "description": "Explicit expected completion marker, not inferred from the current date."
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareerDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "countryCode",
+          "countryName",
+          "city",
+          "organizationName",
+          "organizationCode",
+          "organizationTitle",
+          "startMonth",
+          "endMonth",
+          "expected",
+          "latitude",
+          "longitude"
+        ],
+        "additionalProperties": true
+      },
+      "Experience": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/PositiveId"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["work", "education"]
+          },
+          "countryCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO alpha-3; Journey uses the local SVG country identity."
+          },
+          "countryName": {
+            "type": "string",
+            "description": "Localized country display name."
+          },
+          "city": {
+            "type": "string",
+            "description": "Localized city display name."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Localized full display name; no organization lookup request."
+          },
+          "organizationCode": {
+            "type": "string",
+            "description": "Display abbreviation; not a foreign key."
+          },
+          "organizationTitle": {
+            "type": "string",
+            "description": "Role or degree title, not the project subtitle."
+          },
+          "startMonth": {
+            "$ref": "#/components/schemas/Month"
+          },
+          "endMonth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Month"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Optional real calendar day; requires endMonth."
+          },
+          "expected": {
+            "type": "boolean",
+            "description": "Explicit expected completion marker, not inferred from the current date."
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareerDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order": {
+            "type": "number",
+            "description": "Retained server ordering value; frontend never sorts by it."
+          },
+          "content": {
+            "type": "string",
+            "description": "Localized experience introduction."
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DisplayLabel"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "countryCode",
+          "countryName",
+          "city",
+          "organizationName",
+          "organizationCode",
+          "organizationTitle",
+          "startMonth",
+          "endMonth",
+          "order",
+          "content",
+          "skills"
+        ],
+        "additionalProperties": true
+      },
+      "ProjectDetail": {
+        "type": "object",
+        "properties": {
+          "workflowDescription": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Full end-to-end business process; absent text hides the section."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "flow": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DisplayLabel"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "technicalDescription": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Architecture and implementation choices."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contribution": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Concrete personal responsibilities and delivery."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Supported results; no invented metrics."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "workflowDescription",
+          "flow",
+          "technicalDescription",
+          "contribution",
+          "outcome"
+        ],
+        "additionalProperties": true
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/PositiveId"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Localized full display name; no organization lookup request."
+          },
+          "organizationCode": {
+            "type": "string",
+            "description": "Display abbreviation; not a foreign key."
+          },
+          "organizationTitle": {
+            "type": "string",
+            "description": "Role or degree title, not the project subtitle."
+          },
+          "startMonth": {
+            "$ref": "#/components/schemas/Month"
+          },
+          "endMonth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Month"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected": {
+            "type": "boolean",
+            "description": "true requires a non-null endMonth."
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Project name used by card and dialog."
+          },
+          "projectTitle": {
+            "type": "string",
+            "description": "Short classification or subtitle."
+          },
+          "intro": {
+            "type": "string",
+            "description": "Brief introduction shown on the card only."
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectDetail"
+              },
+              {
+                "type": "null"
+              },
+              {
+                "const": ""
+              }
+            ],
+            "description": "Returned completely with the list; empty values or an all-empty object hide the opener."
+          },
+          "skills": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DisplayLabel"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "organizationName",
+          "organizationCode",
+          "organizationTitle",
+          "startMonth",
+          "endMonth",
+          "projectName",
+          "projectTitle",
+          "intro",
+          "detail",
+          "skills"
+        ],
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "expected": {
+                  "const": true
+                }
+              },
+              "required": ["expected"]
+            },
+            "then": {
+              "properties": {
+                "endMonth": {
+                  "$ref": "#/components/schemas/Month"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CursorPage": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["limit", "total", "hasMore", "nextCursor"],
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "hasMore": {
+                  "const": true
+                }
+              },
+              "required": ["hasMore"]
+            },
+            "then": {
+              "properties": {
+                "nextCursor": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "nextCursor": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Skill": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/SkillId"
+          },
+          "labelKey": {
+            "$ref": "#/components/schemas/TextKey"
+          }
+        },
+        "required": ["id", "labelKey"],
+        "additionalProperties": true
+      },
+      "SkillCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/SkillId"
+          },
+          "labelKey": {
+            "$ref": "#/components/schemas/TextKey"
+          },
+          "skillIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillId"
+            },
+            "uniqueItems": true
+          },
+          "skillsPage": {
+            "$ref": "#/components/schemas/CursorPage"
+          }
+        },
+        "required": ["id", "labelKey", "skillIds", "skillsPage"],
+        "additionalProperties": true
+      },
+      "Included": {
+        "type": "object",
+        "properties": {
+          "organizations": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "countries": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "locations": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skill"
+            }
+          },
+          "translations": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "propertyNames": {
+              "$ref": "#/components/schemas/Locale"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "organizations",
+          "countries",
+          "locations",
+          "skills",
+          "translations"
+        ],
+        "additionalProperties": true
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "const": 1
+          },
+          "revision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "locale": {
+            "$ref": "#/components/schemas/Locale"
+          }
+        },
+        "required": ["apiVersion", "revision", "locale"],
+        "additionalProperties": true
+      },
+      "SiteResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SiteData"
+          },
+          "included": {
+            "$ref": "#/components/schemas/Included"
+          },
+          "page": {
+            "type": "null"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": ["data", "included", "page", "meta"],
+        "additionalProperties": true
+      },
+      "JourneyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JourneyItem"
+            }
+          },
+          "included": {
+            "$ref": "#/components/schemas/Included"
+          },
+          "page": {
+            "type": "null"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": ["data", "included", "page", "meta"],
+        "additionalProperties": true
+      },
+      "CategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillCategory"
+            }
+          },
+          "included": {
+            "$ref": "#/components/schemas/Included"
+          },
+          "page": {
+            "$ref": "#/components/schemas/CursorPage"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": ["data", "included", "page", "meta"],
+        "additionalProperties": true
+      },
+      "SkillsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skill"
+            }
+          },
+          "included": {
+            "$ref": "#/components/schemas/Included"
+          },
+          "page": {
+            "$ref": "#/components/schemas/CursorPage"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": ["data", "included", "page", "meta"],
+        "additionalProperties": true
+      },
+      "ExperiencesPage": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "pages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "size": {
+            "const": 6
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Experience"
+            },
+            "maxItems": 6
+          }
+        },
+        "required": ["total", "pages", "page", "size", "items"],
+        "additionalProperties": true,
+        "description": "Exact Page envelope: pages=ceil(total/6), items is the requested slice; page starts at one. Empty collection: total=0,pages=0,page=1,size=6,items=[]. Beyond last page: empty items. No data/included/meta wrapper."
+      },
+      "ProjectsPage": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "pages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "size": {
+            "const": 6
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            },
+            "maxItems": 6
+          }
+        },
+        "required": ["total", "pages", "page", "size", "items"],
+        "additionalProperties": true,
+        "description": "Exact Page envelope: pages=ceil(total/6), items is the requested slice; page starts at one. Empty collection: total=0,pages=0,page=1,size=6,items=[]. Beyond last page: empty items. No data/included/meta wrapper."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INVALID_LOCALE",
+                  "INVALID_PAGE",
+                  "INVALID_SIZE",
+                  "INVALID_QUERY",
+                  "INVALID_LIMIT",
+                  "INVALID_CURSOR",
+                  "INVALID_OWNER",
+                  "NOT_FOUND",
+                  "METHOD_NOT_ALLOWED",
+                  "STALE_CURSOR",
+                  "INVALID_FIXTURE",
+                  "TEMPORARILY_UNAVAILABLE"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable diagnostic, not translated UI copy."
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            },
+            "required": ["code", "message", "retryable"],
+            "additionalProperties": true
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "apiVersion": {
+                "const": 1
+              },
+              "revision": {
+                "type": "string"
+              }
+            },
+            "required": ["apiVersion", "revision"],
+            "additionalProperties": true
+          }
+        },
+        "required": ["error", "meta"],
+        "additionalProperties": true
+      }
+    },
+    "parameters": {
+      "Locale": {
+        "name": "locale",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Locale",
+          "default": "en"
+        },
+        "description": "Frontend always sends its active locale; omitted mock requests default to en."
+      },
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991,
+          "default": 1
+        },
+        "description": "Page number. all, zero and negative values are rejected."
+      },
+      "Size": {
+        "name": "size",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "enum": [6],
+          "default": 6
+        },
+        "description": "Fixed page capacity; final page may have fewer items."
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 12
+        }
+      },
+      "Cursor": {
+        "name": "cursor",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Opaque cursor for this resource/owner/revision. Omit on first request."
+      },
+      "OwnerType": {
+        "name": "ownerType",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": ["category"]
+        }
+      },
+      "OwnerId": {
+        "name": "ownerId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/SkillId"
+        },
+        "description": "Category ID without UI owner prefix."
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid locale, page, size, query, limit, cursor or owner.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Retryable 503; preserve current data and retry the same page.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "StaleCursor": {
+        "description": "Dataset revision changed; reload from a consistent snapshot.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested category owner does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-backend-notes": [
+    "Journey and numbered collections use positive safe JSON numbers; SQL int8 is allowed only within the specified maximum.",
+    "Sort in the backend. Each locale must return the same IDs, order and total.",
+    "Numbered pages have no revision token: use a stable unique tie-breaker and documented consistency policy.",
+    "date order, endDay calendar validity and page arithmetic require application validation.",
+    "Use JSON serializers for normal input and line breaks; do not pre-escape HTML.",
+    "No /projects/{id} endpoint. Project detail and skills return with each list page.",
+    "Additional object fields may be retained but never auto-rendered."
+  ]
+}

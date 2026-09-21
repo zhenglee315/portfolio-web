@@ -1,0 +1,411 @@
+[
+  {
+    "id": 4,
+    "organizationName": "The Gospel as Revealed to Me",
+    "organizationCode": "AI Publishing",
+    "organizationTitle": "Senior Agent Platform Engineer",
+    "startMonth": "2026-04",
+    "endMonth": "2026-09",
+    "projectName": "AI-assisted publishing",
+    "projectTitle": "APPLIED AI WORKFLOWS",
+    "intro": "An LLM-assisted translation and publishing workflow that keeps reviewer-approved translations in context and people in the review process.",
+    "detail": {
+      "workflowDescription": "Source chapters pass through extraction, translation, revision and publication export. Domain-specific prompts and reviewer-approved translations provide context for subsequent translation and revision. Human review remains part of the workflow through Slack, while storage retains the generated artefacts for later steps.",
+      "flow": ["Source chapters", "Translation & review", "Publication export"],
+      "technicalDescription": "Domain-specific prompts and approved translations provide context for subsequent work. Slack supports review, while object storage holds workflow artefacts.",
+      "contribution": "Designed the RAG workflow and asynchronous architecture for extraction, translation, revision and export.",
+      "outcome": "Reduced turnaround per volume from 18 to 3 months and required translation staffing from 7 to 2 people."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "RAG",
+      "FastAPI",
+      "Celery",
+      "Redis",
+      "Ollama",
+      "RustFS",
+      "Prompt engineering",
+      "Human-in-the-loop review",
+      "Slack"
+    ]
+  },
+  {
+    "id": 2,
+    "organizationName": "Delta Electronics",
+    "organizationCode": "Delta Electronics",
+    "organizationTitle": "Senior Software Design Engineer",
+    "startMonth": "2025-09",
+    "endMonth": "2026-01",
+    "projectName": "Manufacturing AI tools",
+    "projectTitle": "AGENT & MCP INTEGRATION",
+    "intro": "Connecting AI agents to real manufacturing data through a tool layer for production metrics, equipment status and operational calculations.",
+    "detail": {
+      "workflowDescription": "An AI agent calls manufacturing tools through an MCP integration layer. Each tool delegates queries and calculations to existing manufacturing APIs, then returns production or equipment metrics to the agent. The workflow covers output, yield, scrap counts, equipment status, failure counts and utilisation.",
+      "flow": ["AI agent", "MCP tools", "Manufacturing APIs"],
+      "technicalDescription": "Exposed tools for production output, yield, scrap counts, equipment status, failure counts and utilisation. Existing backend services perform the underlying queries and calculations.",
+      "contribution": "Designed and implemented the MCP integration layer around existing manufacturing APIs.",
+      "outcome": "Integrated 46 existing manufacturing APIs as MCP tools."
+    },
+    "expected": false,
+    "skills": ["MCP", "FastMCP", "Python", "FastAPI", "AI agent integration"]
+  },
+  {
+    "id": 1,
+    "organizationName": "Delta Electronics",
+    "organizationCode": "Delta Electronics",
+    "organizationTitle": "Senior Software Design Engineer",
+    "startMonth": "2025-03",
+    "endMonth": "2026-02",
+    "projectName": "HolmesBase",
+    "projectTitle": "SHARED MANUFACTURING PLATFORM",
+    "intro": "A reusable backend foundation for manufacturing analytics, bringing cross-plant data access, calculations and scheduling into one platform.",
+    "detail": {
+      "workflowDescription": "Factory data is accessed through shared platform services, where reusable manufacturing calculations prepare information for downstream analytics. Engineering teams use the same data-access and scheduling capabilities across factory applications, with development, maintenance and updates managed centrally.\n\nREST and gRPC interfaces make those capabilities available to client applications. Monitoring collects API metrics across service instances so teams can observe the shared services running in multiple Kubernetes namespaces.",
+      "flow": [
+        "Factory data",
+        "Data preprocessing",
+        "Shared services",
+        "Analytics teams"
+      ],
+      "technicalDescription": "A common FastAPI framework supports 25 controller modules, with REST and gRPC interfaces exposing cross-plant data access and reusable manufacturing calculations. Prometheus client metrics use shared Redis storage for API monitoring across service instances in multiple Kubernetes namespaces.",
+      "contribution": "Designed and developed shared platform services, including reusable data access, manufacturing calculations, background tasks and API monitoring.",
+      "outcome": "Deployed across 28+ plants and 100+ production lines in China, Thailand and Taiwan."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "FastAPI",
+      "gRPC",
+      "REST",
+      "PostgreSQL",
+      "Redis",
+      "Kubernetes",
+      "Prometheus"
+    ]
+  },
+  {
+    "id": 3,
+    "organizationName": "Delta Electronics",
+    "organizationCode": "Delta Electronics",
+    "organizationTitle": "Senior Software Design Engineer",
+    "startMonth": "2025-03",
+    "endMonth": "2025-09",
+    "projectName": "Model training & delivery",
+    "projectTitle": "ML PLATFORM ENGINEERING",
+    "intro": "A platform workflow for registering datasets and scripts, dispatching training jobs and delivering model artefacts to edge applications.",
+    "detail": {
+      "workflowDescription": "Algorithm teams register datasets and training scripts, then submit jobs for background execution. The platform dispatches work to training workers and tracks execution states. Produced model artefacts are stored for delivery to Edge applications, with a GitLab-triggered Jenkins workflow supporting deployment.",
+      "flow": ["Datasets & scripts", "Training workers", "Edge delivery"],
+      "technicalDescription": "The platform tracks execution through task states and manages model artefacts in S3-compatible storage. Queues separate long-running training from interactive API requests.",
+      "contribution": "Designed and developed training services and contributed to the CI/CD workflow for model delivery.",
+      "outcome": "Contributed to reducing model-deployment lead time from 7 days to approximately 10 hours."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "Training orchestration",
+      "Celery",
+      "RabbitMQ",
+      "Redis",
+      "S3-compatible storage",
+      "RustFS",
+      "GitLab",
+      "Jenkins CI/CD"
+    ]
+  },
+  {
+    "id": 5,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2022-10",
+    "endMonth": "2023-07",
+    "projectName": "Enterprise data analytics platform",
+    "projectTitle": "PLATFORM ARCHITECTURE",
+    "intro": "A shared analytics platform connecting manufacturing, inventory, equipment and business data through reusable APIs and a central warehouse.",
+    "detail": {
+      "workflowDescription": "Manufacturing, inventory, equipment and business data are integrated through shared APIs and a central warehouse. Analytical workloads run separately from production databases, allowing different business domains to reuse a common data foundation for cross-site reporting and analysis.",
+      "flow": [
+        "Operational systems",
+        "Shared APIs & warehouse",
+        "Business analytics"
+      ],
+      "technicalDescription": "Separated analytical workloads from production databases, with shared services supporting multiple business domains.",
+      "contribution": "Architected the platform and led three junior developers, coordinating code integration and reviewing changes.",
+      "outcome": "Established a reusable foundation for cross-site manufacturing and business analytics."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "Django REST Framework",
+      "PostgreSQL",
+      "Redis",
+      "Vue 3",
+      "REST",
+      "Data warehousing"
+    ]
+  },
+  {
+    "id": 6,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2022-08",
+    "endMonth": "2023-01",
+    "projectName": "LSTM equipment anomaly detection",
+    "projectTitle": "PREDICTIVE MAINTENANCE",
+    "intro": "An equipment anomaly prediction pipeline combining feature selection, sequence modelling and hyperparameter optimisation.",
+    "detail": {
+      "workflowDescription": "Equipment signals pass through feature selection before entering the sequence-modelling pipeline. Pearson correlation and Lasso identify useful inputs, while particle swarm optimisation tunes model parameters. Predictions support early anomaly detection and inform equipment shutdown and maintenance decisions.",
+      "flow": [
+        "Equipment signals",
+        "Feature selection & LSTM",
+        "Maintenance decisions"
+      ],
+      "technicalDescription": "Used equipment signals to support early anomaly detection and inform shutdown and maintenance decisions.",
+      "contribution": "Developed the prediction pipeline, including Pearson correlation and Lasso feature selection and particle swarm optimisation for hyperparameter tuning.",
+      "outcome": "Named inventor on published patent application CN116467593A."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "LSTM",
+      "Lasso",
+      "PSO",
+      "Pearson correlation",
+      "Feature selection"
+    ]
+  },
+  {
+    "id": 7,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2021-09",
+    "endMonth": "2021-11",
+    "projectName": "Linux & Docker deployment standardisation",
+    "projectTitle": "DEPLOYMENT ENGINEERING",
+    "intro": "Reusable container images for analytics applications, making factory deployments more consistent across environments.",
+    "detail": {
+      "workflowDescription": "Analytics applications are packaged into reusable Docker images and deployed on Ubuntu across factory sites and application servers. The same image-based approach replaces repeated environment-specific setup, making deployment and ongoing maintenance more consistent.",
+      "flow": [
+        "Analytics applications",
+        "Container images",
+        "Factory deployments"
+      ],
+      "technicalDescription": "Packaged applications into reusable images and standardised deployment across factory sites and application servers.",
+      "contribution": "Introduced Ubuntu and Docker into an environment previously reliant on Windows Server and IIS.",
+      "outcome": "Reduced environment-specific configuration and maintenance effort."
+    },
+    "expected": false,
+    "skills": ["Docker", "Linux", "Ubuntu"]
+  },
+  {
+    "id": 8,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2021-05",
+    "endMonth": "2022-08",
+    "projectName": "Real-time equipment monitoring",
+    "projectTitle": "INDUSTRIAL DATA SYSTEMS",
+    "intro": "Equipment dashboards, parameter analysis and inspection reporting connecting factory data to daily operations.",
+    "detail": {
+      "workflowDescription": "Equipment data is integrated into monitoring services and presented in dashboards for daily operations. Users can inspect current equipment views, compare parameters and review historical trends and inspection reports to support equipment supervision and follow-up.",
+      "flow": [
+        "Equipment data",
+        "Monitoring services",
+        "Dashboards & inspections"
+      ],
+      "technicalDescription": "Built live equipment views, parameter analysis, historical trends and inspection reports.",
+      "contribution": "Designed and developed the platform in a three-person team, integrating with the automation data-collection team.",
+      "outcome": "Supported 525 machines across six workshops in Shenzhen, Zhunan and Wuxi."
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "ECharts", "Tableau"]
+  },
+  {
+    "id": 9,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "Manufacturing data engineering & SQL",
+    "projectTitle": "DATA PIPELINES & PERFORMANCE",
+    "intro": "Reusable warehouse and ETL pipelines that move analytical workloads away from production databases and reduce reporting delays.",
+    "detail": {
+      "workflowDescription": "Production records are integrated into warehouse and ETL pipelines for manufacturing reporting. Reusable transformations consolidate repeated calculations before reports consume the results. SQL and index optimisation address expensive lot-history queries, while preprocessing reduces the volume handled by monthly yield reporting.",
+      "flow": [
+        "Production databases",
+        "Warehouse & ETL",
+        "Manufacturing reports"
+      ],
+      "technicalDescription": "Optimised SQL and indexes on an 800-million-row lot-history table and consolidated repeated calculations in monthly yield reporting.",
+      "contribution": "Designed the warehouse and ETL architecture and coordinated report development in a three-person team.",
+      "outcome": "Reduced a five-lot query from 10 minutes to 5 seconds and monthly yield preprocessing from 60 to 20 minutes."
+    },
+    "expected": false,
+    "skills": [
+      "SQL",
+      "Oracle GoldenGate",
+      "ETL",
+      "Data warehousing",
+      "Tableau Prep Builder"
+    ]
+  },
+  {
+    "id": 10,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "Enterprise BI architecture & visualisation",
+    "projectTitle": "EMBEDDED ANALYTICS",
+    "intro": "Embedded Tableau dashboards with trusted authentication and a clustered server architecture for multi-site reporting.",
+    "detail": {
+      "workflowDescription": "Manufacturing data feeds Tableau dashboards that are embedded in internal web applications. Trusted authentication connects users to the reporting experience. The server deployment uses a Red Hat Linux cluster with load balancing and failover to support reporting across multiple sites.",
+      "flow": ["Manufacturing data", "Tableau cluster", "Embedded dashboards"],
+      "technicalDescription": "Integrated dashboards through trusted authentication and web embedding, and migrated Tableau Server from Windows to a Red Hat Linux cluster with load balancing and failover.",
+      "contribution": "Designed and deployed the analytics architecture as part of a two-person team.",
+      "outcome": "Deployed across seven sites in mainland China and Taiwan."
+    },
+    "expected": false,
+    "skills": [
+      "Tableau",
+      "Red Hat Linux",
+      "Load balancing",
+      "Failover",
+      "Trusted authentication",
+      "Web embedding"
+    ]
+  },
+  {
+    "id": 11,
+    "organizationName": "Foxconn Technology Group",
+    "organizationCode": "Foxconn",
+    "organizationTitle": "System Design & Data Analysis Engineer",
+    "startMonth": "2020-08",
+    "endMonth": "2021-01",
+    "projectName": "Reporting integration & access control",
+    "projectTitle": "BACKEND & AUTHORISATION",
+    "intro": "A Django reporting portal with custom role-based permissions for manufacturing and business teams.",
+    "detail": {
+      "workflowDescription": "Employees access embedded Tableau reports through an internal Django platform. A custom role-based access-control module determines the reports each user may view, supporting different reporting needs across production, quality, process engineering, business management and HR.",
+      "flow": ["Employee login", "Report permissions", "Embedded reports"],
+      "technicalDescription": "Supported production, quality, process engineering, business management and HR with permissions tailored to each user.",
+      "contribution": "Embedded Tableau dashboards and developed a custom RBAC module to control report-level access.",
+      "outcome": "Served an internal platform covering 2,000 employees across five departments."
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "RBAC", "Tableau"]
+  },
+  {
+    "id": 12,
+    "organizationName": "Fu Jen Catholic University",
+    "organizationCode": "Fu Jen University",
+    "organizationTitle": "Python Instructor / Teaching Assistant",
+    "startMonth": "2018-09",
+    "endMonth": "2019-06",
+    "projectName": "Translation & information literacy",
+    "projectTitle": "PYTHON INSTRUCTOR · TEACHING ASSISTANT",
+    "intro": "Python and translation-tool guidance for faculty and students in the Faculty of Foreign Languages.",
+    "detail": {
+      "workflowDescription": "Faculty and students learn Python fundamentals before applying a translation library to practical language tasks. Guided exercises connect programming concepts with Google Translate usage, with hands-on support as participants work through the examples.",
+      "flow": [
+        "Python fundamentals",
+        "Translation exercises",
+        "Hands-on guidance"
+      ],
+      "technicalDescription": "Used a Python library to work with Google Translate as part of information-literacy teaching.",
+      "contribution": "Introduced Python fundamentals and guided faculty and students through translation tasks.",
+      "outcome": "Connected programming concepts with practical language and translation tasks."
+    },
+    "expected": false,
+    "skills": ["Python", "Google Translate", "Information literacy"]
+  },
+  {
+    "id": 13,
+    "organizationName": "Fu Jen Catholic University",
+    "organizationCode": "Fu Jen University",
+    "organizationTitle": "Python Instructor / Teaching Assistant",
+    "startMonth": "2018-08",
+    "endMonth": "2019-06",
+    "projectName": "Introduction to programming",
+    "projectTitle": "PYTHON INSTRUCTOR · TEACHING ASSISTANT",
+    "intro": "Python fundamentals and data structures for students in the Departments of Statistics and Accounting.",
+    "detail": {
+      "workflowDescription": "Teaching materials introduce Python fundamentals and data structures, followed by guided programming exercises. Students receive individual programming and debugging support. Assessments and final examinations check their understanding and provide feedback on the concepts taught.",
+      "flow": [
+        "Teaching materials",
+        "Programming exercises",
+        "Assessment & feedback"
+      ],
+      "technicalDescription": "Prepared and marked final examinations and provided individual programming and debugging support.",
+      "contribution": "Developed teaching materials, delivered lessons and guided students through programming exercises.",
+      "outcome": "Supported students from fundamentals through independent programming exercises."
+    },
+    "expected": false,
+    "skills": ["Python", "Data structures", "Debugging"]
+  },
+  {
+    "id": 14,
+    "organizationName": "Fu Jen Catholic University",
+    "organizationCode": "Fu Jen University",
+    "organizationTitle": "MS Information Management",
+    "startMonth": "2017-09",
+    "endMonth": "2019-07",
+    "projectName": "CTG multiclass classification research",
+    "projectTitle": "MS INFORMATION MANAGEMENT · RESEARCH",
+    "intro": "Master’s research on classifying cardiotocography data using ensemble methods for prenatal fetal detection.",
+    "detail": {
+      "workflowDescription": "Cardiotocography data is prepared using feature selection and class-imbalance handling. Multiple classification approaches are trained and evaluated, including ANN, XGBoost, AdaBoost, SVM and random forest. Their performance is compared as part of the MS dissertation on prenatal fetal detection.",
+      "flow": [
+        "CTG data",
+        "Feature selection & class balancing",
+        "Model comparison"
+      ],
+      "technicalDescription": "Combined feature selection and class-imbalance handling, comparing ANN, XGBoost, AdaBoost, SVM and random forest models.",
+      "contribution": "Developed and evaluated multiclass classification models for CTG data.",
+      "outcome": "Completed an MS dissertation on multiclass cardiotocography classification. Dates shown are the MS study period."
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "XGBoost",
+      "Random forest",
+      "SVM",
+      "AdaBoost",
+      "ANN",
+      "Ensemble methods",
+      "Feature selection",
+      "Class-imbalance handling"
+    ]
+  },
+  {
+    "id": 15,
+    "organizationName": "Fu Jen Catholic University",
+    "organizationCode": "Fu Jen University",
+    "organizationTitle": "Python Instructor / Teaching Assistant",
+    "startMonth": "2017-09",
+    "endMonth": "2018-06",
+    "projectName": "Introduction to web scraping",
+    "projectTitle": "TEACHING ASSISTANT · EVENING GENERAL EDUCATION",
+    "intro": "Hands-on Python web-scraping exercises and debugging support for evening general-education students.",
+    "detail": {
+      "workflowDescription": "Classroom instruction introduces the concepts needed for Python web scraping. Students apply them in practical exercises, receive hands-on help and debug programming errors as they learn to collect data from web pages.",
+      "flow": [
+        "Classroom instruction",
+        "Scraping exercises",
+        "Debugging support"
+      ],
+      "technicalDescription": "Provided hands-on guidance with Python web scraping and helped students diagnose programming errors.",
+      "contribution": "Assisted classroom instruction and supported students during practical exercises.",
+      "outcome": "Helped students apply classroom programming concepts to practical data collection."
+    },
+    "expected": false,
+    "skills": ["Python", "Web scraping", "Debugging"]
+  }
+]

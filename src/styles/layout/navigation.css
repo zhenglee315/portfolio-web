@@ -1,0 +1,226 @@
+/* Sidebar, mobile drawer and shared wordmark. */
+.sidebar {
+  position: fixed;
+  width: var(--rail-width);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-track) transparent;
+  inset: 0 auto 0 0;
+  border-right: 1px solid var(--border);
+  padding: 38px 24px 26px;
+  background: var(--sidebar-surface);
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+.wordmark {
+  font: 600 38px/1 var(--mono);
+  letter-spacing: -4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.wordmark span {
+  color: var(--accent);
+}
+.sidebar nav {
+  margin-top: 32px;
+  display: grid;
+  gap: 8px;
+}
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
+  color: var(--nav-text);
+  font-size: 14px;
+  transition: var(--duration-hover);
+}
+.sidebar nav a small {
+  margin-left: auto;
+  font: 12px var(--mono);
+  opacity: 0.5;
+}
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: var(--selection-surface);
+  color: var(--accent);
+  border-color: var(--selection-border);
+}
+.nav-icon {
+  font: 18px var(--mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 23px;
+  width: 23px;
+  text-align: center;
+}
+.sidebar-foot {
+  margin-top: auto;
+  padding-top: 30px;
+}
+.sidebar-foot > .mono {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+.sidebar-foot p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.sidebar-foot > small {
+  display: block;
+  color: var(--sidebar-muted);
+  font-size: 12px;
+  margin-top: 25px;
+}
+.mobile-header {
+  display: none;
+}
+footer .wordmark {
+  font-size: 28px;
+}
+@media (max-width: 1150px) {
+  .sidebar {
+    padding: 30px 17px;
+  }
+}
+@media (max-width: 760px) {
+  .mobile-header {
+    height: 64px;
+    display: flex;
+    position: fixed;
+    inset: 0 0 auto;
+    background: var(--header-surface);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    padding: 0 20px;
+    z-index: 40;
+  }
+  .mobile-header .wordmark {
+    font-size: 28px;
+  }
+  .mobile-header button {
+    margin-left: auto;
+    background: var(--menu-surface);
+    border: 1px solid var(--menu-border);
+    border-radius: 5px;
+    width: 40px;
+    height: 38px;
+    font-size: 19px;
+  }
+  .sidebar {
+    top: 64px;
+    transform: translateX(-100%);
+    visibility: hidden;
+    pointer-events: none;
+    /* Delay visibility until the closing slide finishes; reopening reverses smoothly. */
+    transition:
+      transform var(--duration-drawer) var(--ease-drawer),
+      visibility 0s var(--duration-drawer);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .sidebar-foot {
+    padding-top: 20px;
+  }
+  .sidebar-foot p {
+    display: none;
+  }
+  /* Keep the hidden backdrop rendered for its exit fade, without intercepting input. */
+  #menu-backdrop {
+    display: block;
+    position: fixed;
+    inset: 64px 0 0;
+    background: var(--menu-backdrop);
+    z-index: 25;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity var(--duration-drawer) ease-out,
+      visibility 0s;
+  }
+  #menu-backdrop[hidden] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition-delay: 0s, var(--duration-drawer);
+  }
+}
+@media (min-width: 2200px) {
+  .sidebar {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    width: 250px;
+  }
+}
+.wordmark .wordmark-alias {
+  margin-left: 9px;
+  font-size: 0.45em;
+  letter-spacing: 1.2px;
+  color: var(--accent);
+}
+#journey-endpoints {
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.sidebar > * {
+  flex-shrink: 0;
+}
+.brand-heading {
+  display: flex;
+  align-items: center;
+  /* Center the wordmark and chat trigger together on the navigation column. */
+  justify-content: center;
+  gap: 8px;
+}
+.brand-heading .wordmark {
+  flex-shrink: 0;
+  font-size: 34px;
+}
+@media (max-width: 1150px) and (min-width: 761px) {
+  .brand-heading .wordmark {
+    font-size: 30px;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar .brand-heading {
+    display: none;
+  }
+  .mobile-header #menu-toggle {
+    flex-shrink: 0;
+  }
+}
+@media (min-width: 761px) and (max-width: 1150px) {
+  .brand-heading {
+    gap: 5px;
+  }
+}
+@media (max-width: 760px) {
+  .mobile-header {
+    gap: 8px;
+    padding-inline: 16px;
+  }
+  .mobile-header .wordmark {
+    flex-shrink: 0;
+  }
+  .mobile-header #menu-toggle {
+    margin-left: auto;
+    width: var(--control-size);
+    height: var(--control-size);
+  }
+  .sidebar nav {
+    margin-top: 16px;
+  }
+}

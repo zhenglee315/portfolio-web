@@ -1,0 +1,383 @@
+{
+  "items": [
+    {
+      "id": "python",
+      "labelKey": "skill.python"
+    },
+    {
+      "id": "fastapi",
+      "labelKey": "skill.fastapi"
+    },
+    {
+      "id": "django",
+      "labelKey": "skill.django"
+    },
+    {
+      "id": "django-rest-framework",
+      "labelKey": "skill.django-rest-framework"
+    },
+    {
+      "id": "flask",
+      "labelKey": "skill.flask"
+    },
+    {
+      "id": "rest",
+      "labelKey": "skill.rest"
+    },
+    {
+      "id": "grpc",
+      "labelKey": "skill.grpc"
+    },
+    {
+      "id": "groovy",
+      "labelKey": "skill.groovy"
+    },
+    {
+      "id": "mcp",
+      "labelKey": "skill.mcp"
+    },
+    {
+      "id": "fastmcp",
+      "labelKey": "skill.fastmcp"
+    },
+    {
+      "id": "rag",
+      "labelKey": "skill.rag"
+    },
+    {
+      "id": "langchain",
+      "labelKey": "skill.langchain"
+    },
+    {
+      "id": "ollama",
+      "labelKey": "skill.ollama"
+    },
+    {
+      "id": "chroma",
+      "labelKey": "skill.chroma"
+    },
+    {
+      "id": "prompt-engineering",
+      "labelKey": "skill.prompt-engineering"
+    },
+    {
+      "id": "human-in-the-loop-review",
+      "labelKey": "skill.human-in-the-loop-review"
+    },
+    {
+      "id": "kubernetes",
+      "labelKey": "skill.kubernetes"
+    },
+    {
+      "id": "docker",
+      "labelKey": "skill.docker"
+    },
+    {
+      "id": "linux",
+      "labelKey": "skill.linux"
+    },
+    {
+      "id": "jwt",
+      "labelKey": "skill.jwt"
+    },
+    {
+      "id": "rbac",
+      "labelKey": "skill.rbac"
+    },
+    {
+      "id": "sso",
+      "labelKey": "skill.sso"
+    },
+    {
+      "id": "prometheus",
+      "labelKey": "skill.prometheus"
+    },
+    {
+      "id": "rancher",
+      "labelKey": "skill.rancher"
+    },
+    {
+      "id": "ubuntu",
+      "labelKey": "skill.ubuntu"
+    },
+    {
+      "id": "red-hat-linux",
+      "labelKey": "skill.red-hat-linux"
+    },
+    {
+      "id": "postgresql",
+      "labelKey": "skill.postgresql"
+    },
+    {
+      "id": "sql",
+      "labelKey": "skill.sql"
+    },
+    {
+      "id": "redis",
+      "labelKey": "skill.redis"
+    },
+    {
+      "id": "kafka",
+      "labelKey": "skill.kafka"
+    },
+    {
+      "id": "apache-nifi",
+      "labelKey": "skill.apache-nifi"
+    },
+    {
+      "id": "sqlalchemy",
+      "labelKey": "skill.sqlalchemy"
+    },
+    {
+      "id": "oracle",
+      "labelKey": "skill.oracle"
+    },
+    {
+      "id": "mongodb",
+      "labelKey": "skill.mongodb"
+    },
+    {
+      "id": "s3-compatible-storage",
+      "labelKey": "skill.s3-compatible-storage"
+    },
+    {
+      "id": "rustfs",
+      "labelKey": "skill.rustfs"
+    },
+    {
+      "id": "oracle-goldengate",
+      "labelKey": "skill.oracle-goldengate"
+    },
+    {
+      "id": "data-warehousing",
+      "labelKey": "skill.data-warehousing"
+    },
+    {
+      "id": "tableau",
+      "labelKey": "skill.tableau"
+    },
+    {
+      "id": "celery",
+      "labelKey": "skill.celery"
+    },
+    {
+      "id": "rabbitmq",
+      "labelKey": "skill.rabbitmq"
+    },
+    {
+      "id": "airflow",
+      "labelKey": "skill.airflow"
+    },
+    {
+      "id": "gitlab",
+      "labelKey": "skill.gitlab"
+    },
+    {
+      "id": "jenkins-ci-cd",
+      "labelKey": "skill.jenkins-ci-cd"
+    },
+    {
+      "id": "kettle-etl",
+      "labelKey": "skill.kettle-etl"
+    },
+    {
+      "id": "tableau-prep-builder",
+      "labelKey": "skill.tableau-prep-builder"
+    },
+    {
+      "id": "training-orchestration",
+      "labelKey": "skill.training-orchestration"
+    },
+    {
+      "id": "mlflow-integration",
+      "labelKey": "skill.mlflow-integration"
+    },
+    {
+      "id": "xgboost",
+      "labelKey": "skill.xgboost"
+    },
+    {
+      "id": "lstm",
+      "labelKey": "skill.lstm"
+    },
+    {
+      "id": "random-forest",
+      "labelKey": "skill.random-forest"
+    },
+    {
+      "id": "svm",
+      "labelKey": "skill.svm"
+    },
+    {
+      "id": "adaboost",
+      "labelKey": "skill.adaboost"
+    },
+    {
+      "id": "ann",
+      "labelKey": "skill.ann"
+    },
+    {
+      "id": "ensemble-methods",
+      "labelKey": "skill.ensemble-methods"
+    },
+    {
+      "id": "feature-selection",
+      "labelKey": "skill.feature-selection"
+    },
+    {
+      "id": "class-imbalance-handling",
+      "labelKey": "skill.class-imbalance-handling"
+    },
+    {
+      "id": "lasso",
+      "labelKey": "skill.lasso"
+    },
+    {
+      "id": "pso",
+      "labelKey": "skill.pso"
+    },
+    {
+      "id": "pearson-correlation",
+      "labelKey": "skill.pearson-correlation"
+    },
+    {
+      "id": "vue-3",
+      "labelKey": "skill.vue-3"
+    },
+    {
+      "id": "echarts",
+      "labelKey": "skill.echarts"
+    },
+    {
+      "id": "html",
+      "labelKey": "skill.html"
+    },
+    {
+      "id": "smtp",
+      "labelKey": "skill.smtp"
+    },
+    {
+      "id": "slack",
+      "labelKey": "skill.slack"
+    },
+    {
+      "id": "google-translate",
+      "labelKey": "skill.google-translate"
+    },
+    {
+      "id": "web-scraping",
+      "labelKey": "skill.web-scraping"
+    }
+  ],
+  "categories": [
+    {
+      "id": "backend-apis",
+      "labelKey": "skillCategory.backend-apis",
+      "skillIds": [
+        "python",
+        "fastapi",
+        "django",
+        "django-rest-framework",
+        "flask",
+        "rest",
+        "grpc",
+        "groovy"
+      ]
+    },
+    {
+      "id": "ai-agents",
+      "labelKey": "skillCategory.ai-agents",
+      "skillIds": [
+        "mcp",
+        "fastmcp",
+        "rag",
+        "langchain",
+        "ollama",
+        "chroma",
+        "prompt-engineering",
+        "human-in-the-loop-review"
+      ]
+    },
+    {
+      "id": "platform-security",
+      "labelKey": "skillCategory.platform-security",
+      "skillIds": [
+        "kubernetes",
+        "docker",
+        "linux",
+        "jwt",
+        "rbac",
+        "sso",
+        "prometheus",
+        "rancher",
+        "ubuntu",
+        "red-hat-linux"
+      ]
+    },
+    {
+      "id": "data-storage",
+      "labelKey": "skillCategory.data-storage",
+      "skillIds": [
+        "postgresql",
+        "sql",
+        "redis",
+        "kafka",
+        "apache-nifi",
+        "sqlalchemy",
+        "oracle",
+        "mongodb",
+        "s3-compatible-storage",
+        "rustfs",
+        "oracle-goldengate",
+        "data-warehousing",
+        "tableau"
+      ]
+    },
+    {
+      "id": "workflows-delivery",
+      "labelKey": "skillCategory.workflows-delivery",
+      "skillIds": [
+        "celery",
+        "rabbitmq",
+        "airflow",
+        "gitlab",
+        "jenkins-ci-cd",
+        "kettle-etl",
+        "tableau-prep-builder"
+      ]
+    },
+    {
+      "id": "ml-research",
+      "labelKey": "skillCategory.ml-research",
+      "skillIds": [
+        "training-orchestration",
+        "mlflow-integration",
+        "xgboost",
+        "lstm",
+        "random-forest",
+        "svm",
+        "adaboost",
+        "ann",
+        "ensemble-methods",
+        "feature-selection",
+        "class-imbalance-handling",
+        "lasso",
+        "pso",
+        "pearson-correlation"
+      ]
+    },
+    {
+      "id": "web-integrations",
+      "labelKey": "skillCategory.web-integrations",
+      "skillIds": [
+        "vue-3",
+        "echarts",
+        "html",
+        "smtp",
+        "slack",
+        "google-translate",
+        "web-scraping"
+      ]
+    }
+  ]
+}

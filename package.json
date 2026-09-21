@@ -1,0 +1,17 @@
+{
+  "name": "zheng-lee-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Offline-first static portfolio with normalized data and reusable UI modules.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check",
+    "preview": "node scripts/serve.cjs",
+    "test": "node scripts/test.mjs",
+    "test:unit": "node scripts/test.mjs --unit",
+    "package": "node scripts/package.mjs"
+  }
+}

@@ -1,0 +1,363 @@
+[
+  {
+    "id": 4,
+    "organizationName": "The Gospel as Revealed to Me（福音翻译与出版）",
+    "organizationCode": "AI 出版",
+    "organizationTitle": "资深 Agent 平台工程师",
+    "startMonth": "2026-04",
+    "endMonth": "2026-09",
+    "projectName": "AI 辅助出版",
+    "projectTitle": "AI 应用工作流程",
+    "intro": "以大型语言模型辅助翻译与出版，将审稿通过的译文保留为上下文，并持续纳入人工审核。",
+    "detail": {
+      "workflowDescription": "原文章节依次进入提取、翻译、修订与出版导出流程。领域提示词及审核通过的译文作为后续翻译与修订的上下文；人工审核通过 Slack 参与流程，存储服务保留各阶段产出供后续使用。",
+      "flow": ["原文章节", "翻译与审核", "出版导出"],
+      "technicalDescription": "使用领域专用提示词与核准译文，为后续翻译提供上下文；通过 Slack 协作审核，以对象保存保存流程产物。",
+      "contribution": "设计 RAG 流程，以及用于截取、翻译、修订和导出的异步架构。",
+      "outcome": "每册处理时间由 18 个月缩短至 3 个月，所需翻译人力由 7 人降至 2 人。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "RAG",
+      "FastAPI",
+      "Celery",
+      "Redis",
+      "Ollama",
+      "RustFS",
+      "提示工程",
+      "人工参与审核",
+      "Slack"
+    ]
+  },
+  {
+    "id": 2,
+    "organizationName": "台达电子",
+    "organizationCode": "台达电子",
+    "organizationTitle": "资深软件设计工程师",
+    "startMonth": "2025-09",
+    "endMonth": "2026-01",
+    "projectName": "制造 AI 工具",
+    "projectTitle": "Agent 与 MCP 集成",
+    "intro": "通过工具层，让 AI Agent 访问真实制造数据，涵盖生产指针、设备状态与营运计算。",
+    "detail": {
+      "workflowDescription": "AI agent 通过 MCP 集成层调用制造工具。各工具将查询与计算交由现有制造 API 执行，再把生产或设备指标返回给 agent。流程涵盖产出、良率、报废数、设备状态、故障次数与利用率。",
+      "flow": ["AI Agent", "MCP 工具", "制造 API"],
+      "technicalDescription": "提供产量、良率、报废数量、设备状态、故障次数与稼动率等工具；底层查找及计算由既有后端服务运行。",
+      "contribution": "以既有制造 API 为基础，设计并实作 MCP 集成层。",
+      "outcome": "将 46 个既有制造 API 集成为 MCP 工具。"
+    },
+    "expected": false,
+    "skills": ["MCP", "FastMCP", "Python", "FastAPI", "AI Agent 集成"]
+  },
+  {
+    "id": 1,
+    "organizationName": "台达电子",
+    "organizationCode": "台达电子",
+    "organizationTitle": "资深软件设计工程师",
+    "startMonth": "2025-03",
+    "endMonth": "2026-02",
+    "projectName": "HolmesBase",
+    "projectTitle": "共用制造平台",
+    "intro": "可重复使用的制造分析后端基础，将跨厂数据访问、计算与调度集成到同一平台。",
+    "detail": {
+      "workflowDescription": "工厂数据通过共享平台服务获取，再由可复用的制造计算模块整理为下游分析所需的信息。工程团队在不同工厂应用中共享数据访问与调度能力，集中管理开发、维护及更新。\n\n应用程序通过 REST 与 gRPC 接口使用这些能力。监控流程汇集不同服务实例的 API 指标，帮助团队观察跨 Kubernetes namespace 运行的共享服务。",
+      "flow": ["工厂数据", "数据预处理", "共享服务", "分析团队"],
+      "technicalDescription": "共享 FastAPI 框架支持 25 个 controller 模块，通过 REST 与 gRPC 接口提供跨厂数据访问及可复用的制造计算。Prometheus client 指标使用共享 Redis 存储，支持多个 Kubernetes namespace 内不同服务实例的 API 监控。",
+      "contribution": "设计及开发共用平台服务，包含可重复使用的数据访问、制造计算、背景任务与 API 监控。",
+      "outcome": "已部署于中国、泰国与台湾的 28 座以上工厂、100 条以上产线。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "FastAPI",
+      "gRPC",
+      "REST",
+      "PostgreSQL",
+      "Redis",
+      "Kubernetes",
+      "Prometheus"
+    ]
+  },
+  {
+    "id": 3,
+    "organizationName": "台达电子",
+    "organizationCode": "台达电子",
+    "organizationTitle": "资深软件设计工程师",
+    "startMonth": "2025-03",
+    "endMonth": "2025-09",
+    "projectName": "模型训练与交付",
+    "projectTitle": "机器学习平台工程",
+    "intro": "创建数据集与脚本注册、训练任务派送，以及模型产物交付至边缘应用的完整平台流程。",
+    "detail": {
+      "workflowDescription": "算法团队先登记数据集与训练脚本，再提交后台训练任务。平台将任务分发给训练 worker 并跟踪执行状态，产出的模型文件存入存储服务，供 Edge 应用交付使用；由 GitLab 触发的 Jenkins 流程支持部署。",
+      "flow": ["数据集与脚本", "训练工作节点", "边缘交付"],
+      "technicalDescription": "通过任务状态追踪运行进度，以兼容 S3 的保存管理模型产物，并利用队列将长时间训练与交互式 API 请求分离。",
+      "contribution": "设计及开发训练服务，并参与模型交付的 CI/CD 流程建置。",
+      "outcome": "协助将模型部署所需时间由 7 天缩短至约 10 小时。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "训练任务编排",
+      "Celery",
+      "RabbitMQ",
+      "Redis",
+      "兼容 S3 的保存",
+      "RustFS",
+      "GitLab",
+      "Jenkins CI/CD"
+    ]
+  },
+  {
+    "id": 5,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2022-10",
+    "endMonth": "2023-07",
+    "projectName": "企业数据分析平台",
+    "projectTitle": "平台架构",
+    "intro": "以可重复使用的 API 与中央数据仓库，串接制造、库存、设备及企业营运数据的共用分析平台。",
+    "detail": {
+      "workflowDescription": "制造、库存、设备与业务数据通过共享 API 及中央数据仓库整合。分析负载与生产数据库分离，让不同业务领域共享数据基础，支持跨厂报表及分析。",
+      "flow": ["营运系统", "共用 API 与数据仓库", "企业分析"],
+      "technicalDescription": "将分析工作负载与生产数据库分离，以共用服务支持多个业务领域。",
+      "contribution": "规划平台架构并带领 3 名初阶开发人员，协调代码集成与审查。",
+      "outcome": "创建可重复使用的基础，支持跨厂制造与企业营运分析。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "Django REST Framework",
+      "PostgreSQL",
+      "Redis",
+      "Vue 3",
+      "REST",
+      "数据仓库"
+    ]
+  },
+  {
+    "id": 6,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2022-08",
+    "endMonth": "2023-01",
+    "projectName": "LSTM 设备异常侦测",
+    "projectTitle": "预测性维护",
+    "intro": "集成特征选取、串行建模与超参数优化的设备异常预测管线。",
+    "detail": {
+      "workflowDescription": "设备信号先经过特征选择，再进入序列模型流程。通过 Pearson 相关系数与 Lasso 选择输入特征，并以粒子群优化调整模型参数。预测结果支持提前检测异常，供设备停机与维护决策参考。",
+      "flow": ["设备信号", "特征选取与 LSTM", "维护决策"],
+      "technicalDescription": "利用设备信号提早侦测异常，支持停机与维护决策。",
+      "contribution": "开发预测管线，使用 Pearson 相关系数与 Lasso 进行特征选取，并以粒子群优化调整超参数。",
+      "outcome": "列名为公开专利申请 CN116467593A 的发明人。"
+    },
+    "expected": false,
+    "skills": ["Python", "LSTM", "Lasso", "PSO", "Pearson 相关系数", "特征选取"]
+  },
+  {
+    "id": 7,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2021-09",
+    "endMonth": "2021-11",
+    "projectName": "Linux 与 Docker 部署标准化",
+    "projectTitle": "部署工程",
+    "intro": "为分析应用创建可重复使用的容器映像，让不同环境的工厂部署保持一致。",
+    "detail": {
+      "workflowDescription": "分析应用封装为可复用的 Docker 镜像，部署到各厂区与应用服务器的 Ubuntu 环境。共享镜像流程减少重复的环境配置，让部署与日常维护更加一致。",
+      "flow": ["分析应用", "容器映像", "工厂部署"],
+      "technicalDescription": "将应用封装为可重复使用的映像，统一各工厂与应用服务器的部署方式。",
+      "contribution": "将 Ubuntu 与 Docker 导入原先依赖 Windows Server 与 IIS 的环境。",
+      "outcome": "降低个别环境设置与维护所需的投入。"
+    },
+    "expected": false,
+    "skills": ["Docker", "Linux", "Ubuntu"]
+  },
+  {
+    "id": 8,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2021-05",
+    "endMonth": "2022-08",
+    "projectName": "即时设备监控",
+    "projectTitle": "工业数据系统",
+    "intro": "通过设备仪表板、参数分析与巡检报表，将工厂数据连接到日常营运。",
+    "detail": {
+      "workflowDescription": "设备数据集成到监控服务，再通过仪表板提供现场日常操作。用户可查看实时设备信息、比较参数，并查阅历史趋势与巡检报表，支持设备管理与后续跟踪。",
+      "flow": ["设备数据", "监控服务", "仪表板与巡检"],
+      "technicalDescription": "创建即时设备画面、参数分析、历史趋势及巡检报表。",
+      "contribution": "在 3 人团队中设计与开发平台，并与自动化数据采集团队集成。",
+      "outcome": "支持深圳、竹南与无锡 6 个车间的 525 台设备。"
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "ECharts", "Tableau"]
+  },
+  {
+    "id": 9,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "制造数据工程与 SQL",
+    "projectTitle": "数据管线与性能",
+    "intro": "创建可重复使用的数据仓库与 ETL 管线，将分析负载移出生产数据库，减少报表延迟。",
+    "detail": {
+      "workflowDescription": "生产记录集成到数据仓库与 ETL 流程，供制造报表使用。可复用的转换步骤先合并重复计算，再将结果提供给报表；SQL 与索引优化处理批号历史查询瓶颈，预处理则减少月度良率报表需要处理的数据量。",
+      "flow": ["生产数据库", "数据仓库与 ETL", "制造报表"],
+      "technicalDescription": "针对 8 亿笔数据的批量历程数据表，优化 SQL 与索引，并集成月良率报表中的重复计算。",
+      "contribution": "设计数据仓库与 ETL 架构，并在 3 人团队中协调报表开发。",
+      "outcome": "5 个批量的查找由 10 分钟缩短至 5 秒，月良率前处理由 60 分钟缩短至 20 分钟。"
+    },
+    "expected": false,
+    "skills": [
+      "SQL",
+      "Oracle GoldenGate",
+      "ETL",
+      "数据仓库",
+      "Tableau Prep Builder"
+    ]
+  },
+  {
+    "id": 10,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "企业 BI 架构与可视化",
+    "projectTitle": "嵌入式分析",
+    "intro": "集成可信任验证与集群服务器架构，提供嵌入式 Tableau 仪表板，支持多厂报表。",
+    "detail": {
+      "workflowDescription": "制造数据供给 Tableau 仪表板，并嵌入内部网页应用。用户通过可信认证进入报表；服务器采用具有负载均衡与故障转移的 Red Hat Linux 集群，支持多站点报表使用。",
+      "flow": ["制造数据", "Tableau 集群", "嵌入式仪表板"],
+      "technicalDescription": "通过可信任验证与网页嵌入集成仪表板，将 Tableau Server 由 Windows 迁移至具备负载平衡与故障移转的 Red Hat Linux 集群。",
+      "contribution": "在 2 人团队中设计并部署分析架构。",
+      "outcome": "部署于中国大陆与台湾的 7 个据点。"
+    },
+    "expected": false,
+    "skills": [
+      "Tableau",
+      "Red Hat Linux",
+      "负载平衡",
+      "故障移转",
+      "可信任验证",
+      "网页嵌入"
+    ]
+  },
+  {
+    "id": 11,
+    "organizationName": "富士康科技集团",
+    "organizationCode": "富士康",
+    "organizationTitle": "系统设计与数据分析工程师",
+    "startMonth": "2020-08",
+    "endMonth": "2021-01",
+    "projectName": "报表集成与访问控制",
+    "projectTitle": "后端与权限管理",
+    "intro": "以 Django 创建报表入口，为制造与业务团队提供自订的角色权限管理。",
+    "detail": {
+      "workflowDescription": "员工通过内部 Django 平台使用嵌入式 Tableau 报表。自定义角色权限模块决定每位用户可查看的报表，支持生产、质量、工艺、经营管理及人力资源等部门的不同需求。",
+      "flow": ["员工登录", "报表权限", "嵌入式报表"],
+      "technicalDescription": "依用户需求配置权限，支持生产、品质、制程工程、经营管理与人资团队。",
+      "contribution": "嵌入 Tableau 仪表板，并开发自订 RBAC 模块，控制各报表的访问权限。",
+      "outcome": "支持涵盖 5 个部门、2,000 名员工的内部平台。"
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "RBAC", "Tableau"]
+  },
+  {
+    "id": 12,
+    "organizationName": "辅仁大学",
+    "organizationCode": "辅仁大学",
+    "organizationTitle": "Python 讲师／教学助理",
+    "startMonth": "2018-09",
+    "endMonth": "2019-06",
+    "projectName": "翻译与信息素养",
+    "projectTitle": "Python 讲师 · 教学助理",
+    "intro": "为外语学院师生提供 Python 与翻译工具的教学指导。",
+    "detail": {
+      "workflowDescription": "教师与学生先学习 Python 基础，再使用翻译库完成实际语言任务。引导式练习将编程概念与 Google Translate 的使用结合，并在操作过程中提供帮助。",
+      "flow": ["Python 基础", "翻译练习", "实作指导"],
+      "technicalDescription": "在信息素养教学中，使用 Python 函数库操作 Google Translate。",
+      "contribution": "介绍 Python 基础，带领师生完成翻译相关练习。",
+      "outcome": "将编程概念链接至实际语言与翻译任务。"
+    },
+    "expected": false,
+    "skills": ["Python", "Google Translate", "信息素养"]
+  },
+  {
+    "id": 13,
+    "organizationName": "辅仁大学",
+    "organizationCode": "辅仁大学",
+    "organizationTitle": "Python 讲师／教学助理",
+    "startMonth": "2018-08",
+    "endMonth": "2019-06",
+    "projectName": "编程入门",
+    "projectTitle": "Python 讲师 · 教学助理",
+    "intro": "为统计与会计学系学生教授 Python 基础及数据结构。",
+    "detail": {
+      "workflowDescription": "教材先介绍 Python 基础与数据结构，再安排引导式编程练习。学生可获得个别编程及调试帮助，通过评估与期末考试检查理解程度，并获得学习反馈。",
+      "flow": ["教学教材", "程序练习", "评量与回馈"],
+      "technicalDescription": "设计及批改期末考试，提供个别编程与调试协助。",
+      "contribution": "设计教材、授课，并指导学生完成程序练习。",
+      "outcome": "协助学生从基础概念进展到独立完成程序实作。"
+    },
+    "expected": false,
+    "skills": ["Python", "数据结构", "调试"]
+  },
+  {
+    "id": 14,
+    "organizationName": "辅仁大学",
+    "organizationCode": "辅仁大学",
+    "organizationTitle": "信息管理硕士（MS）",
+    "startMonth": "2017-09",
+    "endMonth": "2019-07",
+    "projectName": "CTG 多类别分类研究",
+    "projectTitle": "信息管理硕士（MS）· 研究",
+    "intro": "以集成方法分类胎儿心跳宫缩略图（CTG）数据，应用于产前胎儿侦测的硕士研究。",
+    "detail": {
+      "workflowDescription": "胎心监护数据先经过特征选择与类别不平衡处理，再训练及评估 ANN、XGBoost、AdaBoost、SVM 与随机森林等分类方法。比较各模型表现，作为产前胎儿检测相关硕士论文的研究内容。",
+      "flow": ["CTG 数据", "特征选取与类别平衡", "模型比较"],
+      "technicalDescription": "集成特征选取与类别不平衡处理，比较 ANN、XGBoost、AdaBoost、SVM 与随机森林模型。",
+      "contribution": "开发并评估 CTG 数据的多类别分类模型。",
+      "outcome": "完成 CTG 多类别分类硕士论文；所列日期为 MS 硕士就学期间。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "XGBoost",
+      "随机森林",
+      "SVM",
+      "AdaBoost",
+      "ANN",
+      "集成方法",
+      "特征选取",
+      "类别不平衡处理"
+    ]
+  },
+  {
+    "id": 15,
+    "organizationName": "辅仁大学",
+    "organizationCode": "辅仁大学",
+    "organizationTitle": "Python 讲师／教学助理",
+    "startMonth": "2017-09",
+    "endMonth": "2018-06",
+    "projectName": "网络爬虫入门",
+    "projectTitle": "教学助理 · 夜间通识课程",
+    "intro": "协助夜间通识学生进行 Python 网络爬虫实作与调试。",
+    "detail": {
+      "workflowDescription": "课堂先介绍 Python 网页爬虫所需概念，学生再通过实践练习应用所学。在数据提取及程序调试过程中提供操作帮助，让学生将课堂概念用于实际数据收集。",
+      "flow": ["课堂教学", "爬虫练习", "调试支持"],
+      "technicalDescription": "提供 Python 网络爬虫操作指导，协助学生找出程序错误。",
+      "contribution": "协助课堂教学，并支持学生完成实作练习。",
+      "outcome": "协助学生将课堂编程概念应用于实际数据搜集。"
+    },
+    "expected": false,
+    "skills": ["Python", "网络爬虫", "调试"]
+  }
+]

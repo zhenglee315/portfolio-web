@@ -1,0 +1,87 @@
+/* Native project dialog and architecture flow. */
+dialog {
+  background: var(--control-surface);
+  color: var(--text);
+  border: 1px solid var(--dialog-border);
+  border-radius: 12px;
+  width: min(680px, calc(100% - 32px));
+  max-height: 85vh;
+  padding: 42px;
+  box-shadow: 0 30px 100px var(--shadow-strong);
+}
+dialog::backdrop {
+  background: var(--dialog-backdrop);
+  backdrop-filter: blur(6px);
+}
+.dialog-close {
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  background: transparent;
+  border: 0;
+  font-size: 29px;
+  color: var(--muted);
+  width: 40px;
+  height: 40px;
+}
+.dialog-close:hover {
+  color: var(--accent);
+}
+dialog h2 {
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+}
+dialog h3 {
+  font-size: 15px;
+  color: var(--accent);
+  margin-top: 25px;
+}
+dialog p {
+  color: var(--date-text);
+}
+.architecture {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 24px 0;
+}
+.architecture span {
+  background: var(--flow-surface);
+  padding: 9px;
+  font: 12px var(--mono);
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+}
+.architecture i {
+  color: var(--accent);
+  font-style: normal;
+}
+@media (max-width: 760px) {
+  dialog {
+    padding: 30px 24px;
+  }
+  dialog h2 {
+    font-size: 26px;
+  }
+}
+
+.dialog-close .bi {
+  width: 20px;
+  height: 20px;
+}
+
+/* Long API text and flow labels must wrap within the mobile dialog. */
+#dialog-content {
+  overflow-wrap: anywhere;
+}
+.architecture span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.project-organization-title {
+  color: var(--muted);
+  margin-top: 4px;
+}

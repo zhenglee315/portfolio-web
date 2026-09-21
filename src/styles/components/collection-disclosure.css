@@ -1,0 +1,105 @@
+/* Shared paginated disclosure for Experience and Projects. */
+.collection-disclosure {
+  min-width: 0;
+  position: relative;
+}
+.collection-disclosure > summary {
+  list-style: none;
+  margin-left: var(--collection-inset, 159px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 25px;
+  border: 1px solid var(--scroll-track);
+  border-radius: 7px;
+  background: var(--collection-surface);
+  cursor: pointer;
+}
+.collection-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.collection-disclosure > summary:hover,
+.collection-disclosure > summary:focus-visible {
+  border-color: var(--accent);
+  background: var(--selection-surface);
+}
+.collection-disclosure > summary strong {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.collection-count {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  font: 11px/1.6 var(--mono);
+}
+.expand-icon {
+  color: var(--accent);
+  font: 26px/1 var(--mono);
+  flex-shrink: 0;
+  transition: transform var(--duration-hover);
+}
+.collection-disclosure[open] > summary {
+  display: none;
+}
+.collection-items {
+  display: grid;
+  gap: var(--collection-gap, 26px);
+}
+.collapse-collection {
+  display: block;
+  margin: 24px 0 0 var(--collection-inset, 159px);
+  padding: 12px 18px;
+  min-height: var(--control-size);
+  background: var(--collection-surface);
+  color: var(--accent);
+  border: 1px solid var(--scroll-track);
+  border-radius: 5px;
+  font-size: 14px;
+}
+.collapse-collection:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.collapse-collection span {
+  margin-left: 14px;
+}
+@media (max-width: 760px) {
+  .collection-disclosure > summary {
+    margin-left: 23px;
+    padding: 17px 18px;
+  }
+  .collapse-collection {
+    margin-left: 23px;
+  }
+  .collection-disclosure > summary strong {
+    font-size: 15px;
+  }
+}
+.expand-icon .bi {
+  width: var(--collection-icon-size);
+  height: var(--collection-icon-size);
+  /* Emphasize this disclosure through shared animation parameters, without changing chat. */
+  --icon-pulse-rest-opacity: 0.55;
+  --icon-pulse-rest-color: var(--accent);
+  --icon-pulse-peak-color: var(--text);
+  --icon-pulse-peak-scale: var(--collection-icon-pulse-scale);
+  --icon-pulse-peak-glow: var(--collection-icon-pulse-glow);
+  animation: icon-breathe var(--duration-icon-pulse) ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .expand-icon .bi {
+    animation: none;
+    filter: drop-shadow(0 0 3px var(--glow-medium));
+  }
+}
+
+/* Experience inherits its card offset and spacing from the timeline geometry. */
+.timeline > .collection-disclosure {
+  --collection-inset: var(--experience-card-start);
+  --collection-gap: 20px;
+}

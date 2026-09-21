@@ -1,0 +1,6 @@
+.sites-runtime/
+node_modules/
+src/assets/
+dist/
+artifacts/
+docs/function-reference.md

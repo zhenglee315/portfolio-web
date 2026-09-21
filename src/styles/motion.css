@@ -1,0 +1,33 @@
+/* Shared timeline pulse used by Experience and Projects. */
+@keyframes timeline-point-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 5px var(--bg),
+      0 0 0 6px var(--pulse-soft),
+      0 0 8px var(--pulse-medium);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px var(--bg),
+      0 0 0 10px var(--pulse-medium),
+      0 0 22px var(--pulse-strong);
+  }
+}
+
+/* Shared SVG silhouette glow for chat and historical-project disclosure icons. */
+@keyframes icon-breathe {
+  0%,
+  100% {
+    opacity: var(--icon-pulse-rest-opacity, 1);
+    transform: scale(1);
+    color: var(--icon-pulse-rest-color, currentColor);
+    filter: drop-shadow(0 0 1px var(--glow-low));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(var(--icon-pulse-peak-scale, 1));
+    color: var(--icon-pulse-peak-color, currentColor);
+    filter: var(--icon-pulse-peak-glow, drop-shadow(0 0 7px var(--glow-bright)));
+  }
+}

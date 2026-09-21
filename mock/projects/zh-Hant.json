@@ -1,0 +1,363 @@
+[
+  {
+    "id": 4,
+    "organizationName": "The Gospel as Revealed to Me（福音翻譯與出版）",
+    "organizationCode": "AI 出版",
+    "organizationTitle": "資深 Agent 平台工程師",
+    "startMonth": "2026-04",
+    "endMonth": "2026-09",
+    "projectName": "AI 輔助出版",
+    "projectTitle": "AI 應用工作流程",
+    "intro": "以大型語言模型輔助翻譯與出版，將審稿通過的譯文保留為上下文，並持續納入人工審核。",
+    "detail": {
+      "workflowDescription": "原文章節依序進入擷取、翻譯、修訂與出版匯出流程。領域提示詞及審閱通過的譯文作為後續翻譯與修訂的上下文；人工審閱透過 Slack 參與流程，儲存服務保留各階段產出供後續使用。",
+      "flow": ["原文章節", "翻譯與審核", "出版匯出"],
+      "technicalDescription": "使用領域專用提示詞與核准譯文，為後續翻譯提供上下文；透過 Slack 協作審核，以物件儲存保存流程產物。",
+      "contribution": "設計 RAG 流程，以及用於擷取、翻譯、修訂和匯出的非同步架構。",
+      "outcome": "每冊處理時間由 18 個月縮短至 3 個月，所需翻譯人力由 7 人降至 2 人。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "RAG",
+      "FastAPI",
+      "Celery",
+      "Redis",
+      "Ollama",
+      "RustFS",
+      "提示工程",
+      "人工參與審核",
+      "Slack"
+    ]
+  },
+  {
+    "id": 2,
+    "organizationName": "台達電子",
+    "organizationCode": "台達電子",
+    "organizationTitle": "資深軟體設計工程師",
+    "startMonth": "2025-09",
+    "endMonth": "2026-01",
+    "projectName": "製造 AI 工具",
+    "projectTitle": "Agent 與 MCP 整合",
+    "intro": "透過工具層，讓 AI Agent 存取真實製造資料，涵蓋生產指標、設備狀態與營運計算。",
+    "detail": {
+      "workflowDescription": "AI agent 透過 MCP 整合層呼叫製造工具。各工具將查詢與計算交由既有製造 API 執行，再把生產或設備指標回傳給 agent。流程涵蓋產出、良率、報廢數、設備狀態、故障次數與稼動率。",
+      "flow": ["AI Agent", "MCP 工具", "製造 API"],
+      "technicalDescription": "提供產量、良率、報廢數量、設備狀態、故障次數與稼動率等工具；底層查詢及計算由既有後端服務執行。",
+      "contribution": "以既有製造 API 為基礎，設計並實作 MCP 整合層。",
+      "outcome": "將 46 個既有製造 API 整合為 MCP 工具。"
+    },
+    "expected": false,
+    "skills": ["MCP", "FastMCP", "Python", "FastAPI", "AI Agent 整合"]
+  },
+  {
+    "id": 1,
+    "organizationName": "台達電子",
+    "organizationCode": "台達電子",
+    "organizationTitle": "資深軟體設計工程師",
+    "startMonth": "2025-03",
+    "endMonth": "2026-02",
+    "projectName": "HolmesBase",
+    "projectTitle": "共用製造平台",
+    "intro": "可重複使用的製造分析後端基礎，將跨廠資料存取、計算與排程整合到同一平台。",
+    "detail": {
+      "workflowDescription": "工廠資料透過共用平台服務取得，再由可重用的製造計算模組整理為下游分析所需的資訊。工程團隊在不同工廠應用中共用資料存取與排程能力，集中管理開發、維護及更新。\n\n應用程式透過 REST 與 gRPC 介面使用這些能力。監控流程彙整不同服務實例的 API 指標，協助團隊觀察跨 Kubernetes namespace 運行的共用服務。",
+      "flow": ["工廠資料", "資料預處理", "共用服務", "分析團隊"],
+      "technicalDescription": "共用 FastAPI 框架支援 25 個 controller 模組，透過 REST 與 gRPC 介面提供跨廠資料存取及可重用的製造計算。Prometheus client 指標使用共用 Redis 儲存，支援多個 Kubernetes namespace 內不同服務實例的 API 監控。",
+      "contribution": "設計及開發共用平台服務，包含可重複使用的資料存取、製造計算、背景任務與 API 監控。",
+      "outcome": "已部署於中國、泰國與台灣的 28 座以上工廠、100 條以上產線。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "FastAPI",
+      "gRPC",
+      "REST",
+      "PostgreSQL",
+      "Redis",
+      "Kubernetes",
+      "Prometheus"
+    ]
+  },
+  {
+    "id": 3,
+    "organizationName": "台達電子",
+    "organizationCode": "台達電子",
+    "organizationTitle": "資深軟體設計工程師",
+    "startMonth": "2025-03",
+    "endMonth": "2025-09",
+    "projectName": "模型訓練與交付",
+    "projectTitle": "機器學習平台工程",
+    "intro": "建立資料集與腳本註冊、訓練任務派送，以及模型產物交付至邊緣應用的完整平台流程。",
+    "detail": {
+      "workflowDescription": "演算法團隊先登錄資料集與訓練腳本，再提交背景訓練工作。平台派發工作給訓練 worker 並追蹤執行狀態，產出的模型檔案存入儲存服務，供 Edge 應用交付使用；由 GitLab 觸發的 Jenkins 流程支援部署。",
+      "flow": ["資料集與腳本", "訓練工作節點", "邊緣交付"],
+      "technicalDescription": "透過任務狀態追蹤執行進度，以相容 S3 的儲存管理模型產物，並利用佇列將長時間訓練與互動式 API 請求分離。",
+      "contribution": "設計及開發訓練服務，並參與模型交付的 CI/CD 流程建置。",
+      "outcome": "協助將模型部署所需時間由 7 天縮短至約 10 小時。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "訓練任務編排",
+      "Celery",
+      "RabbitMQ",
+      "Redis",
+      "相容 S3 的儲存",
+      "RustFS",
+      "GitLab",
+      "Jenkins CI/CD"
+    ]
+  },
+  {
+    "id": 5,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2022-10",
+    "endMonth": "2023-07",
+    "projectName": "企業資料分析平台",
+    "projectTitle": "平台架構",
+    "intro": "以可重複使用的 API 與中央資料倉儲，串接製造、庫存、設備及企業營運資料的共用分析平台。",
+    "detail": {
+      "workflowDescription": "製造、庫存、設備與業務資料透過共用 API 及中央資料倉儲整合。分析負載與生產資料庫分離，讓不同業務領域共用資料基礎，支援跨廠報表及分析。",
+      "flow": ["營運系統", "共用 API 與資料倉儲", "企業分析"],
+      "technicalDescription": "將分析工作負載與生產資料庫分離，以共用服務支援多個業務領域。",
+      "contribution": "規劃平台架構並帶領 3 名初階開發人員，協調程式碼整合與審查。",
+      "outcome": "建立可重複使用的基礎，支援跨廠製造與企業營運分析。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "Django REST Framework",
+      "PostgreSQL",
+      "Redis",
+      "Vue 3",
+      "REST",
+      "資料倉儲"
+    ]
+  },
+  {
+    "id": 6,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2022-08",
+    "endMonth": "2023-01",
+    "projectName": "LSTM 設備異常偵測",
+    "projectTitle": "預測性維護",
+    "intro": "整合特徵選取、序列建模與超參數最佳化的設備異常預測管線。",
+    "detail": {
+      "workflowDescription": "設備訊號先經過特徵選擇，再進入序列模型流程。透過 Pearson 相關係數與 Lasso 選取輸入特徵，並以粒子群最佳化調整模型參數。預測結果支援提早偵測異常，供設備停機與維護決策參考。",
+      "flow": ["設備訊號", "特徵選取與 LSTM", "維護決策"],
+      "technicalDescription": "利用設備訊號提早偵測異常，支援停機與維護決策。",
+      "contribution": "開發預測管線，使用 Pearson 相關係數與 Lasso 進行特徵選取，並以粒子群最佳化調整超參數。",
+      "outcome": "列名為公開專利申請 CN116467593A 的發明人。"
+    },
+    "expected": false,
+    "skills": ["Python", "LSTM", "Lasso", "PSO", "Pearson 相關係數", "特徵選取"]
+  },
+  {
+    "id": 7,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2021-09",
+    "endMonth": "2021-11",
+    "projectName": "Linux 與 Docker 部署標準化",
+    "projectTitle": "部署工程",
+    "intro": "為分析應用建立可重複使用的容器映像，讓不同環境的工廠部署保持一致。",
+    "detail": {
+      "workflowDescription": "分析應用封裝為可重用的 Docker 映像，部署到各廠區與應用伺服器的 Ubuntu 環境。共用映像流程減少重複的環境設定，讓部署與日常維護更一致。",
+      "flow": ["分析應用", "容器映像", "工廠部署"],
+      "technicalDescription": "將應用封裝為可重複使用的映像，統一各工廠與應用伺服器的部署方式。",
+      "contribution": "將 Ubuntu 與 Docker 導入原先依賴 Windows Server 與 IIS 的環境。",
+      "outcome": "降低個別環境設定與維護所需的投入。"
+    },
+    "expected": false,
+    "skills": ["Docker", "Linux", "Ubuntu"]
+  },
+  {
+    "id": 8,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2021-05",
+    "endMonth": "2022-08",
+    "projectName": "即時設備監控",
+    "projectTitle": "工業資料系統",
+    "intro": "透過設備儀表板、參數分析與巡檢報表，將工廠資料連接到日常營運。",
+    "detail": {
+      "workflowDescription": "設備資料整合到監控服務，再透過儀表板提供現場日常操作。使用者可檢視即時設備資訊、比較參數，並查閱歷史趨勢與巡檢報表，支援設備管理與後續追蹤。",
+      "flow": ["設備資料", "監控服務", "儀表板與巡檢"],
+      "technicalDescription": "建立即時設備畫面、參數分析、歷史趨勢及巡檢報表。",
+      "contribution": "在 3 人團隊中設計與開發平台，並與自動化資料採集團隊整合。",
+      "outcome": "支援深圳、竹南與無錫 6 個車間的 525 台設備。"
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "ECharts", "Tableau"]
+  },
+  {
+    "id": 9,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "製造資料工程與 SQL",
+    "projectTitle": "資料管線與效能",
+    "intro": "建立可重複使用的資料倉儲與 ETL 管線，將分析負載移出生產資料庫，減少報表延遲。",
+    "detail": {
+      "workflowDescription": "生產記錄整合到資料倉儲與 ETL 流程，供製造報表使用。可重用的轉換步驟先整併重複計算，再將結果提供給報表；SQL 與索引最佳化處理批號歷史查詢瓶頸，預處理則減少月度良率報表需要處理的資料量。",
+      "flow": ["生產資料庫", "資料倉儲與 ETL", "製造報表"],
+      "technicalDescription": "針對 8 億筆資料的批次歷程資料表，最佳化 SQL 與索引，並整合月良率報表中的重複計算。",
+      "contribution": "設計資料倉儲與 ETL 架構，並在 3 人團隊中協調報表開發。",
+      "outcome": "5 個批次的查詢由 10 分鐘縮短至 5 秒，月良率前處理由 60 分鐘縮短至 20 分鐘。"
+    },
+    "expected": false,
+    "skills": [
+      "SQL",
+      "Oracle GoldenGate",
+      "ETL",
+      "資料倉儲",
+      "Tableau Prep Builder"
+    ]
+  },
+  {
+    "id": 10,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2021-01",
+    "endMonth": "2023-04",
+    "projectName": "企業 BI 架構與視覺化",
+    "projectTitle": "嵌入式分析",
+    "intro": "整合可信任驗證與叢集伺服器架構，提供嵌入式 Tableau 儀表板，支援多廠報表。",
+    "detail": {
+      "workflowDescription": "製造資料供應 Tableau 儀表板，並嵌入內部網頁應用。使用者透過信任驗證進入報表；伺服器採用具負載平衡與容錯移轉的 Red Hat Linux 叢集，支援多據點報表使用。",
+      "flow": ["製造資料", "Tableau 叢集", "嵌入式儀表板"],
+      "technicalDescription": "透過可信任驗證與網頁嵌入整合儀表板，將 Tableau Server 由 Windows 遷移至具備負載平衡與故障移轉的 Red Hat Linux 叢集。",
+      "contribution": "在 2 人團隊中設計並部署分析架構。",
+      "outcome": "部署於中國大陸與台灣的 7 個據點。"
+    },
+    "expected": false,
+    "skills": [
+      "Tableau",
+      "Red Hat Linux",
+      "負載平衡",
+      "故障移轉",
+      "可信任驗證",
+      "網頁嵌入"
+    ]
+  },
+  {
+    "id": 11,
+    "organizationName": "富士康科技集團",
+    "organizationCode": "富士康",
+    "organizationTitle": "系統設計與資料分析工程師",
+    "startMonth": "2020-08",
+    "endMonth": "2021-01",
+    "projectName": "報表整合與存取控制",
+    "projectTitle": "後端與權限管理",
+    "intro": "以 Django 建立報表入口，為製造與業務團隊提供自訂的角色權限管理。",
+    "detail": {
+      "workflowDescription": "員工透過內部 Django 平台使用嵌入式 Tableau 報表。自訂角色權限模組決定每位使用者可查看的報表，支援生產、品質、製程、經營管理及人資等部門的不同需求。",
+      "flow": ["員工登入", "報表權限", "嵌入式報表"],
+      "technicalDescription": "依使用者需求配置權限，支援生產、品質、製程工程、經營管理與人資團隊。",
+      "contribution": "嵌入 Tableau 儀表板，並開發自訂 RBAC 模組，控制各報表的存取權限。",
+      "outcome": "支援涵蓋 5 個部門、2,000 名員工的內部平台。"
+    },
+    "expected": false,
+    "skills": ["Python", "Django", "RBAC", "Tableau"]
+  },
+  {
+    "id": 12,
+    "organizationName": "輔仁大學",
+    "organizationCode": "輔仁大學",
+    "organizationTitle": "Python 講師／教學助理",
+    "startMonth": "2018-09",
+    "endMonth": "2019-06",
+    "projectName": "翻譯與資訊素養",
+    "projectTitle": "Python 講師 · 教學助理",
+    "intro": "為外語學院師生提供 Python 與翻譯工具的教學指導。",
+    "detail": {
+      "workflowDescription": "教師與學生先學習 Python 基礎，再使用翻譯函式庫完成實際語言任務。引導式練習將程式概念與 Google Translate 的使用結合，並在操作過程提供協助。",
+      "flow": ["Python 基礎", "翻譯練習", "實作指導"],
+      "technicalDescription": "在資訊素養教學中，使用 Python 函式庫操作 Google Translate。",
+      "contribution": "介紹 Python 基礎，帶領師生完成翻譯相關練習。",
+      "outcome": "將程式設計概念連結至實際語言與翻譯任務。"
+    },
+    "expected": false,
+    "skills": ["Python", "Google Translate", "資訊素養"]
+  },
+  {
+    "id": 13,
+    "organizationName": "輔仁大學",
+    "organizationCode": "輔仁大學",
+    "organizationTitle": "Python 講師／教學助理",
+    "startMonth": "2018-08",
+    "endMonth": "2019-06",
+    "projectName": "程式設計入門",
+    "projectTitle": "Python 講師 · 教學助理",
+    "intro": "為統計與會計學系學生教授 Python 基礎及資料結構。",
+    "detail": {
+      "workflowDescription": "教材先介紹 Python 基礎與資料結構，再安排引導式程式練習。學生可獲得個別程式設計及除錯協助，透過評量與期末考檢視理解程度，並取得學習回饋。",
+      "flow": ["教學教材", "程式練習", "評量與回饋"],
+      "technicalDescription": "設計及批改期末考試，提供個別程式設計與除錯協助。",
+      "contribution": "設計教材、授課，並指導學生完成程式練習。",
+      "outcome": "協助學生從基礎概念進展到獨立完成程式實作。"
+    },
+    "expected": false,
+    "skills": ["Python", "資料結構", "除錯"]
+  },
+  {
+    "id": 14,
+    "organizationName": "輔仁大學",
+    "organizationCode": "輔仁大學",
+    "organizationTitle": "資訊管理碩士（MS）",
+    "startMonth": "2017-09",
+    "endMonth": "2019-07",
+    "projectName": "CTG 多類別分類研究",
+    "projectTitle": "資訊管理碩士（MS）· 研究",
+    "intro": "以集成方法分類胎兒心跳宮縮圖（CTG）資料，應用於產前胎兒偵測的碩士研究。",
+    "detail": {
+      "workflowDescription": "心胎圖資料先經過特徵選擇與類別不平衡處理，再訓練及評估 ANN、XGBoost、AdaBoost、SVM 與隨機森林等分類方法。比較各模型表現，作為產前胎兒偵測相關碩士論文的研究內容。",
+      "flow": ["CTG 資料", "特徵選取與類別平衡", "模型比較"],
+      "technicalDescription": "整合特徵選取與類別不平衡處理，比較 ANN、XGBoost、AdaBoost、SVM 與隨機森林模型。",
+      "contribution": "開發並評估 CTG 資料的多類別分類模型。",
+      "outcome": "完成 CTG 多類別分類碩士論文；所列日期為 MS 碩士就學期間。"
+    },
+    "expected": false,
+    "skills": [
+      "Python",
+      "XGBoost",
+      "隨機森林",
+      "SVM",
+      "AdaBoost",
+      "ANN",
+      "集成方法",
+      "特徵選取",
+      "類別不平衡處理"
+    ]
+  },
+  {
+    "id": 15,
+    "organizationName": "輔仁大學",
+    "organizationCode": "輔仁大學",
+    "organizationTitle": "Python 講師／教學助理",
+    "startMonth": "2017-09",
+    "endMonth": "2018-06",
+    "projectName": "網路爬蟲入門",
+    "projectTitle": "教學助理 · 夜間通識課程",
+    "intro": "協助夜間通識學生進行 Python 網路爬蟲實作與除錯。",
+    "detail": {
+      "workflowDescription": "課堂先介紹 Python 網頁爬蟲所需概念，學生再透過實作練習應用所學。在資料擷取及程式除錯過程提供操作協助，讓學生將課堂概念用於實際資料蒐集。",
+      "flow": ["課堂教學", "爬蟲練習", "除錯支援"],
+      "technicalDescription": "提供 Python 網路爬蟲操作指導，協助學生找出程式錯誤。",
+      "contribution": "協助課堂教學，並支援學生完成實作練習。",
+      "outcome": "協助學生將課堂程式設計概念應用於實際資料蒐集。"
+    },
+    "expected": false,
+    "skills": ["Python", "網路爬蟲", "除錯"]
+  }
+]
