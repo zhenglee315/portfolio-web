@@ -66,3 +66,13 @@ Cookie 名稱為 `portfolio-appearance`，內容是 URI 編碼的 JSON，`Path=/
 ## 霧白亮色主題
 
 新增 `mist`（霧白／雾白／Mist），沿用相同設定物件、Cookie、本機備份與前端翻譯。theme.css 使用 `color-scheme: light`、灰白背景、深灰綠文字及深青綠重點色；卡片、地圖、聊天框、導覽與陰影各自使用語意 token。`--on-accent` 統一控制深色重點底上的文字對比。四個選項以兩欄排列，避免窄螢幕擁擠；預設仍為薄荷。
+
+## Cold-start entrance / 冷啟動進場（2026-09-22）
+
+HTML declares data-ready=false. Until app.refresh completes, background-field.css hides main, the skip link, sidebar and mobile header with visibility:hidden. Layout remains measurable for map geometry and skill chips; unfinished controls cannot receive keyboard focus. / HTML 從第一個畫面即宣告尚未就緒；CSS 隱藏正文、跳轉連結及導覽，同時保留布局量測，避免初次 JS 下載或資料等待時閃現靜態內文。
+
+app.js sets data-ready=true only after data initialization, feature startup and the first refresh. The existing field-entering animations then control content/navigation entrance, and backgroundField.whenReady remains the sole chat greeting boundary. No extra animation timer or duplicate ready flag is introduced. / 初次刷新完成才解除隱藏；進場樣式和既有 whenReady 繼續管理內容、選單及聊天框，不新增另一套計時或就緒狀態。
+
+The startup loading/error/retry status lives outside the hidden surfaces. Data failure keeps unfinished content hidden while the localized retry button remains visible and focusable. Reduced motion and saved pause skip the animation but still wait for valid content. / 載入狀態及三語錯誤／重試位於獨立區域；減少動態或已保存暫停偏好會略過動畫，但仍須等待資料完成。
+
+Regression: tests/cold-entry-browser.cjs holds app.js before its execution, disables browser cache, delays mock responses, samples pre-ready frames, and verifies desktop/mobile/tablet/4K, all three locales, reduced motion, pause and failure/retry. tests/chat-entry-browser.cjs continues to verify the later chat fade and three-second idle lifecycle. / 冷啟動測試覆蓋 JS 執行前、慢速資料、逐幀防閃爍、尺寸、三語及錯誤恢復；聊天框的淡入與三秒閒置由既有測試接續覆蓋。

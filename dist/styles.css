@@ -3400,7 +3400,11 @@ body {
 .field-entering main > * {
   animation: field-content-in 0.45s 0.75s ease-out backwards;
 }
-/* Hide the entire navigation surface, not just its children, before the frame settles. */
+/* The HTML starts unready, so cold loads cannot paint fallback content before JS.
+   Keep layout measurable for geometry and skill previews; visibility also prevents
+   focus on unfinished controls. The startup status remains outside these surfaces. */
+html:not([data-ready="true"]) main,
+html:not([data-ready="true"]) .skip,
 html:not([data-ready="true"]) .sidebar,
 html:not([data-ready="true"]) .mobile-header {
   visibility: hidden;

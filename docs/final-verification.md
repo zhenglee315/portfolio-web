@@ -1,5 +1,13 @@
 # Final verification / 最後驗證
 
+## Latest: cold-start entrance / 最新：冷啟動進場（2026-09-22）
+
+**13/13 suites passed, including 36 contract/maintenance cases.** Added a browser suite that holds deferred JavaScript before first paint, disables cache and delays data. It verifies no pre-ready content leakage across three locales and 390/1024/1440/3840px widths, plus reduced motion, saved pause and localized failure/retry. Existing chat entrance, hover retention and three-second idle tests also pass. / **13/13 組通過，包含 36 個契約／維護案例**。新增測試從 JS 下載前開始逐幀檢查，涵蓋慢速資料、三語四尺寸、動態偏好與錯誤重試；既有聊天框進場、hover 保留及三秒淡出仍通過。
+
+The fix reuses data-ready and the existing backgroundField.whenReady boundary. HTML, app lifecycle comments, component CSS, build output, function reference and architecture/appearance docs are synchronized. Offline packaging and whitespace checks pass. / 修正沿用 data-ready 與既有 whenReady，不增加另一套動畫計時；HTML、生命週期註解、元件樣式、建置結果及開發文件已同步，離線封裝與空白檢查通過。
+
+## Previous full audit / 前次完整稽核
+
 Date / 日期：2026-09-21。Scope / 範圍：portfolio-web only.
 
 Result: **12/12 suites passed, including 36 contract and maintenance cases**. All 56 authored JavaScript files passed syntax checks; git diff whitespace checks passed. The generated index documents 198 named functions/helpers with English comments. The additional Markdown table guard also passed after the full run. / 結果：**12/12 組通過，包含 36 個契約與維護案例**；56 份 authored JavaScript 語法及 git diff 空白檢查通過。函式索引記錄 198 個具名函式／helper 與英文註解；完整回歸後新增的 Markdown 表格欄數檢查亦通過。

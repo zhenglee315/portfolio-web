@@ -4,6 +4,10 @@
 
 最新全專案驗證見 [final-verification.md](final-verification.md)，包含三語 30 組尺寸、0／1／6／7／19 筆啟動與 4K。以下保留各次歷史驗收結果。
 
+## 冷啟動修正（2026-09-22）
+
+新增 tests/cold-entry-browser.cjs，從 deferred script 尚未執行時開始檢查，補上過去從 data-ready 之後才開始驗證的缺口。逐幀核對就緒前內容不外露，並驗證三語 × 390／1024／1440／3840px、減少動態、保存暫停、載入失敗與重試。實際執行結果見 [最後驗證](final-verification.md)。
+
 ## 歷史：Projects 第 4 支 API 驗收（2026-09-21）
 
 清理後完整執行 node scripts/test.mjs：**11/11 組通過，32 個契約案例通過**。52 份 authored JavaScript 語法檢查通過，git diff --check 通過。桌面英文與 390px 繁體 HolmesBase 詳情已視覺檢視，流程、技術說明及換行呈現正常。

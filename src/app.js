@@ -43,5 +43,7 @@
   document.addEventListener("languagechange", refresh);
   document.addEventListener("portfolio:datachange", refresh);
   refresh();
+  // Release the pre-paint CSS guard only after data, layout and entrance styles exist.
+  // backgroundField.whenReady still owns animation completion and chat scheduling.
   document.documentElement.dataset.ready = "true";
 })();

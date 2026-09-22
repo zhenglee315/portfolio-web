@@ -190,6 +190,7 @@ portfolio-web/
 | tests/navigation-browser.cjs   | 所有錨點、舊別名、query／歷史還原、scrollspy、長畫面與手機選單                                           |
 | tests/chat-idle-browser.cjs    | 自動／重開倒數、hover／焦點暫停、淡出救回、關閉及 reduced motion                                         |
 | tests/chat-entry-browser.cjs   | 7 種尺寸首次顯示、3 秒淡出、觸控及邊界                                                                   |
+| tests/cold-entry-browser.cjs   | 無快取且延遲 JS／資料的首屏、三語四尺寸、動態偏好與錯誤重試                                              |
 | tests/appearance-browser.cjs   | 三語／四主題、六尺寸、Cookie／file:// 備份、重置、錯誤值及動態偏好                                       |
 | tests/interactions-browser.cjs | 共用內容、圖示、資源、hover、焦點、標籤計數、語言記憶及手機外部關閉                                      |
 | mock/README.md                 | 全部 mock 檔案責任、資料界線與維護流程                                                                   |
@@ -251,6 +252,26 @@ portfolio-web/
 | `tests/spec.test.cjs`            | OpenAPI 引用、狀態、DTO 名稱與實際 mock 範例一致性           |
 | `spec/openapi.json`              | 六支 GET API 的 OpenAPI 3.1 schema；前四支已確認，兩支待討論 |
 | `spec/README.md`                 | API schema 使用、更新與驗證方式                              |
+
+## README gallery assets / 圖集檔案
+
+All captures are reproduced with `node scripts/capture-readme.cjs` from the real offline build. / 由離線網站實際操作後重拍，不修改 mock 或網站樣式。
+
+| File / 檔案                         | Responsibility / 用途     |
+| ----------------------------------- | ------------------------- |
+| `docs/images/theme-mint.png`        | 薄荷主題桌面              |
+| `docs/images/theme-blue.png`        | 冰藍主題桌面              |
+| `docs/images/theme-amber.png`       | 琥珀主題桌面              |
+| `docs/images/theme-mist.png`        | 霧白主題桌面              |
+| `docs/images/appearance.png`        | 主題與背景設定面板        |
+| `docs/images/journey.png`           | 旅程地圖與城市浮框        |
+| `docs/images/experience.png`        | 完整六筆工作與學習經歷    |
+| `docs/images/experience-skills.png` | 經歷技能展開              |
+| `docs/images/projects.png`          | 首批六個專案與更多入口    |
+| `docs/images/projects-expanded.png` | 下一頁六個專案與收合控制  |
+| `docs/images/project-detail.png`    | HolmesBase 完整詳情與技能 |
+| `docs/images/skills.png`            | 七類技能收合總覽          |
+| `docs/images/skills-expanded.png`   | 七類技能展開              |
 
 ## Ownership rules / 維護規則
 

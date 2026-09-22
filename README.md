@@ -4,7 +4,7 @@ A multilingual, offline-first engineering portfolio built with modular JavaScrip
 
 以模組化 JavaScript、CSS 與多語 JSON 資料打造的工程師作品集，支援完整離線瀏覽。
 
-[English](#english) · [繁體中文](#繁體中文) · [Hosted site / 網站預覽](https://zheng-lee-engineering-journey.wilson19950315.chatgpt.site) · [API specification / API 規格](spec/README.md)
+[Visual tour / 圖片導覽](#visual-tour--圖片導覽) · [English](#english) · [繁體中文](#繁體中文) · [Hosted site / 網站預覽](https://zheng-lee-engineering-journey.wilson19950315.chatgpt.site) · [API specification / API 規格](spec/README.md)
 
 ![English desktop portfolio showing the introduction, navigation and journey map / 英文桌面版首頁、導覽及旅程地圖](docs/images/desktop.png)
 
@@ -14,6 +14,101 @@ A multilingual, offline-first engineering portfolio built with modular JavaScrip
 ![Traditional Chinese mobile portfolio / 繁體中文手機版作品集](docs/images/mobile.png)
 
 </details>
+
+## Visual tour / 圖片導覽
+
+Actual screenshots from the offline build. Open any image to inspect it at full size; expand the galleries for complete timelines and interaction states. / 以下皆為離線版的實際畫面，可點開圖片查看原尺寸；展開圖集可查看完整時間軸與操作後的狀態。
+
+[Themes / 配色](#themes--四種主題) · [Journey / 旅程](#journey--地圖旅程) · [Experience / 經歷](#experience--工作與學習經歷) · [Projects / 專案](#projects--專案與詳情) · [Skills / 技能](#skills--技能分類)
+
+### Themes / 四種主題
+
+Four coordinated palettes change the navigation, cards, map, controls and background together. / 四套配色同步套用於導覽、卡片、地圖、控制項與背景。
+
+| Mint / 薄荷                                                               | Ice / 冰藍                                                                 |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| ![Mint dark theme / 薄荷深色主題](docs/images/theme-mint.png)             | ![Ice blue dark theme / 冰藍深色主題](docs/images/theme-blue.png)          |
+| Soft green accents on a charcoal background. / 深炭色背景搭配柔和薄荷綠。 | Cool blue accents for a crisp technical feel. / 冷色冰藍呈現清晰的科技感。 |
+
+| Amber / 琥珀                                                         | Mist / 霧白                                                                       |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| ![Amber warm dark theme / 琥珀暖色主題](docs/images/theme-amber.png) | ![Mist light theme / 霧白亮色主題](docs/images/theme-mist.png)                    |
+| Warm amber on deep brown surfaces. / 深棕底色搭配溫暖琥珀。          | Pale surfaces with deep teal text and accents. / 淺色表面搭配深青綠文字與重點色。 |
+
+The palette button opens background settings: theme, heartbeat speed, highlight intensity, pause and reset. Preferences persist through cookies on HTTP, with a local-storage fallback for offline viewing. System reduced-motion preferences take priority. / 右上角調色盤提供主題、心跳速度、高亮強度、暫停及重置；HTTP 環境透過 Cookie 保存，離線使用本機儲存備援，並尊重系統減少動態效果設定。
+
+<details>
+<summary>Background settings / 展開背景設定畫面</summary>
+
+![Theme palette and background controls / 主題配色及背景控制面板](docs/images/appearance.png)
+
+</details>
+
+### Journey / 地圖旅程
+
+Follow the career route from New Taipei through Shenzhen, Chengdu, Suzhou/Wujiang and Taoyuan to London. Cities are positioned from latitude and longitude; the route follows the order supplied by the data. / 從新北出發，經過深圳、成都、蘇州／吳江、桃園，前往倫敦；城市以經緯度定位，旅程依資料陣列順序播放。
+
+Use Play/Pause and Replay to control the animated journey. Select a destination in the strip to move between chapters; hover, focus or activate a city marker to see its country, dates, organization and role. The destination strip scrolls when space is limited. / 可播放、暫停及重播飛行旅程，點選底部城市切換經歷；城市節點的滑鼠停駐、鍵盤焦點或啟用操作會顯示國家、期間、機構與職稱，底部選項在空間不足時可左右滑動。
+
+![Journey map with a Chengdu career tooltip and destination strip / 旅程地圖、成都職涯浮框與城市切換列](docs/images/journey.png)
+
+### Experience / 工作與學習經歷
+
+A chronological presentation of work and education: organization, role or program, location, period, description and related skills. Building and graduation-cap icons distinguish work from education. / 以時間軸呈現工作與學習，包含機構、職稱或課程、地點、起訖時間、說明及相關技能，並以大樓與學士帽圖示區分。
+
+The current six entries cover UCL, AI-assisted publishing, Delta Electronics, two Foxconn roles and Fu Jen Catholic University. Each card's **+N skills** control reveals its remaining skills; **Show less** collapses them. / 現有六筆涵蓋 UCL、AI 翻譯出版、台達電、富士康兩段經歷及輔仁大學；每張卡的 **+N skills** 可展開剩餘技能，再以 **Show less** 收合。
+
+![Delta Electronics experience with its complete skill list expanded / 台達電經歷與完整技能展開](docs/images/experience-skills.png)
+
+<details>
+<summary>All six experience entries / 展開查看完整六段經歷</summary>
+
+![Complete work and education timeline / 完整工作與學習時間軸](docs/images/experience.png)
+
+</details>
+
+The list initially shows six records. **Show more experience** appears only when additional records exist and loads the next page of six. The current six-record dataset therefore has no extra-record button. Experience cards expose skills inline; project-style detail dialogs belong to Projects. / 經歷初始顯示六筆，超過六筆才出現展開入口，每次載入下一頁六筆；目前剛好六筆，因此沒有額外記錄按鈕。經歷卡片直接展開技能，完整詳細視窗則由 Projects 提供。
+
+### Projects / 專案與詳情
+
+Project cards combine the organization, project period, name, subtitle, short introduction and expandable skills. The timeline preserves backend ordering and groups adjacent projects with the same start month. / 專案卡呈現機構、專案期間、名稱、副標、簡介及可展開技能；時間軸保留後端排序，將相鄰且起始月相同的專案放在同一組。
+
+<details>
+<summary>Project timeline — initial six records / 展開查看首批六個專案</summary>
+
+![Project timeline with the initial six projects and Show more projects control / 首批六個專案與 Show more projects 入口](docs/images/projects.png)
+
+</details>
+
+Select the **↗** on a project card to open its full case study. The HolmesBase example below includes the workflow, flow diagram, technical implementation, personal contribution, outcome and complete skills. Close with **×**, Escape or the backdrop. / 點選專案卡的 **↗** 開啟詳細視窗；下圖 HolmesBase 完整展示作業流程、流程圖、技術實作、個人貢獻、成果及技能，可透過 **×**、Escape 或背景區域關閉。
+
+![HolmesBase project detail with workflow, technical implementation, contribution, outcome and expanded skills / HolmesBase 專案流程、技術、貢獻、成果與完整技能](docs/images/project-detail.png)
+
+**Show more projects** reveals older records six at a time. The current dataset contains 15 projects: six initially, six on the next page and three on the last. Collapsing and reopening reuses loaded records. / **Show more projects** 每次展開六筆較早的專案；目前共 15 筆，依序為 6、6、3 筆，收合後再次展開會沿用已載入內容。
+
+<details>
+<summary>Show more projects — expanded state / 展開查看更多專案的實際畫面</summary>
+
+![Additional six projects with load more and collapse controls / 展開的六個較早專案、繼續載入及收合控制](docs/images/projects-expanded.png)
+
+</details>
+
+### Skills / 技能分類
+
+Seven categories organize the toolkit: Backend & APIs, AI & agents, Platform & security, Data & storage, Workflows & delivery, ML & research, and Web & integrations. / 七個分類整理技術能力：後端與 API、AI 與 Agent、平台與安全、資料與儲存、工作流程與交付、機器學習與研究，以及 Web 與整合。
+
+![Skills overview grouped into seven categories with compact previews / 七類技能總覽與收合預覽](docs/images/skills.png)
+
+The shared skill component fits its preview to three quarters of the available row width, reserving room for **+N skills**. Expanding a category reveals more labels; **Show less** returns to the compact view. The same interaction is used on experience cards, project cards and project dialogs. / 共用技能元件依每列可用寬度的四分之三計算預覽，保留 **+N skills** 的空間；展開分類後顯示更多標籤，再以 **Show less** 收合。經歷卡、專案卡及專案詳情皆共用相同操作。
+
+<details>
+<summary>Expanded skill categories / 展開查看完整技能分類</summary>
+
+![Seven skill categories after expanding their labels / 七類技能展開後的完整畫面](docs/images/skills-expanded.png)
+
+</details>
+
+All gallery images show real data and UI states, without fabricated records. Motion is paused for clear still images; the website itself retains its animated background and journey controls. / 圖集使用真實資料與操作狀態，沒有補造記錄；為方便閱讀，截圖暫停動態效果，網站仍保留背景動畫及旅程播放功能。
 
 ## English
 

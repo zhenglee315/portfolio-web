@@ -368,7 +368,10 @@ This index covers named function declarations and directly assigned arrow helper
 
 | Function / 函式 | Responsibility / 英文註解 |
 | --- | --- |
-| `main` | Use deterministic appearance preferences and real mock content for reproducible README previews. |
+| `settle` | Wait for layout observers before freezing a screenshot; never alter application CSS or mock data. |
+| `openPage` | Open the actual offline build with fresh preferences and finish the automatic greeting before capture. |
+| `capture` | Save either a complete component or a viewport, preserving the real responsive layout. |
+| `main` | Capture four themes and meaningful feature states through the same controls available to visitors. |
 
 ## scripts/document-functions.mjs
 
@@ -468,6 +471,17 @@ This index covers named function declarations and directly assigned arrow helper
 | Function / 函式 | Responsibility / 英文註解 |
 | --- | --- |
 | `fading` | Observe the active fade state without introducing fixed timing assumptions. |
+
+## tests/cold-entry-browser.cjs
+
+[Source / 原始碼](../tests/cold-entry-browser.cjs)
+
+| Function / 函式 | Responsibility / 英文註解 |
+| --- | --- |
+| `coldPage` | Serve local build bytes through intercepted requests, holding the bundle until initial-paint assertions finish. |
+| `sample` | Sample every rendered frame, including the interval before app.js exists. |
+| `verifyReady` | ", async (route) => { const url = new URL(route.request().url()); assert.equal( url.origin, "http://portfolio.test", "All assets must remain local", ); const file = path.resolve( root, "." + (url.pathname === "/" ? "/index.html" : url.pathname), ); assert(file.startsWith(root + path.sep)); if (url.pathname === "/app.js") await bundle; await route.fulfill({ body: fs.readFileSync(file), contentType: { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", }[path.extname(file)] \|\| "application/octet-stream", }); }); await page.addInitScript( ({ db, locale, mode, failure }) => { localStorage.setItem("portfolio.language", locale); if (mode === "paused") localStorage.setItem( "portfolio-appearance", JSON.stringify({ paused: true }), ); let client; Object.defineProperty(window, "PortfolioApi", { configurable: true, get: () => client, set: () => { const failThisVisit = failure && !sessionStorage.getItem("retried"); client = createPortfolioApi( MockPortfolioTransport.create(db, { delayMs: 150, failures: failThisVisit ? { "/site": 1 } : {}, }), ); }, }); window.preReadyLeaks = []; // Sample every rendered frame, including the interval before app.js exists. function sample() { if (document.documentElement.dataset.ready === "true") return; for (const selector of [".intro", ".sidebar", ".mobile-header"]) { const el = document.querySelector(selector); if ( el && el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) ) preReadyLeaks.push(selector); } requestAnimationFrame(sample); } requestAnimationFrame(sample); }, { db: fixture(), locale, mode, failure }, ); await page.goto("http://portfolio.test/", { waitUntil: "commit" }); await page.waitForFunction( () => document.querySelector(".intro") && getComputedStyle(document.querySelector(".sidebar")).visibility === "hidden", ); assert.equal(await page.evaluate(() => typeof Portfolio), "undefined"); assert.equal( await page.locator(".intro").isVisible(), false, "HTML must hide fallback text before bundle download", ); await page.keyboard.press("Tab"); assert.equal( await page.evaluate( () => !!document.activeElement.closest("main,.sidebar,.mobile-header,.skip"), ), false, "Unready controls must not receive focus", ); release(); await page.locator("#startup-status").waitFor({ state: "visible" }); assert.equal( await page.locator(".intro").isVisible(), false, "Slow data must not expose the static introduction", ); return { page, errors }; } /** Assert that the initial guard hands control to the existing animation and then the chat greeting. |
+| `main` | Cover cold desktop/mobile startup, motion overrides and localized failure/retry without external networking. |
 
 ## tests/data.test.cjs
 

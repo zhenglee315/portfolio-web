@@ -35,7 +35,7 @@
 
 ## 可重複驗證
 
-執行 `node scripts/build.mjs` 後執行 `node scripts/test.mjs`。完整入口為 12 組；最新案例數與結果見 final-verification.md；維護檢查覆蓋來源責任清單、英文檔頭註解、CSS 引用圖、token 消費者、Markdown 本地連結、JSON 範例及功能清單／回歸清單 ID 一致性。
+執行 `node scripts/build.mjs` 後執行 `node scripts/test.mjs`。完整入口為 13 組；最新案例數與結果見 final-verification.md；維護檢查覆蓋來源責任清單、英文檔頭註解、CSS 引用圖、token 消費者、Markdown 本地連結、JSON 範例及功能清單／回歸清單 ID 一致性。
 
 Browser API 回歸另檢查三語啟動失敗，以及資料晚於 window.load 時的深層連結與捲動同步。最新結果與限制記於 [regression-coverage.md](regression-coverage.md)，實際執行報告位於 `artifacts/test-results.json`。靜態檢查與 Edge 瀏覽器回歸不等於所有瀏覽器和所有未來資料都已驗收。
 

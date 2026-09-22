@@ -135,7 +135,7 @@ node scripts/test.mjs --unit
 node scripts/test.mjs
 ```
 
-測試使用離線模式，覆蓋全部專案的三語 dialog、ID 狀態還原、重排／空資料、同月跨群組、文字 escaping、30 組 RWD／語言、技能 3/4 寬度與時間軸對齊。Journey 專用測試涵蓋抵達高亮、暫停／重播、鍵盤 tooltip，以及 1／24 筆資料的滑動選單。導覽、對話框計時／首次顯示與 UI 互動已納入同一個 12 組回歸入口。逐項功能與測試對照見 [regression-coverage.md](regression-coverage.md)。
+測試使用離線模式，覆蓋全部專案的三語 dialog、ID 狀態還原、重排／空資料、同月跨群組、文字 escaping、30 組 RWD／語言、技能 3/4 寬度與時間軸對齊。Journey 專用測試涵蓋抵達高亮、暫停／重播、鍵盤 tooltip，以及 1／24 筆資料的滑動選單。導覽、對話框計時／首次顯示與 UI 互動已納入同一個 13 組回歸入口。逐項功能與測試對照見 [regression-coverage.md](regression-coverage.md)。
 
 格式檢查使用 Prettier 3.6.2 與本專案設定；Prettier／Playwright 都是開發工具，不加入網頁執行時依賴。圖示更新仍由 `scripts/vendor-icons.mjs` 下載指定版本的官方資產，重新產生後再套用格式規範。
 
@@ -209,6 +209,8 @@ Experience 的 previewCount 讀取 runtime.pagination.experiences（目前 6）�
 ### 初次進場與 chatme 的調度
 
 chatme 宣告依賴 backgroundField，等待其一次性 `whenReady` Promise 後才開啟目前尺寸對應的浮框。側欄／手機導覽的完整表面在四邊定位後淡入；chatbox 再使用既有 fadeMs 淡入，完成後才啟動 idleMs。hover／focus 不會提前倒數，手動開關會取消尚未開始的首次自動顯示；一般重新開啟沿用既有互動計時。減少動態與略過進場均會完成 Promise，不會讓浮框永遠等待。
+
+初始 HTML 使用 data-ready=false；background-field.css 在初次資料與 refresh 完成前隱藏 main、skip 與兩種導覽，保留布局量測與獨立錯誤／重試。app.js 僅在初次 refresh 完成後解除；field-entering 與 whenReady 延續原有責任。詳見 [冷啟動進場](appearance-development.md#cold-start-entrance--冷啟動進場2026-09-22)。
 
 ### 小螢幕導覽抽屜動畫
 

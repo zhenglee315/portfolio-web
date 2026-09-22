@@ -27,6 +27,7 @@ const suites = [
         ["sidebar-rail", ["tests/sidebar-rail-browser.cjs"]],
         ["chat-idle", ["tests/chat-idle-browser.cjs"]],
         ["chat-entry", ["tests/chat-entry-browser.cjs"]],
+        ["cold-entry", ["tests/cold-entry-browser.cjs"]],
         ["interactions", ["tests/interactions-browser.cjs"]],
         ["appearance", ["tests/appearance-browser.cjs"]],
         ["api-lazy-loading", ["tests/api-browser.cjs"]],
