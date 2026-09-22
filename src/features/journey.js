@@ -119,6 +119,7 @@ Portfolio.register("journey", ["data", "carousel"], ({ data, carousel }) => {
     paths = new Map();
     highlightedId = null;
     svg.innerHTML = MAP_DATA.svg;
+    // Rebuild the destination highlight from backend array order, independently of playback.
     const finalCountry = items.at(-1)?.countryCode;
     svg
       .querySelectorAll(".country")

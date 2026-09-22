@@ -23,6 +23,8 @@ Actual screenshots from the offline build. Open any image to inspect it at full 
 
 ### Themes / 四種主題
 
+Mist is the default for first-time visitors; a saved theme takes priority. / 首次使用預設為霧白，已保存的主題偏好優先沿用。
+
 Four coordinated palettes change the navigation, cards, map, controls and background together. / 四套配色同步套用於導覽、卡片、地圖、控制項與背景。
 
 | Mint / 薄荷                                                               | Ice / 冰藍                                                                 |
@@ -35,7 +37,7 @@ Four coordinated palettes change the navigation, cards, map, controls and backgr
 | ![Amber warm dark theme / 琥珀暖色主題](docs/images/theme-amber.png) | ![Mist light theme / 霧白亮色主題](docs/images/theme-mist.png)                    |
 | Warm amber on deep brown surfaces. / 深棕底色搭配溫暖琥珀。          | Pale surfaces with deep teal text and accents. / 淺色表面搭配深青綠文字與重點色。 |
 
-The palette button opens background settings: theme, heartbeat speed, highlight intensity, pause and reset. Preferences persist through cookies on HTTP, with a local-storage fallback for offline viewing. System reduced-motion preferences take priority. / 右上角調色盤提供主題、心跳速度、高亮強度、暫停及重置；HTTP 環境透過 Cookie 保存，離線使用本機儲存備援，並尊重系統減少動態效果設定。
+The palette button opens background settings: theme, blink frequency, highlight intensity, pause and reset. Preferences persist through cookies on HTTP, with a local-storage fallback for offline viewing. System reduced-motion preferences take priority. / 右上角調色盤提供主題、閃爍頻率、高亮強度、暫停及重置；HTTP 環境透過 Cookie 保存，離線使用本機儲存備援，並尊重系統減少動態效果設定。
 
 <details>
 <summary>Background settings / 展開背景設定畫面</summary>

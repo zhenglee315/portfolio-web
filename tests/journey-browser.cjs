@@ -217,6 +217,54 @@ async function main() {
         .locator("#journey-map")
         .evaluate((n) => n.viewBox.baseVal.x < 0),
     );
+    // Destination emphasis follows the final API record, including replacement and empty data.
+    for (const countryCode of ["USA", "CHN", original.at(-1).countryCode]) {
+      await page.evaluate(
+        ({ original, countryCode }) => {
+          const rows = structuredClone(original);
+          rows.at(-1).countryCode = countryCode;
+          Portfolio.get("data").replaceJourney(rows);
+          Portfolio.get("journey").select(rows[0].id);
+        },
+        { original, countryCode },
+      );
+      const destination = page.locator(".country.final-country");
+      assert.equal(await destination.count(), 1);
+      assert.equal(await destination.getAttribute("data-country"), countryCode);
+      for (const theme of ["mint", "blue", "amber", "mist"]) {
+        const pulse = await destination.evaluate((node, theme) => {
+          document.documentElement.dataset.theme = theme;
+          const animation = node.getAnimations()[0];
+          animation.pause();
+          animation.currentTime = 0;
+          const rest = getComputedStyle(node).fill;
+          animation.currentTime = 2000;
+          const style = getComputedStyle(node);
+          return {
+            name: style.animationName,
+            duration: style.animationDuration,
+            changesFill: rest !== style.fill,
+            glow: style.filter,
+            transform: style.transform,
+          };
+        }, theme);
+        assert.equal(pulse.name, "country-breathe");
+        assert.equal(pulse.duration, "4s");
+        assert.equal(pulse.changesFill, true);
+        assert.notEqual(pulse.glow, "none");
+        assert.equal(pulse.transform, "none");
+      }
+    }
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(
+      await page
+        .locator(".country.final-country")
+        .evaluate((node) => getComputedStyle(node).animationName),
+      "none",
+    );
+    assert.equal(await page.locator(".country.final-country").count(), 1);
+    await page.evaluate(() => Portfolio.get("data").replaceJourney([]));
+    assert.equal(await page.locator(".country.final-country").count(), 0);
     assert.deepEqual(errors, []);
     console.log(
       "PASS arrival highlighting, playback, manual pause, keyboard/tooltips, language, one/24 stops and restart loop.",

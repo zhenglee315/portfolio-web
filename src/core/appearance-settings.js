@@ -3,7 +3,8 @@ Portfolio.register("appearanceSettings", [], () => {
   const key = "portfolio-appearance";
   const themes = Object.freeze(["mint", "blue", "amber", "mist"]);
   const defaults = Object.freeze({
-    theme: "mint",
+    // Match the HTML first-paint palette; valid saved preferences still take priority.
+    theme: "mist",
     speed: 1,
     brightness: 80,
     paused: false,

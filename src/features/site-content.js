@@ -86,9 +86,7 @@ Portfolio.register("siteContent", ["data"], ({ data }) => {
       ? t("nextChapter", { city: last.city.toUpperCase() })
       : "";
     document.querySelector("#map-hint").textContent =
-      first && last
-        ? t("mapHint", { first: first.city, last: last.city })
-        : t("emptyJourney");
+      first && last ? t("mapHint") : t("emptyJourney");
     const coordinate = document.querySelector("#map-coordinate-value"),
       location = last;
     coordinate.textContent = location

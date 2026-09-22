@@ -167,6 +167,40 @@ async function main() {
       await page.mouse.move(1, 1);
       assert.equal(await pulse(first), "timeline-point-breathe");
     }
+    // Sample real keyframes so both disclosure icons stay equally visible in every palette.
+    for (const theme of ["mint", "blue", "amber", "mist"]) {
+      const samples = await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+        return [".expand-icon .bi", ".project-open .bi"].map((selector) => {
+          const icon = document.querySelector(selector);
+          const animation = icon.getAnimations()[0];
+          animation.pause();
+          animation.currentTime = 0;
+          const rest = getComputedStyle(icon).opacity;
+          const restFilter = getComputedStyle(icon).filter;
+          animation.currentTime = 1200;
+          const style = getComputedStyle(icon);
+          const sample = {
+            name: style.animationName,
+            duration: style.animationDuration,
+            rest,
+            peak: style.opacity,
+            scale: new DOMMatrix(style.transform).a,
+            glowChanged: style.filter !== restFilter,
+            color: style.color,
+          };
+          animation.play();
+          return sample;
+        });
+      }, theme);
+      assert.deepEqual(samples[0], samples[1]);
+      assert.equal(samples[1].name, "icon-breathe");
+      assert.equal(samples[1].duration, "2.4s");
+      assert.equal(samples[1].rest, "0.55");
+      assert.equal(samples[1].peak, "1");
+      assert.equal(samples[1].scale, 1.18);
+      assert.equal(samples[1].glowChanged, true);
+    }
     // Native dialog close paths restore the same stable opener, and history has one close control.
     const opener = page.locator('[data-project="4"]');
     await opener.click();
@@ -290,6 +324,17 @@ async function main() {
         getComputedStyle(document.querySelector(".pointer-glow")).display ===
         "none",
     );
+    for (const selector of [".expand-icon .bi", ".project-open .bi"]) {
+      const reduced = await page
+        .locator(selector)
+        .first()
+        .evaluate((icon) => ({
+          animation: getComputedStyle(icon).animationName,
+          glow: getComputedStyle(icon).filter,
+        }));
+      assert.equal(reduced.animation, "none");
+      assert.notEqual(reduced.glow, "none");
+    }
     const touch = await browser.newPage({
       offline: true,
       isMobile: true,

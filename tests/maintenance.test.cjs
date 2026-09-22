@@ -76,7 +76,8 @@ test("every stylesheet is composed once and declared tokens have consumers", () 
   );
   for (const token of tokens)
     assert(
-      contents.includes(`var(${token}`) || contents.includes(`"${token}"`),
+      contents.replace(/var\(\s+/g, "var(").includes(`var(${token}`) ||
+        contents.includes(`"${token}"`),
       `Unused theme token: ${token}`,
     );
 });

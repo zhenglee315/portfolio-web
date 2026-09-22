@@ -48,6 +48,10 @@ detail 和 skills 每頁一次回傳。detail=null 或空字串時不顯示詳�
 
 切換語言重取已載入頁，確認相同 ID、順序與 total 後才切換，保留展開與 selectedId。失敗保留原語言，可重試。沒有 revision 的頁碼契約無法保證跨請求快照隔離；total 改變或重複 ID 會拒收，後端仍須保證穩定排序。
 
+## 詳情入口的共用動態效果
+
+卡片右上角的展開箭頭與「顯示更多」加號共用 `src/styles/motion.css` 的 `icon-breathe`：2.4 秒週期、低點透明度 0.55、高點透明度 1／縮放 1.18。`theme.css` 的 `--disclosure-icon-pulse-*` 統一設定強度，四種主題沿用各自色彩。動畫只作用於 SVG，圓形按鈕的尺寸與點擊範圍維持穩定。hover／鍵盤焦點保留填色後的箭頭對比；減少動態效果時只保留靜態柔光。不新增 JavaScript 計時器或 API 欄位。
+
 ## 驗證與維護
 
 `tests/projects.test.cjs` 驗證三語、6/6/3 分頁、空值、非法 ID／日期、重試、去重與語言切換原子性；`tests/api-browser.cjs` 驗證大量資料和完整技能；`tests/browser.cjs` 驗證 15 個 dialog × 三語、RWD 與原生互動。`tests/maintenance.test.cjs` 核對文件範例與 mock 一致。

@@ -23,7 +23,7 @@
 
 ```json
 {
-  "theme": "mint",
+  "theme": "mist",
   "speed": 1,
   "brightness": 80,
   "paused": false
@@ -32,7 +32,7 @@
 
 | key          | 合法值／預設                                 | 用途                                                                             |
 | ------------ | -------------------------------------------- | -------------------------------------------------------------------------------- |
-| `theme`      | `mint`、`blue`、`amber`、`mist`；預設 `mint` | 薄荷、冰藍、琥珀、霧白；英文 Mint、Ice、Amber、Mist；簡體 薄荷、冰蓝、琥珀、雾白 |
+| `theme`      | `mint`、`blue`、`amber`、`mist`；預設 `mist` | 薄荷、冰藍、琥珀、霧白；英文 Mint、Ice、Amber、Mist；簡體 薄荷、冰蓝、琥珀、雾白 |
 | `speed`      | 0.4～2，步進 0.1；預設 1                     | 背景十字呼吸與新訊號間隔的倍率                                                   |
 | `brightness` | 20～100，步進 5；預設 80                     | 背景訊號圖層強度，不降低正文對比                                                 |
 | `paused`     | boolean；預設 false                          | 使用者暫停背景動畫的偏好，不控制 Journey 飛機或其他元件                          |
@@ -49,7 +49,7 @@ Cookie 名稱為 `portfolio-appearance`，內容是 URI 編碼的 JSON，`Path=/
 
 ## 動畫與樣式規則
 
-- 預設薄荷沿用原 Tiffany 配色。冰藍、琥珀共享 tonal scale，只改主題 hue 與主色；卡片、地圖、聊天框、標籤與滑鼠光暈一同使用 theme token。
+- 預設使用霧白亮色；薄荷保留原 Tiffany 配色。冰藍、琥珀共享 tonal scale，只改主題 hue 與主色；卡片、地圖、聊天框、標籤與滑鼠光暈一同使用 theme token。
 - 只建立可視區域網格，頁面變長不增加 SVG 節點；ResizeObserver 在視窗或側欄尺寸改變時重新計算十字和網格交點。
 - 初次進入先完成上、下、左、右定位，再呈現內容及整塊側欄／手機導覽；側欄底色、文字與圖示一起淡入，避免底色提早出現。1.4 秒內完成進場。切換語言或載入更多不重播。
 - 圖層使用 `aria-hidden` 與 `pointer-events: none`，不攔截點擊／鍵盤，也不增加閱讀順序。
@@ -65,7 +65,7 @@ Cookie 名稱為 `portfolio-appearance`，內容是 URI 編碼的 JSON，`Path=/
 
 ## 霧白亮色主題
 
-新增 `mist`（霧白／雾白／Mist），沿用相同設定物件、Cookie、本機備份與前端翻譯。theme.css 使用 `color-scheme: light`、灰白背景、深灰綠文字及深青綠重點色；卡片、地圖、聊天框、導覽與陰影各自使用語意 token。`--on-accent` 統一控制深色重點底上的文字對比。四個選項以兩欄排列，避免窄螢幕擁擠；預設仍為薄荷。
+新增 `mist`（霧白／雾白／Mist），沿用相同設定物件、Cookie、本機備份與前端翻譯。theme.css 使用 `color-scheme: light`、灰白背景、深灰綠文字及深青綠重點色；卡片、地圖、聊天框、導覽與陰影各自使用語意 token。`--on-accent` 統一控制深色重點底上的文字對比。四個選項以兩欄排列，避免窄螢幕擁擠；預設使用霧白；有效的既有 Cookie／本機主題偏好優先保留。HTML 初始 data-theme 與 appearanceSettings.defaults 同為 mist，避免首次載入先套用深色再切亮色。
 
 ## Cold-start entrance / 冷啟動進場（2026-09-22）
 

@@ -41,7 +41,8 @@
   font-size: 21px;
   transition: var(--duration-hover);
 }
-.project-open:hover {
+.project-open:hover,
+.project-open:focus-visible {
   background: var(--accent);
   color: var(--project-open-hover);
   transform: rotate(45deg);
@@ -252,4 +253,10 @@
 .project-open .bi {
   width: 18px;
   height: 18px;
+}
+
+/* Keep the pulsing arrow readable over the filled hover and keyboard-focus surface. */
+.project-open:is(:hover, :focus-visible) .bi {
+  --icon-pulse-rest-color: var(--project-open-hover);
+  --icon-pulse-peak-color: var(--project-open-hover);
 }

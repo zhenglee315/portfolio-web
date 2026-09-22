@@ -1,4 +1,4 @@
-/* Map geometry, playback states, city pulse and stop carousel. */
+/* Map geometry, playback states, destination pulses and stop carousel. */
 .map-panel {
   border: 1px solid var(--panel-outline);
   border-radius: 10px;
@@ -399,6 +399,28 @@
   fill: var(--country-final);
   stroke: var(--country-final-border);
   stroke-width: 0.9;
+  /* The journey module assigns this class from the final record, never a fixed country. */
+  animation: country-breathe var(--duration-country-pulse) ease-in-out
+    infinite;
+}
+/* Continuous breathing changes paint only; country geometry and city targets stay fixed. */
+@keyframes country-breathe {
+  0%,
+  100% {
+    fill: var(--country-final);
+    stroke: var(--country-final-border);
+    filter: none;
+  }
+  50% {
+    fill: var(--country-pulse-fill);
+    stroke: var(--accent);
+    filter: var(--country-pulse-glow);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .country.final-country {
+    animation: none;
+  }
 }
 .stops-carousel {
   display: grid;

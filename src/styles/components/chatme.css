@@ -216,10 +216,7 @@
     opacity: 1;
   }
 }
-.chatme-bubble .pixel-shell {
-  background: transparent;
-  box-shadow: inset 0 0 0 6px var(--chat-outline);
-}
+/* Inherit the solid stepped shell from pixel-bubble.css so all four corners stay outlined. */
 .chatme-bubble .pixel-content {
   background: linear-gradient(
     135deg,

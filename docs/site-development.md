@@ -67,3 +67,7 @@
 ### Medium 社群入口
 
 `social.medium` 直接綁定 `data-social="medium"`，值為普通 URL（目前 `https://medium.com/@WilsonLeee`）；空字串隱藏入口。使用本地 Bootstrap `medium` SVG，輸出 `bi bi-medium` class，沿用既有 Icons 元件，無需 icon font 或 CDN。三語 aria-label／title 在 `ui.medium`，連結以新分頁開啟。
+
+## Chatme 共用像素邊框
+
+桌面及手機 chatbox 與地圖資訊框共用 `pixel-bubble.css` 的 `.pixel-shell`／`.pixel-content` 階梯裁切及 `.pixel-tail` 尾端。外殼使用 `theme.css` 的 `--bubble-outline` 實心填色，確保四角與邊緣連續；不另建透明外殼或矩形 inset 邊框。Chatme 僅保留自身內容排版、漸層表面、定位及淡入淡出，不影響三秒閒置關閉、hover 或鍵盤操作。

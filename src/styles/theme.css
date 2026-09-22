@@ -15,11 +15,18 @@
   --ease-drawer: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-timeline-pulse: 2.2s;
   --duration-city-pulse: 2.4s;
+  --duration-country-pulse: 4s;
+  --country-pulse-fill: color-mix(
+    in srgb,
+    var(--country-final) 78%,
+    var(--accent)
+  );
+  --country-pulse-glow: drop-shadow(0 0 2px var(--glow-medium));
   --duration-chat-pulse: 4s;
   --duration-icon-pulse: 2.4s;
   --collection-icon-size: 24px;
-  --collection-icon-pulse-scale: 1.18;
-  --collection-icon-pulse-glow: drop-shadow(0 0 3px var(--accent))
+  --disclosure-icon-pulse-scale: 1.18;
+  --disclosure-icon-pulse-glow: drop-shadow(0 0 3px var(--accent))
     drop-shadow(0 0 10px var(--glow-bright));
   --link-border: #587b7b;
   --bg: #0c1215;
@@ -42,7 +49,6 @@
   --pointer-glow-color: #81d8d012;
   --pointer-glow-radius: clamp(280px, 40vw, 560px);
   --chat-link-hover: #14736d;
-  --chat-outline: #071315aa;
   --chat-gradient-start: #d7f3f2f2;
   --chat-gradient-end: #cbedede6;
   --chat-bevel-light: #edfdf7d9;
@@ -231,7 +237,6 @@ html:lang(zh-Hans) {
   --scroll-thumb: #7d9d8f;
   /* Pixel bubbles stay pale; their outlines are softened rather than inverted. */
   --chat-shadow: #91aca3;
-  --chat-outline: #94aea599;
   --chat-text: var(--text);
   --chat-muted: var(--muted);
   --chat-divider: #9bb7aa;
@@ -306,7 +311,6 @@ html:lang(zh-Hans) {
   --glow-medium: hsl(var(--theme-hue) 52.7% 67.6% / 0.333);
   --pointer-glow-color: hsl(var(--theme-hue) 52.7% 67.6% / 0.071);
   --chat-link-hover: hsl(var(--theme-hue) 70.4% 26.5%);
-  --chat-outline: hsl(var(--theme-hue) 50% 5.5% / 0.667);
   --chat-gradient-start: hsl(var(--theme-hue) 53.8% 89.8% / 0.949);
   --chat-gradient-end: hsl(var(--theme-hue) 48.6% 86.3% / 0.902);
   --chat-bevel-light: hsl(var(--theme-hue) 80% 96.1% / 0.851);

@@ -15,7 +15,7 @@
   }
 }
 
-/* Shared SVG silhouette glow for chat and historical-project disclosure icons. */
+/* Shared SVG silhouette glow for chat and disclosure icons. */
 @keyframes icon-breathe {
   0%,
   100% {
@@ -28,6 +28,27 @@
     opacity: 1;
     transform: scale(var(--icon-pulse-peak-scale, 1));
     color: var(--icon-pulse-peak-color, currentColor);
-    filter: var(--icon-pulse-peak-glow, drop-shadow(0 0 7px var(--glow-bright)));
+    filter: var(
+      --icon-pulse-peak-glow,
+      drop-shadow(0 0 7px var(--glow-bright))
+    );
+  }
+}
+
+/* Detail arrows and collection controls share one pulse; each component owns its size. */
+.expand-icon .bi,
+.project-open .bi {
+  --icon-pulse-rest-opacity: 0.55;
+  --icon-pulse-rest-color: var(--accent);
+  --icon-pulse-peak-color: var(--text);
+  --icon-pulse-peak-scale: var(--disclosure-icon-pulse-scale);
+  --icon-pulse-peak-glow: var(--disclosure-icon-pulse-glow);
+  animation: icon-breathe var(--duration-icon-pulse) ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .expand-icon .bi,
+  .project-open .bi {
+    animation: none;
+    filter: drop-shadow(0 0 3px var(--glow-medium));
   }
 }

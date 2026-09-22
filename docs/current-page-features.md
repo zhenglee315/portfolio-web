@@ -88,7 +88,7 @@
 | JOURNEY-05 | 旅程狀態面板       | 顯示目前序號／總數、日期、機構、職稱、地區與下一段路線；標題旁地點數量由清單長度計算                                        | `journey.status / content.journeyStops`                           | Derive selection labels, next destination and counts from the same records.         |
 | JOURNEY-06 | 城市資訊浮框       | hover、鍵盤聚焦或觸控選擇呈現城市、國家、期間、依 type 顯示圖示的機構名稱、職稱／學位及可空 detail 資訊；支援關閉與邊界定位 | `cityBubble`                                                      | Render and position localized city details without depending on SVG node identity.  |
 | JOURNEY-07 | 城市高亮與呼吸效果 | 選取、hover、焦點及飛機抵達時讓相應城市點高亮／呼吸                                                                         | `journey.highlight (private) / src/styles/components/journey.css` | Highlight the selected or reached city while preserving motion preferences.         |
-| JOURNEY-08 | 最後所在地國家高亮 | 取最後一筆 countryCode 對應國家輪廓，與目前選取的城市點分開呈現                                                             | `journey.build (private)`                                         | Highlight the final array entry countryCode without a lookup table.                 |
+| JOURNEY-08 | 最後所在地國家高亮 | 取最後一筆 countryCode 對應國家輪廓，以主題色持續平滑呼吸高亮；減少動態時保留靜態填色，與目前選取的城市點分開呈現               | `journey.build (private)`                                         | Highlight the final array entry countryCode without a lookup table.                 |
 | JOURNEY-09 | 可滑動地點清單     | 寬度溢出才出現左右箭頭，到邊界停用；支援手指、觸控板與方向鍵／Home／End，並自動帶出被選中或抵達的地點                       | `carousel`                                                        | Measure overflow, scroll destinations and reveal the active item.                   |
 | JOURNEY-10 | 地圖尺寸調整       | 隨容器及螢幕尺寸調整地圖呈現，超寬及新增範圍擴充 viewBox；標籤量測避讓，浮框同步重新定位                                    | `journey.resize / MapGeometry.layoutLabels / cityBubble.position` | Resize the geographic viewport and reposition open tooltips.                        |
 
@@ -104,14 +104,14 @@
 
 ### 2.6 Projects 專案（6 項）
 
-| ID         | 功能               | 當前行為                                                                                                     | 模組／函式入口                             | English implementation note                                              |
-| ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | ------------------------------------------------------------------------ |
-| PROJECT-01 | 專案時間軸分組     | 保持後端陣列順序，僅相鄰且同開始月份的專案共用節點                                                           | `content.projectGroups (private)`          | Group adjacent equal months without sorting server records.              |
-| PROJECT-02 | 專案摘要卡片       | 機構、期間、類別、名稱、摘要與技能；不顯示原本 01／02 卡片序號，內容靠上且高度隨內容調整                     | `content.projectCard (private)`            | Render safe project summaries with stable IDs and content-driven height. |
-| PROJECT-03 | 期間月數計算       | 起訖月份含頭含尾計算並加上本地化括號；例如 Sep 2025—Jan 2026 為 5 個月；卡片與詳細視窗共用                   | `CareerDates.projectPeriod`                | Reuse inclusive month arithmetic in cards and detail dialogs.            |
-| PROJECT-04 | 專案展開／收合     | 單一列表六筆預覽，超過六筆共用 plus-circle-dotted 呼吸入口；每次追加六筆，失敗重試，收合重開使用快取         | `collectionDisclosure / content.refresh`   | Preserve server order and reuse the shared paginated disclosure.         |
-| PROJECT-05 | 詳細資料視窗       | 開啟專案完整流程說明、流程節點、技術說明、個人貢獻、成果與技能；可用關閉鈕、背景或原生 dialog 的 Escape 關閉 | `projects.refresh / content.projectDetail` | Keep the selected project dialog attached to its stable record ID.       |
-| PROJECT-06 | 專案高亮與節點呼吸 | 預設第一張高亮；hover 其他專案時轉移至該卡片及其所屬時間軸節點                                               | `src/styles/components/projects.css`       | Transfer project highlight and pulse to the hovered timeline group.      |
+| ID         | 功能               | 當前行為                                                                                                                                       | 模組／函式入口                             | English implementation note                                              |
+| ---------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------ |
+| PROJECT-01 | 專案時間軸分組     | 保持後端陣列順序，僅相鄰且同開始月份的專案共用節點                                                                                             | `content.projectGroups (private)`          | Group adjacent equal months without sorting server records.              |
+| PROJECT-02 | 專案摘要卡片       | 機構、期間、類別、名稱、摘要與技能；不顯示原本 01／02 卡片序號，內容靠上且高度隨內容調整                                                       | `content.projectCard (private)`            | Render safe project summaries with stable IDs and content-driven height. |
+| PROJECT-03 | 期間月數計算       | 起訖月份含頭含尾計算並加上本地化括號；例如 Sep 2025—Jan 2026 為 5 個月；卡片與詳細視窗共用                                                     | `CareerDates.projectPeriod`                | Reuse inclusive month arithmetic in cards and detail dialogs.            |
+| PROJECT-04 | 專案展開／收合     | 單一列表六筆預覽，超過六筆共用 plus-circle-dotted 呼吸入口；每次追加六筆，失敗重試，收合重開使用快取                                           | `collectionDisclosure / content.refresh`   | Preserve server order and reuse the shared paginated disclosure.         |
+| PROJECT-05 | 詳細資料視窗       | 右上角箭頭共用展開加號的心跳高亮；開啟專案完整流程說明、流程節點、技術說明、個人貢獻、成果與技能；可用關閉鈕、背景或原生 dialog 的 Escape 關閉 | `projects.refresh / content.projectDetail` | Keep the selected project dialog attached to its stable record ID.       |
+| PROJECT-06 | 專案高亮與節點呼吸 | 預設第一張高亮；hover 其他專案時轉移至該卡片及其所屬時間軸節點                                                                                 | `src/styles/components/projects.css`       | Transfer project highlight and pulse to the hovered timeline group.      |
 
 ### 2.7 Skills 與共用技能標籤（4 項）
 

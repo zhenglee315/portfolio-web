@@ -19,11 +19,18 @@
   --ease-drawer: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-timeline-pulse: 2.2s;
   --duration-city-pulse: 2.4s;
+  --duration-country-pulse: 4s;
+  --country-pulse-fill: color-mix(
+    in srgb,
+    var(--country-final) 78%,
+    var(--accent)
+  );
+  --country-pulse-glow: drop-shadow(0 0 2px var(--glow-medium));
   --duration-chat-pulse: 4s;
   --duration-icon-pulse: 2.4s;
   --collection-icon-size: 24px;
-  --collection-icon-pulse-scale: 1.18;
-  --collection-icon-pulse-glow: drop-shadow(0 0 3px var(--accent))
+  --disclosure-icon-pulse-scale: 1.18;
+  --disclosure-icon-pulse-glow: drop-shadow(0 0 3px var(--accent))
     drop-shadow(0 0 10px var(--glow-bright));
   --link-border: #587b7b;
   --bg: #0c1215;
@@ -46,7 +53,6 @@
   --pointer-glow-color: #81d8d012;
   --pointer-glow-radius: clamp(280px, 40vw, 560px);
   --chat-link-hover: #14736d;
-  --chat-outline: #071315aa;
   --chat-gradient-start: #d7f3f2f2;
   --chat-gradient-end: #cbedede6;
   --chat-bevel-light: #edfdf7d9;
@@ -235,7 +241,6 @@ html:lang(zh-Hans) {
   --scroll-thumb: #7d9d8f;
   /* Pixel bubbles stay pale; their outlines are softened rather than inverted. */
   --chat-shadow: #91aca3;
-  --chat-outline: #94aea599;
   --chat-text: var(--text);
   --chat-muted: var(--muted);
   --chat-divider: #9bb7aa;
@@ -310,7 +315,6 @@ html:lang(zh-Hans) {
   --glow-medium: hsl(var(--theme-hue) 52.7% 67.6% / 0.333);
   --pointer-glow-color: hsl(var(--theme-hue) 52.7% 67.6% / 0.071);
   --chat-link-hover: hsl(var(--theme-hue) 70.4% 26.5%);
-  --chat-outline: hsl(var(--theme-hue) 50% 5.5% / 0.667);
   --chat-gradient-start: hsl(var(--theme-hue) 53.8% 89.8% / 0.949);
   --chat-gradient-end: hsl(var(--theme-hue) 48.6% 86.3% / 0.902);
   --chat-bevel-light: hsl(var(--theme-hue) 80% 96.1% / 0.851);
@@ -504,7 +508,7 @@ h2 > span[data-i18n] {
   }
 }
 
-/* Shared SVG silhouette glow for chat and historical-project disclosure icons. */
+/* Shared SVG silhouette glow for chat and disclosure icons. */
 @keyframes icon-breathe {
   0%,
   100% {
@@ -517,7 +521,28 @@ h2 > span[data-i18n] {
     opacity: 1;
     transform: scale(var(--icon-pulse-peak-scale, 1));
     color: var(--icon-pulse-peak-color, currentColor);
-    filter: var(--icon-pulse-peak-glow, drop-shadow(0 0 7px var(--glow-bright)));
+    filter: var(
+      --icon-pulse-peak-glow,
+      drop-shadow(0 0 7px var(--glow-bright))
+    );
+  }
+}
+
+/* Detail arrows and collection controls share one pulse; each component owns its size. */
+.expand-icon .bi,
+.project-open .bi {
+  --icon-pulse-rest-opacity: 0.55;
+  --icon-pulse-rest-color: var(--accent);
+  --icon-pulse-peak-color: var(--text);
+  --icon-pulse-peak-scale: var(--disclosure-icon-pulse-scale);
+  --icon-pulse-peak-glow: var(--disclosure-icon-pulse-glow);
+  animation: icon-breathe var(--duration-icon-pulse) ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .expand-icon .bi,
+  .project-open .bi {
+    animation: none;
+    filter: drop-shadow(0 0 3px var(--glow-medium));
   }
 }
 
@@ -1216,7 +1241,7 @@ h1 .greeting {
 
 
 /* Source: styles/components/journey.css */
-/* Map geometry, playback states, city pulse and stop carousel. */
+/* Map geometry, playback states, destination pulses and stop carousel. */
 .map-panel {
   border: 1px solid var(--panel-outline);
   border-radius: 10px;
@@ -1617,6 +1642,28 @@ h1 .greeting {
   fill: var(--country-final);
   stroke: var(--country-final-border);
   stroke-width: 0.9;
+  /* The journey module assigns this class from the final record, never a fixed country. */
+  animation: country-breathe var(--duration-country-pulse) ease-in-out
+    infinite;
+}
+/* Continuous breathing changes paint only; country geometry and city targets stay fixed. */
+@keyframes country-breathe {
+  0%,
+  100% {
+    fill: var(--country-final);
+    stroke: var(--country-final-border);
+    filter: none;
+  }
+  50% {
+    fill: var(--country-pulse-fill);
+    stroke: var(--accent);
+    filter: var(--country-pulse-glow);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .country.final-country {
+    animation: none;
+  }
 }
 .stops-carousel {
   display: grid;
@@ -2261,7 +2308,8 @@ h1 .greeting {
   font-size: 21px;
   transition: var(--duration-hover);
 }
-.project-open:hover {
+.project-open:hover,
+.project-open:focus-visible {
   background: var(--accent);
   color: var(--project-open-hover);
   transform: rotate(45deg);
@@ -2472,6 +2520,12 @@ h1 .greeting {
 .project-open .bi {
   width: 18px;
   height: 18px;
+}
+
+/* Keep the pulsing arrow readable over the filled hover and keyboard-focus surface. */
+.project-open:is(:hover, :focus-visible) .bi {
+  --icon-pulse-rest-color: var(--project-open-hover);
+  --icon-pulse-peak-color: var(--project-open-hover);
 }
 
 
@@ -2920,10 +2974,7 @@ dialog p {
     opacity: 1;
   }
 }
-.chatme-bubble .pixel-shell {
-  background: transparent;
-  box-shadow: inset 0 0 0 6px var(--chat-outline);
-}
+/* Inherit the solid stepped shell from pixel-bubble.css so all four corners stay outlined. */
 .chatme-bubble .pixel-content {
   background: linear-gradient(
     135deg,
@@ -3285,19 +3336,6 @@ dialog p {
 .expand-icon .bi {
   width: var(--collection-icon-size);
   height: var(--collection-icon-size);
-  /* Emphasize this disclosure through shared animation parameters, without changing chat. */
-  --icon-pulse-rest-opacity: 0.55;
-  --icon-pulse-rest-color: var(--accent);
-  --icon-pulse-peak-color: var(--text);
-  --icon-pulse-peak-scale: var(--collection-icon-pulse-scale);
-  --icon-pulse-peak-glow: var(--collection-icon-pulse-glow);
-  animation: icon-breathe var(--duration-icon-pulse) ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .expand-icon .bi {
-    animation: none;
-    filter: drop-shadow(0 0 3px var(--glow-medium));
-  }
 }
 
 /* Experience inherits its card offset and spacing from the timeline geometry. */

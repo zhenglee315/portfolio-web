@@ -97,6 +97,13 @@ async function coldPage(
         "hidden",
   );
   assert.equal(await page.evaluate(() => typeof Portfolio), "undefined");
+  assert.equal(await page.locator("html").getAttribute("data-theme"), "mist");
+  assert.equal(
+    await page
+      .locator("html")
+      .evaluate((el) => getComputedStyle(el).colorScheme),
+    "light",
+  );
   assert.equal(
     await page.locator(".intro").isVisible(),
     false,

@@ -8,7 +8,7 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 /** Read an immediately preceding block or line comment, excluding unrelated earlier statements. */
 function precedingComment(source, offset) {
   const prefix = source.slice(0, offset).trimEnd();
-  const block = prefix.match(/\/\*((?:(?!\*\/)[\s\S])*)\*\/$/);
+  const block = prefix.match(/\/\*((?:(?!\/\*|\*\/)[\s\S])*)\*\/$/);
   if (block)
     return block[1]
       .replace(/^\s*\* ?/gm, "")

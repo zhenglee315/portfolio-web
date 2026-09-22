@@ -45,6 +45,12 @@ MapGeometry.project 接收 latitude／longitude。緯度在計算時限制至約
 
 標籤以 getBBox 量測文字，在多個方向與距離嘗試放置，避開其他標籤、節點與邊界。選取／抵達城市優先配置；無空間時隱藏文字但保留停駐點、tooltip 與滑動選項。resize、語言、資料、字型載入與高亮變化都會重新布局。圓點與可見名稱統一支援互動。
 
+## 最後所在地的持續呼吸高亮
+
+`journey.build` 每次重建地圖時，以 Journey 陣列最後一筆的 `countryCode` 比對本地 SVG 的 `data-country`，只為匹配輪廓加上 `final-country`。保持後端排序，與播放／手動選取的城市無關；換資料或語言時重新判定。空陣列或底圖沒有匹配輪廓時，不高亮任何國家，不回退到寫死的國家，也不增加 mapping table 或 API 欄位。
+
+`journey.css` 的 `country-breathe` 只改變填色、邊框及柔光，固定 4 秒循環，以 ease-in-out 持續由暗漸亮再回暗；0%／100% 為低點、50% 為高點，與聊天圖示相同節奏，沒有隨機排程或雙拍停頓，沒有縮放或改動地圖座標。速度、峰值填色與柔光由 `theme.css` 的 `--duration-country-pulse`、`--country-pulse-fill`、`--country-pulse-glow` 統一調整，四種主題共用。`prefers-reduced-motion` 停用動畫並保留靜態國家高亮。此裝飾效果與飛機播放獨立，不新增 JS 計時器。
+
 ## 維護與驗證
 
 三語 mock 需同時維護，資料版本與檔案清單在 config/build.json。API 格式見 [API 規格](api-interface-format.md)，逐欄英文註解見 [mock/journey/README.md](../mock/journey/README.md)。

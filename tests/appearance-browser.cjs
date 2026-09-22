@@ -52,6 +52,7 @@ async function main() {
     await page.waitForFunction(
       () => document.documentElement.dataset.ready === "true",
     );
+    assert.equal(await page.locator("html").getAttribute("data-theme"), "mist");
     await page.waitForFunction(
       () => !document.body.classList.contains("field-entering"),
     );
@@ -79,6 +80,14 @@ async function main() {
     );
     for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
       await page.evaluate((locale) => I18n.setLanguage(locale), locale);
+      assert.equal(
+        await page.locator('[data-i18n="ui.journeyTitle"]').textContent(),
+        locale === "en"
+          ? "A journey in engineering"
+          : locale === "zh-Hans"
+            ? "工程足迹"
+            : "工程旅程",
+      );
       const labels = await page
         .locator("[data-theme-option] span")
         .allTextContents();
@@ -197,7 +206,7 @@ async function main() {
     await page.locator("[data-appearance-reset]").click();
     assert.deepEqual(
       await page.evaluate(() => Portfolio.get("appearanceSettings").get()),
-      { theme: "mint", speed: 1, brightness: 80, paused: false },
+      { theme: "mist", speed: 1, brightness: 80, paused: false },
     );
     await page.emulateMedia({ reducedMotion: "reduce" });
     // Media-query change events are delivered asynchronously by the browser.
@@ -269,7 +278,7 @@ async function main() {
     );
     assert.equal(
       await httpPage.locator("html").getAttribute("data-theme"),
-      "mint",
+      "mist",
     );
     await httpPage.evaluate(() =>
       Portfolio.get("appearanceSettings").update({
@@ -281,7 +290,7 @@ async function main() {
     );
     assert.deepEqual(
       await httpPage.evaluate(() => Portfolio.get("appearanceSettings").get()),
-      { theme: "mint", speed: 2, brightness: 20, paused: false },
+      { theme: "mist", speed: 2, brightness: 20, paused: false },
     );
     await httpContext.close();
     console.log(
