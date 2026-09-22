@@ -1,6 +1,16 @@
 # Final verification / 最後驗證
 
-## Latest: cold-start entrance / 最新：冷啟動進場（2026-09-22）
+## Latest: maintainability audit / 最新：可維護性檢查（2026-09-23）
+
+**13/13 suites passed after cleanup, including 36 contract/maintenance cases; 57 JavaScript files passed syntax checks.** Source and generated output match. / 整理後完整重跑，13／13 組及 36 個契約／維護案例通過，57 份 JavaScript 語法檢查通過，來源與建置產物一致。執行結果在 `artifacts/test-results.json`。
+
+The function reference contains **232 entries**, including window factories, public object arrows and accessors. Independent syntax-tree inspection confirmed all **172 named browser functions/interfaces** are represented. / 函式索引現有 232 項，補齊 window 工廠、物件箭頭介面和 getter/setter；另以語法樹核對前端 172 個具名函式／介面，沒有漏項。匿名回呼由所屬功能／測試情境說明，產生器仍遵循專案宣告格式。
+
+Removed unused detail-retry CSS and redundant project-card declarations. Updated stale Projects view documentation, root LICENSE ownership and maintenance rules. No packages were added. / 移除無引用的 detail-retry 舊樣式、合併專案卡重複及被覆蓋的規則，修正過時 view 描述、授權檔責任及函式維護規則；沒有新增依賴。
+
+Coverage includes three locales, four themes, mobile/tablet/desktop/4K, startup ordering, interactions, pagination, empty/single/multiple records and offline resources. No other confirmed dead code was found; tested scenarios do not prove every possible dynamic path. / 覆蓋三語、四主題、多尺寸、冷啟動、互動、分頁及空／單筆／多筆資料。目前沒有發現其他可確認的廢棄代碼；保留資產與檢查界線見 [maintenance-audit.md](maintenance-audit.md)。
+
+## Previous: cold-start entrance / 前次：冷啟動進場（2026-09-22）
 
 **13/13 suites passed, including 36 contract/maintenance cases.** Added a browser suite that holds deferred JavaScript before first paint, disables cache and delays data. It verifies no pre-ready content leakage across three locales and 390/1024/1440/3840px widths, plus reduced motion, saved pause and localized failure/retry. Existing chat entrance, hover retention and three-second idle tests also pass. / **13/13 組通過，包含 36 個契約／維護案例**。新增測試從 JS 下載前開始逐幀檢查，涵蓋慢速資料、三語四尺寸、動態偏好與錯誤重試；既有聊天框進場、hover 保留及三秒淡出仍通過。
 

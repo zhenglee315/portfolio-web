@@ -7,8 +7,7 @@
   margin: 18px 0;
 }
 .load-page,
-.skills-load-more,
-.detail-retry {
+.skills-load-more {
   border: 1px solid var(--control-border);
   border-radius: var(--radius-card);
   padding: 10px 16px;
@@ -17,8 +16,7 @@
   color: var(--accent);
 }
 .load-page:hover,
-.skills-load-more:hover,
-.detail-retry:hover {
+.skills-load-more:hover {
   background: var(--control-hover);
 }
 .load-page:disabled,

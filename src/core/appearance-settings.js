@@ -93,8 +93,10 @@ Portfolio.register("appearanceSettings", [], () => {
     themes,
     defaults,
     ranges,
+    /** Return a detached snapshot of the current appearance preferences. */
     get: () => ({ ...state }),
     update,
+    /** Restore canonical appearance defaults through the shared update boundary. */
     reset: () => update(defaults),
   });
 });

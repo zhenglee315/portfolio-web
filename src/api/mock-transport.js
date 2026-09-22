@@ -223,6 +223,7 @@ window.MockPortfolioTransport = (() => {
     }
     return Object.freeze({
       request,
+      /** Return a detached request history for transport diagnostics and tests. */
       get requests() {
         return clone(requests);
       },

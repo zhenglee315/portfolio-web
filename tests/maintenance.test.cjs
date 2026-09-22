@@ -41,8 +41,34 @@ test("authored files have documented ownership and code entry comments", () => {
   );
 });
 test("named function comments and generated reference stay synchronized", async () => {
-  const { functionDocument } = await import(
+  const { functionDocument, scanFunctions } = await import(
     "../scripts/document-functions.mjs"
+  );
+  // Public factories and accessors must not silently disappear from the index again.
+  const source = [
+    "/** Build the API client. */",
+    "window.createClient = (transport) => { return transport; };",
+    "const api = {",
+    "/** Read current state. */",
+    "get state() { return {}; },",
+    "/** Restore defaults. */",
+    "reset: () => {},",
+    "};",
+    'const glob = "**/*";',
+    "/** A comment following a glob must not absorb earlier source text. */",
+    "function verify() {}",
+  ].join("\n");
+  const indexed = scanFunctions(source, true);
+  assert.deepEqual(
+    indexed.map((row) => row.name),
+    ["window.createClient", "get state", "reset", "verify"],
+  );
+  assert(
+    indexed.every((row) => row.comment && !row.comment.includes("const glob")),
+  );
+  assert.equal(
+    scanFunctions("window.missing = () => {};", true)[0].comment,
+    "",
   );
   assert.equal(
     read("docs/function-reference.md").replaceAll("\r\n", "\n"),

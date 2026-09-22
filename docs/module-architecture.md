@@ -225,3 +225,7 @@ sidebarRail 依賴 navigation 產生的連結，標題直接使用現有翻譯�
 `tests/maintenance.test.cjs` 隨 contracts 執行，檢查 project-structure 來源責任清單與函式索引、程式檔頭註解、CSS 唯一入口、未引用 token、Markdown 本地連結、JSON 範例及功能 ID 對照。完整稽核與保留資產理由見 [maintenance-audit.md](maintenance-audit.md)。錯誤提示使用前端 UI 字典，無須等待 API；navigation 同時處理資料早於／晚於 window.load 的初始化。
 
 第 3 支詳細契約與欄位對照見 [Experience 開發文件](experiences-development.md)。skills.tags 共用布局，但 Experience 傳入直接文字，其他集合仍傳入 skillIds；不把直接文字轉回技能 ID。
+
+## 函式文件維護規則（2026-09-23）
+
+`document-functions.mjs` 收錄具名函式、直接指派箭頭 helper，以及 src 內的 window 工廠、物件箭頭介面與 getter/setter；皆須有前置英文用途註解。宣告標頭獨立成行，函式不要藏在多變數宣告或單行 return 物件內。匿名事件回呼、註冊模組的工廠閉包及測試替身方法由所屬模組／測試情境說明。修改後執行 `node scripts/document-functions.mjs`，維護測試會驗證索引、公開入口掃描與缺失註解。掃描器按格式慣例運作，並非完整 AST 解析器；新增語法形式時須同步擴充掃描與測試。

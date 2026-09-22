@@ -69,8 +69,13 @@ test("empty collections are valid and localized services return empty views", ()
 });
 test("month arithmetic counts inclusive unions and excludes education", () => {
   const { ctx } = context(),
-    dates = ctx.CareerDates,
-    work = (startMonth, endMonth) => ({ type: "work", startMonth, endMonth });
+    dates = ctx.CareerDates;
+  /** Create a minimal work record for inclusive month-union cases. */
+  const work = (startMonth, endMonth) => ({
+    type: "work",
+    startMonth,
+    endMonth,
+  });
   assert.equal(
     dates.workDuration([work("2023-01", "2023-03"), work("2023-03", "2023-05")])
       .totalMonths,

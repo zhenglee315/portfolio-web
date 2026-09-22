@@ -43,6 +43,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
         ids: [],
         ...(Object.hasOwn(numbered, name)
           ? {
+              /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
               page: 0,
               pages: 0,
               size: PORTFOLIO_RUNTIME.pagination[name],
@@ -97,6 +98,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     Object.assign(pages[name], {
       ids: next.map((row) => row.id),
       total: next.length,
+      /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
       page: Math.max(1, Math.ceil(next.length / size)),
       pages: Math.ceil(next.length / size),
       size,
@@ -194,6 +196,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
           Object.assign(state, {
             total: response.total,
             pages: response.pages,
+            /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
             page: response.page,
             size: response.size,
             ids: next.map((row) => row.id),
@@ -381,6 +384,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   }
   snapshot = freeze(initial);
   return Object.freeze({
+    /** Read the immutable shared skill-category snapshot. */
     get snapshot() {
       return snapshot;
     },
@@ -395,11 +399,14 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     prepareLocale,
     validateJourney,
     replaceJourney,
+    /** Validate and replace Experience records through the shared numbered collection boundary. */
     replaceExperiences: (rows, notify) =>
       replaceNumbered("experiences", rows, notify),
+    /** Validate and replace Projects through the shared numbered collection boundary. */
     replaceProjects: (rows, notify) =>
       replaceNumbered("projects", rows, notify),
     validateProjects,
+    /** Read loaded Projects for the active locale without renaming API fields. */
     get projects() {
       return projectsByLocale.get(I18n.locale) || Object.freeze([]);
     },
@@ -416,6 +423,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     get site() {
       return siteByLocale.get(I18n.locale);
     },
+    /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
     page: (name) => ({ ...pages[name], ids: [...pages[name].ids] }),
   });
 });

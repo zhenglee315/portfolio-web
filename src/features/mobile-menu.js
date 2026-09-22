@@ -35,5 +35,8 @@ Portfolio.register("mobileMenu", [], () => {
     // Clear drawer state when crossing the breakpoint; desktop navigation stays interactive.
     setOpen(false);
   });
-  return { refresh: () => setOpen(sidebar.classList.contains("open")) };
+  return {
+    /** Reapply drawer accessibility state after content or locale refresh. */
+    refresh: () => setOpen(sidebar.classList.contains("open")),
+  };
 });

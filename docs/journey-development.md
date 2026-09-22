@@ -31,7 +31,7 @@ API 的 camelCase 對應 CSS／DOM 的 kebab-case：organizationName → journey
 - src/core/category-icon.js：CategoryIcon(type) 與 runtime.categoryIcons 共用；work 是 building-fill，education 是 mortarboard-fill。
 - src/features/journey.js：播放、選取、RWD viewBox、節點與標籤互動；接收 API 原始欄位。
 - src/features/city-bubble.js：安全呈現原始欄位，organizationName 前插入共用圖示；detail 為空不留空白區塊。
-- src/features/render.js：旅程選項、年資與完整年份範圍使用 data.journey，不受 Experience 分頁影響；Experience 卡片使用 data.experiences 直接欄位；Projects 仍用集合 view。
+- src/features/render.js：旅程選項、年資與完整年份範圍使用 data.journey，不受 Experience 分頁影響；Experience 卡片使用 data.experiences 直接欄位；Projects 使用 data.projects 的原始欄位，detail 隨列表完整提供。
 - src/features/site-content.js：旅程首尾與頁尾地區使用 data.journey，教育摘要仍來自 site.profile。
 - src/styles/components/icons.css：共用分類圖示；pixel-bubble.css 管理資訊框圖示顏色與間距。
 

@@ -122,5 +122,10 @@ Portfolio.register("cityBubble", ["data", "journey"], ({ data }) => {
     if (id) show(id);
     else hide();
   }
-  return { refresh, hide, capture: () => selectedId };
+  return {
+    refresh,
+    hide,
+    /** Preserve the selected record ID before the map is rebuilt. */
+    capture: () => selectedId,
+  };
 });

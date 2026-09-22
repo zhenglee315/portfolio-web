@@ -275,6 +275,7 @@ Portfolio.register("journey", ["data", "carousel"], ({ data, carousel }) => {
   return {
     refresh,
     select,
+    /** Expose a detached playback snapshot for consumers and diagnostics. */
     get state() {
       return { selectedId, elapsed, playing };
     },

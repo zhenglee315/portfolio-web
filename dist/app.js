@@ -233,8 +233,10 @@ Portfolio.register("appearanceSettings", [], () => {
     themes,
     defaults,
     ranges,
+    /** Return a detached snapshot of the current appearance preferences. */
     get: () => ({ ...state }),
     update,
+    /** Restore canonical appearance defaults through the shared update boundary. */
     reset: () => update(defaults),
   });
 });
@@ -246,8 +248,9 @@ window.I18n = (() => {
   const settings = PORTFOLIO_FRONTEND.localization;
   const supported = settings.supported.map((option) => option.code);
   let locale = settings.defaultLocale,
-    loader = async () => {},
     sequence = 0;
+  /** Use a safe no-op until the data store installs its locale loader. */
+  let loader = async () => {};
   let saved = null;
   try {
     saved = localStorage.getItem("portfolio.language");
@@ -297,13 +300,16 @@ window.I18n = (() => {
     );
   }
   return {
+    /** Read the active locale after any pending translation has committed. */
     get locale() {
       return locale;
     },
+    /** Return a copy of supported locale codes. */
     get supported() {
       return [...supported];
     },
     options: settings.supported,
+    /** Install the data-loading boundary used before switching locale. */
     setLoader: (callback) => {
       loader = callback;
     },
@@ -540,6 +546,7 @@ window.MockPortfolioTransport = (() => {
     }
     return Object.freeze({
       request,
+      /** Return a detached request history for transport diagnostics and tests. */
       get requests() {
         return clone(requests);
       },
@@ -1325,6 +1332,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
         ids: [],
         ...(Object.hasOwn(numbered, name)
           ? {
+              /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
               page: 0,
               pages: 0,
               size: PORTFOLIO_RUNTIME.pagination[name],
@@ -1379,6 +1387,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     Object.assign(pages[name], {
       ids: next.map((row) => row.id),
       total: next.length,
+      /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
       page: Math.max(1, Math.ceil(next.length / size)),
       pages: Math.ceil(next.length / size),
       size,
@@ -1476,6 +1485,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
           Object.assign(state, {
             total: response.total,
             pages: response.pages,
+            /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
             page: response.page,
             size: response.size,
             ids: next.map((row) => row.id),
@@ -1663,6 +1673,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   }
   snapshot = freeze(initial);
   return Object.freeze({
+    /** Read the immutable shared skill-category snapshot. */
     get snapshot() {
       return snapshot;
     },
@@ -1677,11 +1688,14 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     prepareLocale,
     validateJourney,
     replaceJourney,
+    /** Validate and replace Experience records through the shared numbered collection boundary. */
     replaceExperiences: (rows, notify) =>
       replaceNumbered("experiences", rows, notify),
+    /** Validate and replace Projects through the shared numbered collection boundary. */
     replaceProjects: (rows, notify) =>
       replaceNumbered("projects", rows, notify),
     validateProjects,
+    /** Read loaded Projects for the active locale without renaming API fields. */
     get projects() {
       return projectsByLocale.get(I18n.locale) || Object.freeze([]);
     },
@@ -1698,6 +1712,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     get site() {
       return siteByLocale.get(I18n.locale);
     },
+    /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
     page: (name) => ({ ...pages[name], ids: [...pages[name].ids] }),
   });
 });
@@ -2965,7 +2980,10 @@ Portfolio.register("mobileMenu", [], () => {
     // Clear drawer state when crossing the breakpoint; desktop navigation stays interactive.
     setOpen(false);
   });
-  return { refresh: () => setOpen(sidebar.classList.contains("open")) };
+  return {
+    /** Reapply drawer accessibility state after content or locale refresh. */
+    refresh: () => setOpen(sidebar.classList.contains("open")),
+  };
 });
 
 ;
@@ -3247,6 +3265,7 @@ Portfolio.register("journey", ["data", "carousel"], ({ data, carousel }) => {
   return {
     refresh,
     select,
+    /** Expose a detached playback snapshot for consumers and diagnostics. */
     get state() {
       return { selectedId, elapsed, playing };
     },
@@ -3435,7 +3454,12 @@ Portfolio.register("cityBubble", ["data", "journey"], ({ data }) => {
     if (id) show(id);
     else hide();
   }
-  return { refresh, hide, capture: () => selectedId };
+  return {
+    refresh,
+    hide,
+    /** Preserve the selected record ID before the map is rebuilt. */
+    capture: () => selectedId,
+  };
 });
 
 ;

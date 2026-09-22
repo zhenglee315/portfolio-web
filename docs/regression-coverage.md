@@ -81,7 +81,7 @@ Playwright 與瀏覽器環境設定見 [README](../README.md)。每次執行結�
 | EXP-03     | 日期與附加經歷展示   | `tests/data.test.cjs`、`tests/browser.cjs`                                                    | 日期政策、三語資料與經歷呈現                                                               |
 | EXP-04     | 時間軸互動高亮       | `tests/browser.cjs`、`tests/interactions-browser.cjs`                                         | 全部節點與線居中，hover 轉移及預設恢復                                                     |
 | EXP-05     | 超過六筆展開         | `tests/api-browser.cjs`、`tests/interactions-browser.cjs`                                     | 六筆不顯示、七筆邊界、81 筆分頁、收合回六筆、快取重開、鍵盤、三語及 RWD                    |
-| PROJECT-01 | 專案時間軸分組       | `tests/browser.cjs`                                                                           | 最近／歷史同月份仍不重複卡片                                                               |
+| PROJECT-01 | 專案時間軸分組       | `tests/browser.cjs`                                                                           | 依後端順序將相鄰同月份專案分組，跨頁不重複卡片                                             |
 | PROJECT-02 | 專案摘要卡片         | `tests/browser.cjs`、`tests/interactions-browser.cjs`                                         | 15 卡片內容及多尺寸自然高度                                                                |
 | PROJECT-03 | 期間月數計算         | `tests/data.test.cjs`、`tests/browser.cjs`                                                    | 含起訖月的期間，三語詳細頁一致                                                             |
 | PROJECT-04 | 專案展開／收合       | `tests/api-browser.cjs`、`tests/projects.test.cjs`                                            | 六筆分頁、剩餘計數、重試、快取及三語                                                       |

@@ -3,8 +3,9 @@ window.I18n = (() => {
   const settings = PORTFOLIO_FRONTEND.localization;
   const supported = settings.supported.map((option) => option.code);
   let locale = settings.defaultLocale,
-    loader = async () => {},
     sequence = 0;
+  /** Use a safe no-op until the data store installs its locale loader. */
+  let loader = async () => {};
   let saved = null;
   try {
     saved = localStorage.getItem("portfolio.language");
@@ -54,13 +55,16 @@ window.I18n = (() => {
     );
   }
   return {
+    /** Read the active locale after any pending translation has committed. */
     get locale() {
       return locale;
     },
+    /** Return a copy of supported locale codes. */
     get supported() {
       return [...supported];
     },
     options: settings.supported,
+    /** Install the data-loading boundary used before switching locale. */
     setLoader: (callback) => {
       loader = callback;
     },

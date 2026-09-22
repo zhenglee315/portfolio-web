@@ -46,6 +46,7 @@ portfolio-web/
 ├── .gitignore
 ├── .prettierrc.json
 ├── .prettierignore
+├── LICENSE
 ├── OFFLINE-README.txt
 └── README.md
 ```
@@ -80,10 +81,13 @@ portfolio-web/
 | `artifacts/`                  | 忽略版本控制的測試報告、離線 ZIP 及發布封裝                  |
 | `.openai/`                    | 既有 Sites 站點識別與靜態發布設定                            |
 
+`node_modules/` 若存在，只供外部開發工具快取並忽略版控；本專案沒有 npm 套件依賴，建置與執行不需要該資料夾。
+
 ### 每個維護中來源檔案
 
 | 檔案                                              | 責任                                                                                                |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `LICENSE`                                         | 專案本身的 MIT 授權，與各供應商資產授權分開保留                                                     |
 | `src/index.html`                                  | 頁面語意骨架與靜態翻譯綁定；JS 標記由建置流程填入                                                   |
 | `src/app.js`                                      | 唯一啟動入口，協調語言／資料刷新並保存互動狀態                                                      |
 | `mock/site/en.json`                               | 完整英文 SiteData：brand、profile、social、chatme                                                   |
@@ -241,7 +245,7 @@ portfolio-web/
 | File / 檔案                      | Responsibility / 責任                                        |
 | -------------------------------- | ------------------------------------------------------------ |
 | `docs/project-structure.md`      | 各資料夾與維護中檔案的責任索引                               |
-| `docs/function-reference.md`     | 由函式英文註解產生的具名函式索引                             |
+| `docs/function-reference.md`     | 由英文註解產生的具名函式、window 工廠與公開物件介面索引      |
 | `docs/backend-handoff.md`        | 後端實作、驗證、語言、錯誤與未實作 HTTP 邊界                 |
 | `docs/final-verification.md`     | 本輪清理、資料邊界、4K、文件與完整測試結果                   |
 | `docs/images/desktop.png`        | 1440px 英文桌面實際畫面，README 預覽                         |
