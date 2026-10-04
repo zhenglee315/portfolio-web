@@ -36,10 +36,10 @@
 | 地圖停駐點              | 6                       | Journey 直接提供經緯度，由前端投影                                                 |
 | 專案                    | 15                      | 6 筆預設顯示、9 筆待按頁展開                                                       |
 | 技能分類                | 7                       | 各分類數量見 SKILL-01                                                              |
-| Skills 區塊技能         | 67 個不重複名稱         | 僅統計 `mock/skills.json 的 categories` 引用的技能；不等於所有經歷／專案標籤的聯集 |
+| Skills 區塊技能         | 67 個不重複名稱         | 依三語 `mock/skill-categories/{locale}.json` 的關聯計算；不等於經歷／專案標籤聯集 |
 | 顯示語言                | 3                       | 英文、簡體中文、繁體中文                                                           |
 | 工作年資                | 74 個月，即 6 年 2 個月 | 依目前工作日期資料計算，不是固定文案                                               |
-| 網站自身的後端 API 請求 | 0                       | 6 支 in-memory mock API；沒有 HTTP／AJAX 請求，外部連結另計                        |
+| 網站自身的後端 API 請求 | 0                       | 6 支 mock API 由按需載入的靜態 JS 片段模擬；尚未連接後端，外部連結另計           |
 
 ## 2. 現有功能清單
 
@@ -147,17 +147,18 @@
 
 ## 3. 模組化後的共用資料
 
-功能從 data 模組取得資料：data.site、data.journey、data.experiences、data.projects 各自快取直接語言內容，保留 API 同名 key。data.snapshot 僅含 schemaVersion、skills 和 skillCategories；只有分類技能使用 mock/locales 業務字典。
+功能從 data 模組取得資料：data.site、data.journey、data.experiences、data.projects 各自快取直接語言內容，保留 API 同名 key。data.snapshot 僅含 schemaVersion、skills 和 skillCategories；分類與技能標籤也由三語 API fixture 直接提供。
 
 | 資料來源                    | 責任                                                 | 共用位置                                          |
 | --------------------------- | ---------------------------------------------------- | ------------------------------------------------- |
 | mock/experiences/\*.json    | 三語直接經歷文字、完整 skills、可空 detail           | Experience page／size 分頁                        |
 | mock/projects/{locale}.json | 三語原樣專案與完整 detail／skills                    | 卡片、時間軸及 dialog                             |
-| mock/skills.json            | 唯一技能實體與分類關聯                               | Skills 分類標籤                                   |
+| mock/skill-categories/{locale}.json | 三語分類 label 與完整有序 skillIds             | Skills 分類及技能預覽                            |
+| mock/skills/{locale}.json   | 三語技能 id 與直接 label                             | Skills 技能標籤                                   |
 | src/config/navigation.json  | 穩定 section key、icon、slug、aliases                | 選單、網址、跳轉                                  |
 | mock/journey/{locale}.json  | 直接語言內容、數字 id、經緯度、日期與 type；陣列原序 | 地圖、首尾、年資、頁尾                            |
 | mock/site/{locale}.json     | brand、profile、social、chatme 四個群組              | 品牌、介紹、教育摘要、對話框、聯絡入口、頁尾      |
-| mock/locales/{locale}.json  | 分類與技能的業務字典                                 | Skills                                            |
+| mock/skills.json、mock/locales/{locale}.json | 相鄰後端匯入用舊來源，不進前端 bundle | 後端 seed                                         |
 | src/assets/maps/world.svg   | 本地 SVG 世界國界                                    | 地圖背景與國家高亮；城市位置由 Journey 經緯度計算 |
 
 聯絡資料來自 data.site.social；固定標籤在 UI 字典。profile 直接提供本人姓名、介紹、教育摘要與短句，不使用字典鍵。
@@ -168,7 +169,7 @@ mock/site/en.json、zh-Hans.json、zh-Hant.json 各提供完整 brand、profile�
 
 固定語言清單由 `src/config/localization.json` 提供；UI 文案在 `src/locales/*.json`，動畫／技能比例／分類圖示／前端頁大小在 `src/config/runtime.json`。以上與導航、SVG 均不由 API 回傳。
 
-年資、月數、旅程筆數、首尾城市、最後國家、經歷年份範圍與專案剩餘筆數維持衍生計算。技能 +N 由寬度決定可見數，再以 API 的關聯 total 減去可見數；僅分類後續技能使用 GET /skills；Experience／Projects skills 完整返回。
+年資、月數、旅程筆數、首尾城市、最後國家、經歷年份範圍與專案剩餘筆數維持衍生計算。技能 +N 由寬度決定可見數，再以 API 的關聯 total 減去可見數；僅分類後續技能使用 GET /portfolio/skills；Experience／Projects skills 完整返回。
 
 ## 4. 本次重構的評析與實作
 
@@ -178,7 +179,7 @@ mock/site/en.json、zh-Hans.json、zh-Hant.json 各提供完整 brand、profile�
 
 ## 5. 尚未存在與仍待決定的能力
 
-仍沒有網站 CMS、資料庫、HTTP API、網站自有帳號權限、內容編輯／發布後台、搜尋／篩選、表單寄信或 AI 聊天服務。Sites 託管存取設定不等於網站程式內已存在登入功能。
+這個前端仍沒有網站 CMS、HTTP adapter、網站自有帳號權限、內容編輯／發布後台、搜尋／篩選、表單寄信或 AI 聊天服務。相鄰 `portfolio-modern` 後端已有六支 GET API，但本頁目前使用離線 mock。
 
 目前已實作 mock API、loading／error／retry、成功快取、Experience／Projects 頁碼分頁與分類 cursor 分頁。HTTP adapter、遠端快照／離線策略、翻譯管理及後端資料驗證尚待實作。Profile 自然語言介紹是人工文案；版權年份是集中設定；地圖仍需要正確投影座標，並沒有地理編碼服務。相同 UI 原則不代表任意資料格式都能直接載入。
 
@@ -200,18 +201,18 @@ mock/site/en.json、zh-Hans.json、zh-Hant.json 各提供完整 brand、profile�
 
 | 對應功能              | 資料入口與新行為                                                                                    | English implementation note                                                                         |
 | --------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| NAV／HOME／CHAT／LANG | /site 提供品牌、profile、social、chatme；導覽及 UI 字典由前端維護；/journey 提供首尾與年資索引      | Load localized site content through the client and keep navigation and UI catalogs in the frontend. |
+| NAV／HOME／CHAT／LANG | /portfolio/site 提供品牌、profile、social、chatme；導覽及 UI 字典由前端維護；/portfolio/journey 提供首尾與年資索引 | Load localized site content through the client and keep navigation and UI catalogs in the frontend. |
 | JOURNEY、HOME-02      | 精簡完整旅程，不隨 Experience 卡片分頁截短                                                          | Keep the complete lightweight route and work-month index independent of card pages.                 |
-| EXP-01                | /experiences 一頁 6 張，載入更多才追加                                                              | Append validated experience pages without truncating the journey index.                             |
-| PROJECT-01／04        | /projects 以 page／size=6 追加，收合卸下額外 DOM 但保留資料快取                                     | Append complete project pages in server order.                                                      |
+| EXP-01                | /portfolio/experiences 一頁 6 張，載入更多才追加                                                    | Append validated experience pages without truncating the journey index.                             |
+| PROJECT-01／04        | /portfolio/projects 以 page／size=6 追加，收合卸下額外 DOM 但保留資料快取                           | Append complete project pages in server order.                                                      |
 | PROJECT-05            | detail 隨列表完整返回；開視窗不新增 API 請求，空詳情隱藏入口                                        | Open complete local details without a separate request.                                             |
-| SKILL-01              | /skill-categories 分頁，共用更多按鈕                                                                | Page skill categories through the shared collection controller.                                     |
-| SKILL-03／04          | Experience／Projects 技能完整隨卡片回傳；只有分類 /skills 按 owner 分頁；3/4 預覽含正確的遠端剩餘數 | Measure visible chips and derive hidden counts from authoritative totals.                           |
-| 共用資料存取          | mock/client/store 分層；去重、快取、版本與原子驗證                                                  | Isolate transport, deduplicate requests and merge only valid snapshots.                             |
+| SKILL-01              | /portfolio/skill-categories 分頁，共用更多按鈕                                                      | Page skill categories through the shared collection controller.                                     |
+| SKILL-03／04          | Experience／Projects 技能完整隨卡片回傳；只有分類 /portfolio/skills 按 owner 分頁                   | Measure visible chips and derive hidden counts from authoritative totals.                           |
+| 共用資料存取          | mock/client/store 分層；去重、快取與原子驗證                                                        | Isolate transport, deduplicate requests and merge only valid snapshots.                             |
 
-16 個 mock JSON 是業務資料來源，前端固定設定與 UI 字典另在 src 維護；元件不讀取 fixtures。為維持 file://，build 將完整 mock 嵌入 app.js，所以目前 lazy loading 是資料與 DOM 層級；後續 HTTP adapter 才會延後網路下載。
+18 個三語 mock JSON 是前端 API 資料來源，固定設定與 UI 字典另在 src 維護；元件不讀取 fixtures。六支回應沒有共用 envelope 或 revision。build 將 mock 輸出為 `dist/mock-pages/` 分頁 JS，`app.js` 只帶程式、設定與片段索引；首次僅載入首批資料，後續頁按請求讀取。`file://` 可直接讀本地片段，託管版本才透過 HTTP 下載相同靜態檔案；正式後端的 HTTP adapter 尚未接入。
 
-語言 client 自動附上當前 locale；首次請求前還原 localStorage 偏好。切換只重取曾載入的列表頁面／分類技能頁，保持分頁與互動狀態；快取依語言分開。語言 cookie、動態導航與 HTTP 請求仍未實作；外觀設定已有獨立 cookie。
+語言 client 自動附上當前 locale；首次請求前還原 localStorage 偏好。切換只重取曾載入的列表頁面／分類技能頁，並使用目標語言新取得的 cursor 續讀，保持分頁與互動狀態；快取依語言分開。語言 cookie、動態導航與正式後端 HTTP API 接線仍未實作；外觀設定已有獨立 cookie。
 
 ## 維護檢查補充
 

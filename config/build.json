@@ -33,7 +33,6 @@
   "styles": "styles/index.css",
   "assets": "assets",
   "mock": {
-    "revision": "portfolio-2026-09-21-projects",
     "files": [
       "site/en",
       "site/zh-Hans",
@@ -47,10 +46,12 @@
       "projects/en",
       "projects/zh-Hans",
       "projects/zh-Hant",
-      "skills",
-      "locales/en",
-      "locales/zh-Hans",
-      "locales/zh-Hant"
+      "skill-categories/en",
+      "skill-categories/zh-Hans",
+      "skill-categories/zh-Hant",
+      "skills/en",
+      "skills/zh-Hans",
+      "skills/zh-Hant"
     ]
   },
   "frontend": {

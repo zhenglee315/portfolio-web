@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hant/data-storage/1", [{"id":"oracle","label":"Oracle"},{"id":"mongodb","label":"MongoDB"},{"id":"s3-compatible-storage","label":"相容 S3 的儲存"},{"id":"rustfs","label":"RustFS"},{"id":"oracle-goldengate","label":"Oracle GoldenGate"},{"id":"data-warehousing","label":"資料倉儲"}]);

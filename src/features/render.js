@@ -135,7 +135,7 @@ Portfolio.register(
         categories
           .map(
             (category) =>
-              `<div class="toolkit-row"><h3>${e(I18n.t(category.labelKey))}</h3>${skills.tags(category.skillIds, "category-" + category.id)}</div>`,
+              `<div class="toolkit-row"><h3>${e(data.categoryLabel(category.id))}</h3>${skills.tags(category.skillIds, "category-" + category.id)}</div>`,
           )
           .join("") + paging.control("categories");
       skills.refresh();

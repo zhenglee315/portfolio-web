@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/en/data-storage/1", [{"id":"oracle","label":"Oracle"},{"id":"mongodb","label":"MongoDB"},{"id":"s3-compatible-storage","label":"S3-compatible storage"},{"id":"rustfs","label":"RustFS"},{"id":"oracle-goldengate","label":"Oracle GoldenGate"},{"id":"data-warehousing","label":"Data warehousing"}]);

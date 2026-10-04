@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hant/backend-apis/0", [{"id":"python","label":"Python"},{"id":"fastapi","label":"FastAPI"},{"id":"django","label":"Django"},{"id":"django-rest-framework","label":"Django REST Framework"},{"id":"flask","label":"Flask"},{"id":"rest","label":"REST"}]);

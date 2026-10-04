@@ -39,7 +39,7 @@ test("invalid snapshots fail atomically and emit no update event", () => {
     original = data.snapshot;
   for (const mutate of [
     (s) => (s.skillCategories[0].skillIds = ["missing"]),
-    (s) => (s.skills[0].labelKey = "missing.key"),
+    (s) => (s.skills[0].label = ""),
     (s) => (s.schemaVersion = 2),
   ]) {
     const candidate = copy(original);

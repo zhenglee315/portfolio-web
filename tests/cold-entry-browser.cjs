@@ -66,7 +66,7 @@ async function coldPage(
           client = createPortfolioApi(
             MockPortfolioTransport.create(db, {
               delayMs: 150,
-              failures: failThisVisit ? { "/site": 1 } : {},
+              failures: failThisVisit ? { "/portfolio/site": 1 } : {},
             }),
           );
         },

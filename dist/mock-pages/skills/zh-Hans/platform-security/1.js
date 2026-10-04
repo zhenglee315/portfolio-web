@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hans/platform-security/1", [{"id":"prometheus","label":"Prometheus"},{"id":"rancher","label":"Rancher"},{"id":"ubuntu","label":"Ubuntu"},{"id":"red-hat-linux","label":"Red Hat Linux"}]);

@@ -2,7 +2,7 @@ Zheng Lee — Offline portfolio
 
 1. Extract the entire ZIP to a folder.
 2. Open index.html with a current version of Edge, Chrome, Firefox or Safari.
-3. Keep the other files and the assets folder beside index.html.
+3. Keep the other files, assets and mock-pages folders beside index.html.
 
 No internet connection, Node.js, installation or local server is required.
 The page includes its JavaScript, CSS, fonts, SVG icons and map data locally.
@@ -18,13 +18,13 @@ Email links open your configured mail application; sending mail needs connectivi
 Opening the hosted website URL still requires an internet connection.
 
 離線使用：完整解壓縮後，直接用瀏覽器開啟 index.html。
-請保留同資料夾中的 JS、CSS、assets；不要只複製 index.html。
+請保留同資料夾中的 JS、CSS、assets 和 mock-pages；不要只複製 index.html。
 右上角語言圖示可切換英文、簡體中文及繁體中文，三種語言均可離線使用。
 網頁功能可離線使用；LinkedIn、GitHub、Medium 及寄信仍需要網路。
 
-Content is maintained in source mock/*.json and embedded during the build.
-The offline API simulation pages historical work and skills, and opens project
-detail on demand without AJAX. All fixture bytes are included in app.js.
+Content is maintained in source mock/*.json and compiled into local JS chunks.
+The offline API simulation loads later project pages and category skills only
+when requested. app.js contains a small index; the records are in mock-pages/.
 
 Fixed UI text and locale/navigation/runtime settings live in src/locales and
 src/config. The world map is src/assets/maps/world.svg, not API or database data.

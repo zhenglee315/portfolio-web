@@ -173,17 +173,6 @@ Portfolio.register("skills", ["data"], ({ data }) => {
     );
     error.hidden = !request.error;
     error.textContent = request.error ? t("loadError") : "";
-    // Fill a wide preview incrementally, but never fetch the entire expanded collection in a loop.
-    if (
-      !expanded &&
-      state.hasMore &&
-      keep === chips.length &&
-      !request.loading &&
-      !request.error
-    )
-      queueMicrotask(() => {
-        if (group.isConnected) loadMore(group);
-      });
   }
   const schedule = Portfolio.frameTask(() => {
     observed.forEach((group) => {

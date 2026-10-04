@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hans/ai-agents/0", [{"id":"mcp","label":"MCP"},{"id":"fastmcp","label":"FastMCP"},{"id":"rag","label":"RAG"},{"id":"langchain","label":"LangChain"},{"id":"ollama","label":"Ollama"},{"id":"chroma","label":"Chroma"}]);

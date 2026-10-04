@@ -14,7 +14,7 @@
 | projectName                 | string                       | Project name shown on the card and dialog heading.                                                                                      |
 | projectTitle                | string                       | Short project classification or subtitle; distinct from organizationTitle.                                                              |
 | intro                       | string                       | Brief card introduction, not repeated in the detail dialog.                                                                             |
-| detail                      | object, null or empty string | Complete dialog content. Null or empty string removes its opener. An object with all empty sections also removes the opener.            |
+| detail                      | object or null               | Complete dialog content. Null removes its opener. An object with all empty sections also removes the opener.                            |
 | detail.workflowDescription  | string or null               | Detailed end-to-end process: input, processing steps and consumers. Empty values hide this section.                                     |
 | detail.flow                 | string array or null         | Ordered process labels. Empty or null hides the flow; one label has no connecting arrow.                                                |
 | detail.technicalDescription | string or null               | Technical architecture, implementation choices and service interactions.                                                                |
@@ -22,10 +22,10 @@
 | detail.outcome              | string or null               | Supported results or impact; do not invent metrics.                                                                                     |
 | skills                      | string array or null         | Complete localized display labels, in display order. Empty or null hides tags; no skill ID lookup or additional request.                |
 
-All fields except `expected` are required. When detail is an object, retain its five keys and use null/empty values for absent content. Empty string values are accepted for display text; skill and flow elements must be nonblank strings. Additional fields are retained but not automatically displayed.
+All fields are returned by the backend, including `expected` (false when unset). When detail is an object, retain its five keys and use null/empty values for absent content. Empty string values are accepted for display text; skill and flow elements must be nonblank strings. Additional fields are retained but not automatically displayed.
 
 Use ordinary plain text with real line breaks in editor input. A JSON serializer represents breaks as `\n`; users do not type HTML, Markdown or escape codes. The frontend escapes text and preserves line breaks. Keep displayed skills readable (for example Python and FastAPI).
 
 The three fixtures contain 15 projects. Opening details or expanding skills never requests another resource. Only collection pages are lazy loaded. Do not add `scope`, `earlier`, `organizationId`, `skillIds`, `flowKeys` or translation-key mappings.
 
-See [API format](../../docs/api-interface-format.md) and [Projects development](../../docs/projects-development.md) for paging, rendering and verification responsibilities. Update the build revision after editing fixtures.
+See [API format](../../docs/api-interface-format.md) and [Projects development](../../docs/projects-development.md) for paging, rendering and verification responsibilities. Update all three language fixtures together.

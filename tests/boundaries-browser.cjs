@@ -17,11 +17,13 @@ function dataset(count) {
       }));
     }
   }
-  const category = db.skills.categories[0];
-  db.skills.categories = Array.from({ length: count }, (_, i) => ({
-    ...structuredClone(category),
-    id: "category-" + i,
-  }));
+  for (const locale of Object.keys(db.skillCategories)) {
+    const category = db.skillCategories[locale][0];
+    db.skillCategories[locale] = Array.from({ length: count }, (_, i) => ({
+      ...structuredClone(category),
+      id: "category-" + i,
+    }));
+  }
   return db;
 }
 

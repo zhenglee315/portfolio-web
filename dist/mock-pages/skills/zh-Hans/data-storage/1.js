@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hans/data-storage/1", [{"id":"oracle","label":"Oracle"},{"id":"mongodb","label":"MongoDB"},{"id":"s3-compatible-storage","label":"兼容 S3 的保存"},{"id":"rustfs","label":"RustFS"},{"id":"oracle-goldengate","label":"Oracle GoldenGate"},{"id":"data-warehousing","label":"数据仓库"}]);

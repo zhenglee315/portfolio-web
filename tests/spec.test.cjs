@@ -27,10 +27,7 @@ test("OpenAPI defines six unique GET operations and resolves every local referen
     assert.deepEqual(Object.keys(value), ["get"]);
     assert(!ids.has(value.get.operationId));
     ids.add(value.get.operationId);
-    assert.equal(
-      value.get["x-contract-status"],
-      url.includes("skill") ? "pending-review" : "confirmed",
-    );
+    assert.equal(value.get["x-contract-status"], "confirmed");
   }
   for (const match of JSON.stringify(spec).matchAll(/"\$ref":"([^"]+)"/g)) {
     assert(match[1].startsWith("#/"));
@@ -43,11 +40,11 @@ test("OpenAPI response examples exactly match the mock transport and required do
   const api = ctx.createPortfolioApi(ctx.MockPortfolioTransport.create(mock));
   for (const [url, value] of Object.entries(spec.paths)) {
     const query =
-      url === "/skills"
+      url === "/portfolio/skills"
         ? {
             locale: "en",
             ownerType: "category",
-            ownerId: mock.skills.categories[0].id,
+            ownerId: mock.skillCategories.en[0].id,
           }
         : { locale: "en" };
     const result = JSON.parse(JSON.stringify(await api.request(url, query)));
@@ -90,11 +87,13 @@ test("all collection shapes initialize from empty, one or many records and inval
           id: i + 1,
         }));
       }
-    const base = mock.skills.categories[0];
-    mock.skills.categories = Array.from({ length: count }, (_, i) => ({
-      ...structuredClone(base),
-      id: "category-" + i,
-    }));
+    for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+      const base = mock.skillCategories[locale][0];
+      mock.skillCategories[locale] = Array.from({ length: count }, (_, i) => ({
+        ...structuredClone(base),
+        id: "category-" + i,
+      }));
+    }
     ctx.PortfolioApi = ctx.createPortfolioApi(
       ctx.MockPortfolioTransport.create(mock),
     );

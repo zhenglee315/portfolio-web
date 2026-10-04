@@ -1,6 +1,9 @@
 /** Verify API resource boundaries, cursor contracts, caching, retries and bounded store merges. */
 const test = require("node:test"),
-  assert = require("node:assert/strict");
+  assert = require("node:assert/strict"),
+  fs = require("node:fs"),
+  path = require("node:path"),
+  vm = require("node:vm");
 const { context } = require("./helpers.cjs");
 
 test("journey returns direct localized fields in server order without lookup tables", async () => {
@@ -8,18 +11,12 @@ test("journey returns direct localized fields in server order without lookup tab
   const source = structuredClone(mock);
   source.journey.en.reverse();
   source.journey.en[0].startMonth = source.journey.en[1].startMonth;
-  delete source.entities;
-  delete source.locales;
   const result = await ctx.MockPortfolioTransport.create(source).request({
-    path: "/journey",
+    path: "/portfolio/journey",
     query: { locale: "en" },
   });
-  assert.deepEqual(JSON.parse(JSON.stringify(result.data)), source.journey.en);
-  assert.equal(result.page, null);
-  assert.deepEqual(JSON.parse(JSON.stringify(result.included.translations)), {
-    en: {},
-  });
-  for (const row of result.data) {
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), source.journey.en);
+  for (const row of result) {
     assert(Number.isSafeInteger(row.id));
     for (const key of [
       "order",
@@ -108,57 +105,49 @@ function setup(options = {}) {
 
 test("site exposes content only; locale is explicit, validated and returned one language at a time", async () => {
   const { api, transport, ctx, mock } = setup();
-  const en = await api.request("/site");
-  assert.deepEqual(en.data.social, {
+  const en = await api.request("/portfolio/site");
+  assert.deepEqual(en.social, {
     linkedin: "https://www.linkedin.com/in/zhenglee315",
     github: "https://github.com/zhenglee315",
     medium: "https://medium.com/@WilsonLeee",
     email: "zhenglee315@gmail.com",
   });
-  assert.equal(en.included.translations.en["ui.linkedin"], undefined);
   assert.equal(
     typeof ctx.PORTFOLIO_FRONTEND.locales.en["ui.linkedin"],
     "string",
   );
   assert.equal(transport.requests[0].query.locale, "en");
   assert.deepEqual(
-    Object.keys(en.data).sort(),
+    Object.keys(en).sort(),
     ["brand", "profile", "social", "chatme"].sort(),
   );
   assert(
-    !("navigation" in en.data) &&
-      !("map" in en.data) &&
-      !("locales" in en.data),
+    !("navigation" in en) && !("map" in en) && !("locales" in en),
   );
-  const chinese = await api.request("/site", { locale: "zh-Hant" });
-  assert.deepEqual(Object.keys(en.data.chatme).sort(), [
+  const chinese = await api.request("/portfolio/site", { locale: "zh-Hant" });
+  assert.deepEqual(Object.keys(en.chatme).sort(), [
     "content",
     "icon",
     "title",
     "titleSub",
   ]);
-  assert.equal(en.data.chatme.title, "London · 20 hours/week");
-  assert(en.data.chatme.content.includes("\n"));
-  assert.equal(chinese.data.chatme.title, mock.site["zh-Hant"].chatme.title);
-  // Direct site content must not leak into the business translation dictionary.
-  assert.deepEqual(chinese.included.translations["zh-Hant"], {});
-  assert.deepEqual(Object.keys(chinese.included.translations), ["zh-Hant"]);
-  assert.equal(chinese.meta.locale, "zh-Hant");
-  assert.notEqual(chinese.data.profile.content, en.data.profile.content);
-  assert.equal(
-    chinese.included.translations["zh-Hant"]["ui.closeProject"],
-    undefined,
-  );
+  assert.equal(en.chatme.title, "London · 20 hours/week");
+  assert(en.chatme.content.includes("\n"));
+  assert.equal(chinese.chatme.title, mock.site["zh-Hant"].chatme.title);
+  assert.notEqual(chinese.profile.content, en.profile.content);
   assert.equal(
     typeof ctx.PORTFOLIO_FRONTEND.locales["zh-Hant"]["ui.closeProject"],
     "string",
   );
   await assert.rejects(
-    api.request("/site", { locale: "fr" }),
+    api.request("/portfolio/site", { locale: "fr" }),
     (e) => e.code === "INVALID_LOCALE" && e.status === 400,
   );
   const raw = ctx.MockPortfolioTransport.create(mock);
-  assert.equal((await raw.request({ path: "/site" })).meta.locale, "en");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(await raw.request({ path: "/portfolio/site" }))),
+    mock.site.en,
+  );
 });
 
 test("language switches translate loaded pages only and preserve page cursors with separate caches", async () => {
@@ -186,7 +175,7 @@ test("language switches translate loaded pages only and preserve page cursors wi
 });
 
 test("failed language loads keep the current language and can be retried", async () => {
-  const { ctx, data } = setup({ failures: { "/site?locale=zh-Hant": 1 } });
+  const { ctx, data } = setup({ failures: { "/portfolio/site?locale=zh-Hant": 1 } });
   await data.initialize();
   ctx.I18n.setLoader(data.prepareLocale);
   await assert.rejects(ctx.I18n.setLanguage("zh-Hant"));
@@ -205,10 +194,10 @@ test("localized site validation rejects malformed fields atomically and allows c
       const response = await raw.request(request);
       if (
         corrupt &&
-        request.path === "/site" &&
+        request.path === "/portfolio/site" &&
         request.query.locale === "zh-Hant"
       )
-        response.data.profile.content = null;
+        response.profile.content = null;
       return response;
     },
   });
@@ -235,48 +224,196 @@ test("bootstrap loads six Projects with complete detail and no additional detail
   );
   assert.deepEqual(
     Array.from(transport.requests, (r) => r.path),
-    ["/site", "/journey", "/experiences", "/projects", "/skill-categories"],
+    ["/portfolio/site", "/portfolio/journey", "/portfolio/experiences", "/portfolio/projects", "/portfolio/skill-categories"],
   );
 });
-test("category cursors reject invalid owners, stale revisions and invalid limits", async () => {
-  const { api, ctx, mock } = setup();
-  const first = await api.request("/skill-categories", { limit: 1 });
+test("category cursors reject invalid owners, cross-locale reuse and invalid limits", async () => {
+  const { api, mock } = setup();
+  const first = await api.request("/portfolio/skill-categories", { limit: 1 });
   await assert.rejects(
-    api.request("/skills", {
+    api.request("/portfolio/skills", {
       ownerType: "category",
-      ownerId: mock.skills.categories[0].id,
+      ownerId: mock.skillCategories.en[0].id,
       cursor: first.page.nextCursor,
     }),
     (e) => e.code === "INVALID_CURSOR",
   );
   await assert.rejects(
-    api.request("/skill-categories", { cursor: "broken" }),
+    api.request("/portfolio/skill-categories", { cursor: "broken" }),
     (e) => e.code === "INVALID_CURSOR",
   );
   await assert.rejects(
-    api.request("/skill-categories", { limit: 51 }),
+    api.request("/portfolio/skill-categories", { limit: 51 }),
     (e) => e.code === "INVALID_LIMIT",
   );
-  const changed = ctx.createPortfolioApi(
-    ctx.MockPortfolioTransport.create({ ...mock, revision: "new" }),
-  );
   await assert.rejects(
-    changed.request("/skill-categories", { cursor: first.page.nextCursor }),
-    (e) => e.code === "STALE_CURSOR",
+    api.request("/portfolio/skill-categories", {
+      locale: "zh-Hant",
+      cursor: first.page.nextCursor,
+    }),
+    (e) => e.code === "INVALID_CURSOR",
   );
+});
+test("three localized skill resources return direct labels and bounded category continuations", async () => {
+  const { api, mock } = setup();
+  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+    const labels = new Map(mock.skills[locale].map((row) => [row.id, row.label]));
+    const categories = [];
+    let cursor;
+    do {
+      const result = await api.request("/portfolio/skill-categories", {
+        locale,
+        limit: 3,
+        ...(cursor ? { cursor } : {}),
+      });
+      assert.deepEqual(Object.keys(result).sort(), ["included", "items", "page"]);
+      assert.equal(result.page.total, mock.skillCategories[locale].length);
+      for (const row of result.items) {
+        const source = mock.skillCategories[locale].find((item) => item.id === row.id);
+        assert.equal(row.label, source.label);
+        assert.deepEqual(row.skillIds, source.skillIds.slice(0, 6));
+        assert.equal(row.skillsPage.total, source.skillIds.length);
+        const preview = result.included.skills.filter((item) => row.skillIds.includes(item.id));
+        assert(preview.every((item) => item.label === labels.get(item.id)));
+      }
+      categories.push(...result.items);
+      cursor = result.page.nextCursor;
+    } while (cursor);
+    assert.deepEqual(
+      categories.map((row) => row.id),
+      mock.skillCategories[locale].map((row) => row.id),
+    );
+    const source = mock.skillCategories[locale][0];
+    const rest = await api.request("/portfolio/skills", {
+      locale,
+      ownerType: "category",
+      ownerId: source.id,
+      cursor: categories[0].skillsPage.nextCursor,
+    });
+    assert.deepEqual(Object.keys(rest).sort(), ["items", "page"]);
+    assert.deepEqual(
+      rest.items.map((item) => item.id),
+      source.skillIds.slice(6),
+    );
+    assert(rest.items.every((item) => item.label === labels.get(item.id)));
+  }
+});
+test("lazy offline transport loads requested chunks and matches in-memory API responses", async () => {
+  const { ctx, mock } = setup();
+  const root = path.resolve(__dirname, "..");
+  const app = fs.readFileSync(path.join(root, "dist/app.js"), "utf8");
+  const manifest = JSON.parse(app.match(/^window\.PORTFOLIO_MOCK = (.+);$/m)[1]);
+  const accessed = [];
+  let failOnce = "mock-pages/projects/en/2.js";
+  ctx.document.createElement = () => ({ remove() {} });
+  ctx.document.head = {
+    appendChild(script) {
+      const relative = script.src;
+      accessed.push(relative);
+      queueMicrotask(() => {
+        if (relative === failOnce) {
+          failOnce = null;
+          script.onerror();
+          return;
+        }
+        try {
+          vm.runInContext(
+            fs.readFileSync(path.join(root, "dist", relative), "utf8"),
+            ctx,
+          );
+          script.onload();
+        } catch {
+          script.onerror();
+        }
+      });
+    },
+  };
+  const lazy = ctx.MockPortfolioTransport.createLazy(manifest);
+  const memory = ctx.MockPortfolioTransport.create(mock);
+  /** Confirm one response agrees with the in-memory contract for the same query. */
+  const same = async (path, query = {}) => {
+    const input = { path, query };
+    assert.deepEqual(
+      JSON.parse(JSON.stringify(await lazy.request(input))),
+      JSON.parse(JSON.stringify(await memory.request(input))),
+    );
+  };
+  await same("/portfolio/site", { locale: "en" });
+  assert.deepEqual(accessed, ["mock-pages/site/en.js"]);
+  await same("/portfolio/projects", { locale: "en", page: 1, size: 6 });
+  assert(accessed.includes("mock-pages/projects/en/0.js"));
+  assert(!accessed.includes("mock-pages/projects/en/1.js"));
+  await same("/portfolio/projects", { locale: "en", page: 2, size: 6 });
+  assert(accessed.includes("mock-pages/projects/en/1.js"));
+  await assert.rejects(
+    lazy.request({ path: "/portfolio/projects", query: { locale: "en", page: 3 } }),
+    (error) => error.status === 503,
+  );
+  await same("/portfolio/projects", { locale: "en", page: 3 });
+  assert.equal(
+    accessed.filter((name) => name === "mock-pages/projects/en/2.js").length,
+    2,
+  );
+  const query = { locale: "zh-Hant", limit: 1 };
+  await same("/portfolio/skill-categories", query);
+  assert(accessed.includes("mock-pages/skill-categories/zh-Hant/0.js"));
+  assert(accessed.includes("mock-pages/skills/zh-Hant/backend-apis/0.js"));
+  assert(!accessed.includes("mock-pages/skills/zh-Hant/backend-apis/1.js"));
+  const first = await lazy.request({ path: "/portfolio/skill-categories", query });
+  await same("/portfolio/skills", {
+    locale: "zh-Hant",
+    ownerType: "category",
+    ownerId: first.items[0].id,
+    cursor: first.items[0].skillsPage.nextCursor,
+  });
+  assert(accessed.includes("mock-pages/skills/zh-Hant/backend-apis/1.js"));
+});
+test("language switching replays loaded skill pages with locale-scoped cursors", async () => {
+  const { ctx, data, mock } = setup();
+  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+    const base = mock.skillCategories[locale][0];
+    mock.skillCategories[locale] = Array.from({ length: 17 }, (_, index) => ({
+      ...structuredClone(base),
+      id: `category-${index}`,
+      label: `${base.label} ${index}`,
+    }));
+  }
+  const transport = ctx.MockPortfolioTransport.create(mock);
+  ctx.PortfolioApi = ctx.createPortfolioApi(transport);
+  await data.initialize();
+  await data.loadPage("categories");
+  const owner = "category-category-0";
+  await data.loadSkills(owner);
+  const loaded = data.skillsState(owner);
+  assert.equal(data.page("categories").ids.length, 17);
+  assert.equal(loaded.ids.length, mock.skillCategories.en[0].skillIds.length);
+  ctx.I18n.setLoader(data.prepareLocale);
+  await ctx.I18n.setLanguage("zh-Hant");
+  assert.deepEqual(data.skillsState(owner).ids, loaded.ids);
+  assert.equal(data.page("categories").ids.length, 17);
+  assert.equal(data.find("skillCategories", "category-0").label,
+    mock.skillCategories["zh-Hant"][0].label);
+  const localizedSkill = data.find("skills", loaded.ids[0]);
+  assert.equal(localizedSkill.label,
+    mock.skills["zh-Hant"].find((row) => row.id === loaded.ids[0]).label);
+  assert(transport.requests.some((row) =>
+    row.path === "/portfolio/skills" && row.query.locale === "zh-Hant"));
+  assert(transport.requests.filter((row) =>
+    row.path === "/portfolio/skill-categories" && row.query.locale === "zh-Hant").length === 2);
 });
 test("category skills remain paginated and errors preserve prior content", async () => {
   const { data, ctx, mock } = setup();
   await data.initialize();
-  const owner = "category-" + mock.skills.categories[0].id;
+  const owner = "category-" + mock.skillCategories.en[0].id;
   const old = data.skillsState(owner);
   await data.loadSkills(owner);
   assert(data.skillsState(owner).ids.length >= old.ids.length);
   const empty = structuredClone(mock);
-  empty.skills.categories = [];
+  for (const locale of Object.keys(empty.skillCategories))
+    empty.skillCategories[locale] = [];
   const result = await ctx
     .createPortfolioApi(ctx.MockPortfolioTransport.create(empty))
-    .request("/skill-categories");
+    .request("/portfolio/skill-categories");
   assert.deepEqual(JSON.parse(JSON.stringify(result.page)), {
     limit: 12,
     total: 0,
@@ -284,7 +421,7 @@ test("category skills remain paginated and errors preserve prior content", async
     nextCursor: null,
   });
   await assert.rejects(
-    ctx.PortfolioApi.request("/skills", { ownerType: "project", ownerId: 1 }),
+    ctx.PortfolioApi.request("/portfolio/skills", { ownerType: "project", ownerId: 1 }),
     (e) => e.code === "INVALID_OWNER",
   );
 });
@@ -300,26 +437,27 @@ test("chatme is standalone plain content even with empty collections", async () 
   assert.equal(data.experiences.length, 0);
   assert.equal(data.site.chatme.title, mock.site.en.chatme.title);
 });
-test("the client coalesces equivalent queries and rejects a mixed-revision snapshot", async () => {
+test("the client coalesces equivalent queries and rejects malformed direct responses", async () => {
   const { api, transport, ctx, mock } = setup({ delayMs: 5 });
   await Promise.all([
-    api.request("/projects", { page: 1, size: 6 }),
-    api.request("/projects", { size: 6, page: 1 }),
+    api.request("/portfolio/projects", { page: 1, size: 6 }),
+    api.request("/portfolio/projects", { size: 6, page: 1 }),
   ]);
   assert.equal(transport.requests.length, 1);
-  let changed = false;
+  let malformed = false;
   const raw = ctx.MockPortfolioTransport.create(mock),
     client = ctx.createPortfolioApi({
       async request(request) {
         const result = await raw.request(request);
-        if (changed) result.meta.revision = "changed";
+        if (malformed && request.path === "/portfolio/journey")
+          return { data: result, meta: { revision: "old" } };
         return result;
       },
     });
-  await client.request("/site");
-  changed = true;
+  await client.request("/portfolio/site");
+  malformed = true;
   await assert.rejects(
-    client.request("/journey"),
-    (e) => e.code === "STALE_REVISION",
+    client.request("/portfolio/journey"),
+    /Invalid journey response/,
   );
 });

@@ -1,6 +1,6 @@
 # Projects 開發對照
 
-第 4 支 API 已確認並落地：`GET /api/v1/projects?locale=en&page=1&size=6`。成功直接回傳 `{total,pages,page,size,items}`。後端決定排序，前端只依 items 順序追加；三語 ID、順序及總數一致。ID 維持正整數 JSON number，需在 JavaScript 安全整數範圍 1～9007199254740991。完整規格與範例見 [API 文件](api-interface-format.md)，英文逐欄註解見 [mock 說明](../mock/projects/README.md)。
+`GET /portfolio/projects?locale=en&page=1&size=6` 已落地，直接回傳 `{total,pages,page,size,items}`。後端決定排序，前端只依 items 順序追加；三語 ID、順序及總數一致。ID 維持正整數 JSON number，需在 JavaScript 安全整數範圍 1～9007199254740991。完整規格與範例見 [API 文件](api-interface-format.md)，英文逐欄註解見 [mock 說明](../mock/projects/README.md)。
 
 ## 命名與內容分工
 
@@ -22,8 +22,8 @@ mock → transport → client → store → renderer 全程使用 API 原始 key
 | 檔案                                                                      | 責任                                                                                          |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | `mock/projects/{locale}.json`                                             | 完整三語來源，數字 ID 與順序一致                                                              |
-| `config/build.json`、`scripts/lib/mock-data.mjs`                          | 登記並嵌入三語 fixtures，支援 file:// 離線                                                    |
-| `src/api/mock-transport.js`                                               | 依 locale、page、size 切片；完整回傳 detail 與 skills                                         |
+| `config/build.json`、`scripts/lib/mock-data.mjs`                          | 登記三語 fixtures，建置為可由 file:// 按需載入的分頁 JS 片段                                 |
+| `src/api/mock-transport.js`                                               | 依 locale、page、size 讀取對應靜態頁；完整回傳 detail 與 skills                              |
 | `src/api/client.js`                                                       | 共用 Page 結構驗證、按語言快取與請求去重                                                      |
 | `src/core/data-contracts.js`                                              | validateProjects 驗證安全 ID、日期、技能與可空詳情                                            |
 | `src/core/store.js`                                                       | data.projects 與 replaceProjects 保留原始 key；共用 numbered 資源調度處理分頁、驗證和語言快取 |
@@ -34,7 +34,7 @@ mock → transport → client → store → renderer 全程使用 API 原始 key
 | `src/core/dates.js`                                                       | 專案自身起訖月、預計／至今及含頭尾月期間                                                      |
 | `src/styles/base.css`、`components/projects.css`、`components/dialog.css` | 共用純文字換行、卡片和 dialog 樣式，配色取自 theme.css                                        |
 
-numbered 只登記各資源的 cache 與 validator，沒有轉換 object key。技能分類仍使用既有字典；這是尚待討論的第 5／6 支 API，不影響 Projects 的直接文字。
+numbered 只登記各資源的 cache 與 validator，沒有轉換 object key。技能分類和技能使用三語直接 label，與 Projects 一樣不依賴業務翻譯字典。
 
 ## 分頁、快取與空值
 
@@ -56,4 +56,4 @@ detail 和 skills 每頁一次回傳。detail=null 或空字串時不顯示詳�
 
 `tests/projects.test.cjs` 驗證三語、6/6/3 分頁、空值、非法 ID／日期、重試、去重與語言切換原子性；`tests/api-browser.cjs` 驗證大量資料和完整技能；`tests/browser.cjs` 驗證 15 個 dialog × 三語、RWD 與原生互動。`tests/maintenance.test.cjs` 核對文件範例與 mock 一致。
 
-修改來源後執行 `node scripts/build.mjs` 及 `node scripts/test.mjs`。CSS 統一由 index.css 調度，顏色只使用 theme.css token。沒有新增執行期套件、外部素材或 AJAX；離線檔案包含完整 fixtures，真正網路 lazy loading 需未來替換 HTTP transport 並停用 mock 嵌入。
+修改來源後執行 `node scripts/build.mjs` 及 `node scripts/test.mjs`。CSS 統一由 index.css 調度，顏色只使用 theme.css token。沒有新增執行期套件、外部素材或 AJAX；建置會把專案資料切成 `dist/mock-pages/` 中的分頁 JS，後續頁由 mock transport 按需載入。離線版直接讀本地片段，託管版透過 HTTP 下載相同靜態檔案；正式後端則需替換 transport。

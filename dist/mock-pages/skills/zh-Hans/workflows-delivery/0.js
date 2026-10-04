@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hans/workflows-delivery/0", [{"id":"celery","label":"Celery"},{"id":"rabbitmq","label":"RabbitMQ"},{"id":"airflow","label":"Airflow"},{"id":"gitlab","label":"GitLab"},{"id":"jenkins-ci-cd","label":"Jenkins CI/CD"},{"id":"kettle-etl","label":"Kettle-ETL"}]);

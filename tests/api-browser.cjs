@@ -63,7 +63,7 @@ async function verifyStartup(browser) {
       (locale) => localStorage.setItem("portfolio.language", locale),
       locale,
     );
-    await inject(page, fixture(), { failures: { "/site": 1 } });
+    await inject(page, fixture(), { failures: { "/portfolio/site": 1 } });
     await page.goto(url);
     await page.locator('#startup-status[role="alert"]').waitFor();
     const { frontend } = require("./fixtures.cjs");
@@ -120,7 +120,7 @@ async function main() {
     });
     await inject(page, db, {
       delayMs: 35,
-      failures: { "/projects?page=2": 1 },
+      failures: { "/portfolio/projects?page=2": 1 },
     });
     await page.goto(
       pathToFileURL(path.resolve(__dirname, "../dist/index.html")).href,
@@ -158,7 +158,7 @@ async function main() {
         () =>
           testTransport.requests.filter(
             (r) =>
-              (r.path === "/projects" && r.query.page > 1) ||
+              (r.path === "/portfolio/projects" && r.query.page > 1) ||
               r.path.startsWith("/projects/"),
           ).length,
       ),
@@ -179,7 +179,7 @@ async function main() {
       await page.evaluate(
         () =>
           testTransport.requests.filter(
-            (r) => r.path === "/projects" && r.query.page > 1,
+            (r) => r.path === "/portfolio/projects" && r.query.page > 1,
           ).length,
       ),
       1,
@@ -211,7 +211,7 @@ async function main() {
       await page.evaluate(
         () =>
           testTransport.requests.filter(
-            (r) => r.path === "/projects" && r.query.page > 1,
+            (r) => r.path === "/portfolio/projects" && r.query.page > 1,
           ).length,
       ),
       3,
@@ -227,7 +227,7 @@ async function main() {
       await page.evaluate(
         () =>
           testTransport.requests.filter(
-            (r) => r.path === "/projects" && r.query.page > 1,
+            (r) => r.path === "/portfolio/projects" && r.query.page > 1,
           ).length,
       ),
       3,
@@ -243,7 +243,7 @@ async function main() {
     assert.equal(
       await page.evaluate(
         () =>
-          testTransport.requests.filter((r) => r.path === "/experiences")
+          testTransport.requests.filter((r) => r.path === "/portfolio/experiences")
             .length,
       ),
       1,
@@ -260,7 +260,7 @@ async function main() {
     );
     const experienceRequests = await page.evaluate(
       () =>
-        testTransport.requests.filter((r) => r.path === "/experiences").length,
+        testTransport.requests.filter((r) => r.path === "/portfolio/experiences").length,
     );
     await page.locator("#more-experiences .collapse-collection").click();
     assert.equal(await page.locator(".experience-card").count(), 6);
@@ -277,7 +277,7 @@ async function main() {
     assert.equal(
       await page.evaluate(
         () =>
-          testTransport.requests.filter((r) => r.path === "/experiences")
+          testTransport.requests.filter((r) => r.path === "/portfolio/experiences")
             .length,
       ),
       experienceRequests,
@@ -334,7 +334,7 @@ async function main() {
       };
       rows[0].skills = null;
       rows[1].detail = null;
-      rows[2].detail = "";
+      rows[2].detail = null;
       rows[3].detail = {
         workflowDescription: "",
         flow: null,
@@ -448,7 +448,7 @@ async function main() {
     custom.chatme.titleSub = "Custom subtitle";
     await inject(localized, localizedFixture, {
       delayMs: 35,
-      failures: { "/site?locale=zh-Hans": 1 },
+      failures: { "/portfolio/site?locale=zh-Hans": 1 },
     });
     await localized.goto(
       pathToFileURL(path.resolve(__dirname, "../dist/index.html")).href,

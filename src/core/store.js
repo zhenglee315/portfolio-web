@@ -1,9 +1,4 @@
-/** Normalize API responses and own loaded-page state; features never access the mock database. */
-/**
- * SiteData retains the API's brand, profile, social and chatme groups without aliases.
- * Each locale supplies a complete object; field documentation lives in mock/site/README.md.
- * Collection snapshots and their schemaVersion exclude localized site, journey, experiences and projects content.
- */
+/** Own direct portfolio responses and loaded pages without exposing mock fixtures. */
 Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   const {
     validateJourney,
@@ -11,46 +6,49 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     validateProjects,
     validateSite,
     validate,
+    validateCategoriesPage,
+    validateSkillsPage,
   } = dataContracts;
-  const initial = {
-    schemaVersion: 1,
-    skills: [],
-    skillCategories: [],
+  const paths = {
+    site: "/portfolio/site",
+    journey: "/portfolio/journey",
+    experiences: "/portfolio/experiences",
+    projects: "/portfolio/projects",
+    categories: "/portfolio/skill-categories",
+    skills: "/portfolio/skills",
   };
-  let snapshot;
-  // Localized site fields are cached separately so late language responses cannot change active content.
+  /** Freeze records at the store boundary so views cannot change canonical content. */
+  function freeze(value) {
+    if (value && typeof value === "object") {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+    return value;
+  }
+  /** Detach incoming records before keeping them in the immutable store. */
+  const copy = (value) => structuredClone(value);
+  /** Notify features about one completed store lifecycle change. */
+  const emit = (name, detail) =>
+    document.dispatchEvent(new CustomEvent(name, { detail }));
+  const emptySnapshot = freeze({ schemaVersion: 1, skills: [], skillCategories: [] });
   const siteByLocale = new Map();
   const journeyByLocale = new Map();
   const experiencesByLocale = new Map();
   const projectsByLocale = new Map();
-  // Resource descriptors dispatch shared paging behavior without changing any record keys.
+  const categoriesByLocale = new Map();
   const numbered = {
     experiences: { cache: experiencesByLocale, validate: validateExperiences },
     projects: { cache: projectsByLocale, validate: validateProjects },
   };
-  /** Replace only the active language journey; array order is authoritative and IDs stay numeric. */
-  function replaceJourney(rows, notify = true) {
-    journeyByLocale.set(
-      I18n.locale,
-      freeze(structuredClone(validateJourney(rows))),
-    );
-    if (notify) emit("portfolio:datachange");
-  }
-  const pages = Object.fromEntries(
-    ["experiences", "projects", "categories"].map((name) => [
+  const numberedPages = Object.fromEntries(
+    Object.keys(numbered).map((name) => [
       name,
       {
         ids: [],
-        ...(Object.hasOwn(numbered, name)
-          ? {
-              /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
-              page: 0,
-              pages: 0,
-              size: PORTFOLIO_RUNTIME.pagination[name],
-            }
-          : {}),
+        page: 0,
+        pages: 0,
+        size: PORTFOLIO_RUNTIME.pagination[name],
         total: 0,
-        nextCursor: null,
         hasMore: true,
         loaded: false,
         loading: false,
@@ -59,262 +57,379 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     ]),
   );
   const pending = new Map();
-  /** Emit a narrow lifecycle event instead of forcing unrelated features to reinitialize. */
-  const emit = (name, detail) =>
-    document.dispatchEvent(new CustomEvent(name, { detail }));
-  /** Freeze nested records so views cannot accidentally mutate canonical data. */
-  function freeze(value) {
-    if (value && typeof value === "object") {
-      Object.values(value).forEach(freeze);
-      Object.freeze(value);
-    }
-    return value;
-  }
-  /** Commit collection data only; validation failure preserves the snapshot and site cache. */
-  function replace(value, notify = true) {
-    const next = validate(JSON.parse(JSON.stringify(value)));
-    snapshot = freeze(next);
-    // Complete snapshot imports explicitly reset pagination; API merges use a separate path.
-    for (const [name, records] of Object.entries({
-      categories: next.skillCategories,
-    }))
-      Object.assign(pages[name], {
-        ids: records.map((row) => row.id),
-        total: records.length,
-        hasMore: false,
+  let changeVersion = 0;
+
+  /** Create an empty locale-owned category snapshot and cursor state. */
+  function emptyCategoryState() {
+    return {
+      snapshot: emptySnapshot,
+      page: {
+        ids: [],
+        limit: PORTFOLIO_RUNTIME.pagination.categories,
+        total: 0,
         nextCursor: null,
-        loaded: true,
+        hasMore: true,
+        loaded: false,
         loading: false,
         error: null,
-      });
-    if (notify) document.dispatchEvent(new CustomEvent("portfolio:datachange"));
+      },
+      continuations: new Map(),
+    };
   }
-  /** Import a complete localized collection while retaining its API keys and array order. */
+  /** Read one locale's category state without publishing a missing state. */
+  const categoryState = (locale = I18n.locale) =>
+    categoriesByLocale.get(locale) || emptyCategoryState();
+  /** Select category and skill labels for the visible locale. */
+  const activeSnapshot = () => categoryState().snapshot;
+  /** Resolve a loaded skill or category by stable ID. */
+  const find = (table, id) =>
+    activeSnapshot()[table].find((row) => row.id === id);
+  /** Resolve a directly localized skill label for rendering. */
+  const skillLabel = (id) => find("skills", id)?.label ?? id;
+  /** Resolve a directly localized category label for rendering. */
+  const categoryLabel = (id) => find("skillCategories", id)?.label ?? id;
+
+  /** Import a complete skill snapshot for the active locale after reference validation. */
+  function replace(value, notify = true) {
+    const next = freeze(validate(copy(value)));
+    const state = emptyCategoryState();
+    state.snapshot = next;
+    Object.assign(state.page, {
+      ids: next.skillCategories.map((row) => row.id),
+      total: next.skillCategories.length,
+      nextCursor: null,
+      hasMore: false,
+      loaded: true,
+    });
+    categoriesByLocale.clear();
+    categoriesByLocale.set(I18n.locale, state);
+    changeVersion++;
+    if (notify) emit("portfolio:datachange");
+  }
+  /** Import a complete numbered collection with its direct API record keys. */
   function replaceNumbered(name, rows, notify = true) {
     const resource = numbered[name];
-    const next = freeze(structuredClone(resource.validate(rows)));
+    const next = freeze(copy(resource.validate(rows)));
     resource.cache.set(I18n.locale, next);
     const size = PORTFOLIO_RUNTIME.pagination[name];
-    Object.assign(pages[name], {
+    Object.assign(numberedPages[name], {
       ids: next.map((row) => row.id),
-      total: next.length,
-      /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
       page: Math.max(1, Math.ceil(next.length / size)),
       pages: Math.ceil(next.length / size),
       size,
+      total: next.length,
       hasMore: false,
       loaded: true,
       loading: false,
       error: null,
     });
+    changeVersion++;
     if (notify) emit("portfolio:datachange");
   }
-  /** Resolve category skill identities without exposing mutable records. */
-  const find = (table, id) => snapshot[table].find((row) => row.id === id);
-  /** Look up a unique skill label; all components share this dictionary. */
-  const skillLabel = (id) => I18n.t(find("skills", id).labelKey);
-  /** Merge category identities and skill prefixes without discarding already loaded labels. */
-  function mergeRows(next, table, rows) {
-    const entries = new Map(next[table].map((row) => [row.id, row]));
-    for (const row of rows) {
-      const old = entries.get(row.id) || {},
-        merged = { ...old, ...row };
-      if (old.skillIds && row.skillIds) {
-        merged.skillIds = [...new Set([...old.skillIds, ...row.skillIds])];
-        if (old.skillIds.length > row.skillIds.length)
-          merged.skillsPage = old.skillsPage;
-      }
-      entries.set(row.id, merged);
-    }
-    next[table] = [...entries.values()];
+  /** Replace only the active language's ordered journey records. */
+  function replaceJourney(rows, notify = true) {
+    journeyByLocale.set(I18n.locale, freeze(copy(validateJourney(rows))));
+    if (notify) emit("portfolio:datachange");
   }
-  /** Validate a detached merge and its translation references before publishing it to consumers. */
-  function accept(response, table, rows = response.data) {
-    const next = JSON.parse(JSON.stringify(snapshot)),
-      oldCatalogs = PORTFOLIO_LOCALES;
-    const catalogs = JSON.parse(JSON.stringify(oldCatalogs));
-    for (const [locale, values] of Object.entries(
-      response.included.translations,
-    ))
-      Object.assign(catalogs[locale], values);
-    for (const name of ["skills"])
-      mergeRows(next, name, response.included[name] || []);
-    if (table) mergeRows(next, table, Array.isArray(rows) ? rows : [rows]);
-    window.PORTFOLIO_LOCALES = catalogs;
+  /** A failed domain validation must not leave a successful client response cached. */
+  async function read(path, query, check) {
+    const response = await PortfolioApi.request(path, query);
     try {
-      snapshot = freeze(validate(next));
+      return check(response);
     } catch (error) {
-      window.PORTFOLIO_LOCALES = oldCatalogs;
+      PortfolioApi.invalidate(path, query);
       throw error;
     }
   }
-  /** Resolve resource routing centrally rather than teaching each component HTTP query formats. */
-  function definition(name) {
-    const p = PORTFOLIO_RUNTIME.pagination;
-    return {
-      experiences: {
-        path: "/experiences",
-        size: p.experiences,
-      },
-      projects: { path: "/projects", size: p.projects },
-      categories: {
-        path: "/skill-categories",
-        table: "skillCategories",
-        limit: p.categories,
-      },
-    }[name];
+  /** Merge repeated skill references while requiring one label per locale. */
+  function mergeSkills(existing, incoming) {
+    const rows = new Map(existing.map((row) => [row.id, row]));
+    for (const row of incoming) {
+      if (rows.has(row.id) && rows.get(row.id).label !== row.label)
+        throw new Error("Skill label changed within one locale: " + row.id);
+      rows.set(row.id, row);
+    }
+    return [...rows.values()];
   }
-  /** Append one page once; failures preserve the page number or cursor and loaded rows. */
+  /** Append a category page into a private or active locale state. */
+  function acceptCategoryPage(state, response, query) {
+    validateCategoriesPage(response);
+    if (
+      response.page.limit !== query.limit ||
+      (state.page.loaded && response.page.total !== state.page.total) ||
+      (response.page.hasMore &&
+        response.page.nextCursor === state.page.nextCursor)
+    )
+      throw new Error("Category pagination changed");
+    const oldIds = new Set(state.page.ids);
+    if (response.items.some((row) => oldIds.has(row.id)))
+      throw new Error("Duplicate category across pages");
+    const next = {
+      schemaVersion: 1,
+      skills: mergeSkills(state.snapshot.skills, response.included.skills),
+      skillCategories: [...state.snapshot.skillCategories, ...response.items],
+    };
+    validate(next);
+    if (next.skillCategories.length > response.page.total)
+      throw new Error("Category count exceeds total");
+    state.snapshot = freeze(copy(next));
+    Object.assign(state.page, response.page, {
+      ids: next.skillCategories.map((row) => row.id),
+      loaded: true,
+      error: null,
+    });
+  }
+  /** Append a category's next skill page with the cursor from that same locale. */
+  function acceptSkillPage(state, id, response, query) {
+    validateSkillsPage(response);
+    const old = state.snapshot.skillCategories.find((row) => row.id === id);
+    if (!old) throw new Error("Unknown skill category: " + id);
+    if (
+      response.page.limit !== query.limit ||
+      response.page.total !== old.skillsPage?.total ||
+      (response.page.hasMore &&
+        response.page.nextCursor === old.skillsPage?.nextCursor)
+    )
+      throw new Error("Skill pagination changed");
+    const known = new Set(old.skillIds);
+    if (response.items.some((row) => known.has(row.id)))
+      throw new Error("Duplicate skill across pages");
+    const updated = {
+      ...old,
+      skillIds: [...old.skillIds, ...response.items.map((row) => row.id)],
+      skillsPage: response.page,
+    };
+    const next = {
+      schemaVersion: 1,
+      skills: mergeSkills(state.snapshot.skills, response.items),
+      skillCategories: state.snapshot.skillCategories.map((row) =>
+        row.id === id ? updated : row,
+      ),
+    };
+    state.snapshot = freeze(copy(validate(next)));
+    state.continuations.set(id, (state.continuations.get(id) || 0) + 1);
+  }
+  /** Load one numbered or category page without advancing state on failure. */
   function loadPage(name, notify = true) {
-    if (pending.has(name)) return pending.get(name);
-    const state = pages[name],
-      resource = definition(name);
-    if (!state || !resource)
+    const resource = paths[name];
+    if (!resource || (name !== "categories" && !numbered[name]))
       return Promise.reject(new Error("Unknown page resource: " + name));
-    if (state.loaded && !state.hasMore) return Promise.resolve();
-    state.loading = true;
-    state.error = null;
-    emit("portfolio:pagechange", name);
     const locale = I18n.locale;
-    const query = Object.hasOwn(numbered, name)
-      ? { locale, page: state.page + 1, size: resource.size }
+    const key = `${name}:${locale}`;
+    if (pending.has(key)) return pending.get(key);
+    const state = name === "categories"
+      ? categoriesByLocale.get(locale) || emptyCategoryState()
+      : numberedPages[name];
+    if (name === "categories" && !categoriesByLocale.has(locale))
+      categoriesByLocale.set(locale, state);
+    const page = name === "categories" ? state.page : state;
+    if (page.loaded && !page.hasMore) return Promise.resolve();
+    page.loading = true;
+    page.error = null;
+    emit("portfolio:pagechange", name);
+    const query = name === "categories"
+      ? {
+          locale,
+          limit: PORTFOLIO_RUNTIME.pagination.categories,
+          cursor: page.nextCursor || undefined,
+        }
       : {
           locale,
-          cursor: state.nextCursor || undefined,
-          limit: resource.limit,
+          page: page.page + 1,
+          size: PORTFOLIO_RUNTIME.pagination[name],
         };
-    const promise = PortfolioApi.request(resource.path, query)
-      .then((response) => {
-        if (Object.hasOwn(numbered, name)) {
-          if (state.loaded && response.total !== state.total)
-            throw new Error("Collection total changed; reload the page.");
-          const resource = numbered[name];
-          const old = resource.cache.get(locale) || [];
-          const next = [...old, ...response.items];
-          resource.validate(next);
-          resource.cache.set(locale, freeze(structuredClone(next)));
-          Object.assign(state, {
-            total: response.total,
-            pages: response.pages,
-            /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
-            page: response.page,
-            size: response.size,
-            ids: next.map((row) => row.id),
-            hasMore: response.page < response.pages,
-            loaded: true,
-          });
-          return;
-        }
-        if (!Array.isArray(response.data) || !response.page)
-          throw new Error("Expected a paginated collection.");
+    const promise = read(resource, query, (response) => {
+      if (name === "categories") {
+        acceptCategoryPage(state, response, query);
+      } else {
+        const collection = numbered[name];
+        const old = collection.cache.get(locale) || [];
+        const next = [...old, ...response.items];
+        collection.validate(next);
         if (
-          response.page.hasMore &&
-          response.page.nextCursor === state.nextCursor
+          (page.loaded && response.total !== page.total) ||
+          response.page !== page.page + 1 ||
+          response.size !== query.size ||
+          next.length > response.total
         )
-          throw new Error("Pagination cursor did not advance.");
-        const rows = response.data;
-        accept(response, resource.table, rows);
-        state.ids = [...new Set([...state.ids, ...rows.map((row) => row.id)])];
-        Object.assign(state, response.page, { loaded: true });
-      })
+          throw new Error("Numbered pagination changed: " + name);
+        collection.cache.set(locale, freeze(copy(next)));
+        Object.assign(page, {
+          ids: next.map((row) => row.id),
+          page: response.page,
+          pages: response.pages,
+          size: response.size,
+          total: response.total,
+          hasMore: response.page < response.pages,
+          loaded: true,
+        });
+      }
+      changeVersion++;
+    })
       .catch((error) => {
-        PortfolioApi.invalidate(resource.path, query);
-        state.error = error.message;
+        page.error = error.message;
         throw error;
       })
       .finally(() => {
-        state.loading = false;
-        pending.delete(name);
+        page.loading = false;
+        pending.delete(key);
         emit("portfolio:pagechange", name);
         if (notify) emit("portfolio:datachange");
       });
-    pending.set(name, promise);
+    pending.set(key, promise);
     return promise;
   }
-  /** Bootstrap only the resources needed by the visible page; subsequent collection pages remain unloaded. */
+  /** Load only the first visible page of each collection on startup. */
   async function initialize() {
-    const site = await PortfolioApi.request("/site");
-    const content = validateSite(site.data);
-    accept(site);
-    siteByLocale.set(site.meta.locale, freeze(structuredClone(content)));
-    const journey = await PortfolioApi.request("/journey");
-    validateJourney(journey.data);
-    accept(journey);
-    journeyByLocale.set(
-      journey.meta.locale,
-      freeze(structuredClone(journey.data)),
-    );
+    const locale = I18n.locale;
+    const site = await read(paths.site, { locale }, validateSite);
+    const journey = await read(paths.journey, { locale }, validateJourney);
+    siteByLocale.set(locale, freeze(copy(site)));
+    journeyByLocale.set(locale, freeze(copy(journey)));
     await Promise.all(
       ["experiences", "projects", "categories"].map((name) =>
         loadPage(name, false),
       ),
     );
   }
-  /** Stage all requested-locale content before the language service commits the new UI locale. */
-  async function prepareLocale(locale) {
-    const responses = await PortfolioApi.translate(locale);
-    // Read the known resource from the locale cache so missing groups cannot evade validation.
-    const site = await PortfolioApi.request("/site", { locale });
-    const journey = await PortfolioApi.request("/journey", { locale });
+  /** Rebuild category pages with the target locale's own opaque cursors. */
+  async function stageCategories(locale, source) {
+    const staged = emptyCategoryState();
+    if (!source.page.loaded) return staged;
+    const queried = [];
     try {
-      validateSite(site.data);
-      validateJourney(journey.data);
+      const wanted = source.page.ids.length;
+      do {
+        if (staged.page.loaded && !staged.page.hasMore)
+          throw new Error("Localized category page ended early");
+        const query = {
+          locale,
+          limit: PORTFOLIO_RUNTIME.pagination.categories,
+          cursor: staged.page.nextCursor || undefined,
+        };
+        queried.push([paths.categories, query]);
+        await read(paths.categories, query, (response) =>
+          acceptCategoryPage(staged, response, query),
+        );
+      } while (staged.page.ids.length < wanted);
+      if (
+        staged.page.total !== source.page.total ||
+        staged.page.hasMore !== source.page.hasMore ||
+        staged.page.ids.length !== wanted ||
+        staged.page.ids.some((id, index) => id !== source.page.ids[index])
+      )
+        throw new Error("Localized category identity, order or total changed");
+      for (const sourceCategory of source.snapshot.skillCategories) {
+        const id = sourceCategory.id;
+        const count = source.continuations.get(id) || 0;
+        let loaded = 0;
+        while (
+          loaded < count ||
+          staged.snapshot.skillCategories.find((row) => row.id === id).skillIds
+            .length < sourceCategory.skillIds.length
+        ) {
+          const record = staged.snapshot.skillCategories.find((row) => row.id === id);
+          if (!record.skillsPage?.hasMore)
+            throw new Error("Localized skill page ended early: " + id);
+          const query = {
+            locale,
+            ownerType: "category",
+            ownerId: id,
+            cursor: record.skillsPage.nextCursor,
+            limit: PORTFOLIO_RUNTIME.pagination.skills,
+          };
+          queried.push([paths.skills, query]);
+          await read(paths.skills, query, (response) =>
+            acceptSkillPage(staged, id, response, query),
+          );
+          loaded++;
+        }
+        const target = staged.snapshot.skillCategories.find((row) => row.id === id);
+        if (
+          target.skillIds.length !== sourceCategory.skillIds.length ||
+          target.skillIds.some((skillId, index) =>
+            skillId !== sourceCategory.skillIds[index]) ||
+          (sourceCategory.skillsPage &&
+            (target.skillsPage.total !== sourceCategory.skillsPage.total ||
+              target.skillsPage.hasMore !== sourceCategory.skillsPage.hasMore))
+        )
+          throw new Error("Localized skill identity, order or total changed: " + id);
+      }
+      return staged;
     } catch (error) {
-      PortfolioApi.invalidate("/site", { locale });
-      PortfolioApi.invalidate("/journey", { locale });
+      queried.forEach(([path, query]) => PortfolioApi.invalidate(path, query));
       throw error;
     }
-    const catalogs = structuredClone(PORTFOLIO_LOCALES);
-    // Validate every localized collection before committing any visible-language content.
-    const staged = [];
-    for (const [name, resource] of Object.entries(numbered)) {
-      const parts = responses
-        .filter((item) => item.path === "/" + name)
-        .sort((a, b) => a.response.page - b.response.page);
-      const rows = parts.flatMap((item) => item.response.items);
-      try {
-        resource.validate(rows);
-        if (
-          parts.some((item) => item.response.total !== pages[name].total) ||
-          rows.length !== pages[name].ids.length ||
-          rows.some((row, index) => row.id !== pages[name].ids[index])
-        )
-          throw new Error(
-            "Localized collection identity, order or total changed: " + name,
-          );
-      } catch (error) {
-        parts.forEach(({ path, query }) =>
-          PortfolioApi.invalidate(path, query),
-        );
-        throw error;
+  }
+  /** Stage every loaded resource before I18n commits the new visible locale. */
+  async function prepareLocale(locale) {
+    for (;;) {
+      await Promise.allSettled([...pending.values()]);
+      await PortfolioApi.translate(locale);
+      await Promise.allSettled([...pending.values()]);
+      const source = categoryState();
+      const sourcePages = Object.fromEntries(
+        Object.entries(numberedPages).map(([name, page]) => [
+          name,
+          { ...page, ids: [...page.ids] },
+        ]),
+      );
+      const version = changeVersion;
+      const site = await read(paths.site, { locale }, validateSite);
+      const journey = await read(paths.journey, { locale }, validateJourney);
+      const stagedNumbered = [];
+      for (const [name, descriptor] of Object.entries(numbered)) {
+        const sourcePage = sourcePages[name];
+        if (!sourcePage.loaded) continue;
+        const rows = [];
+        const queries = [];
+        try {
+          for (let page = 1; page <= sourcePage.page; page++) {
+            const query = {
+              locale,
+              page,
+              size: PORTFOLIO_RUNTIME.pagination[name],
+            };
+            queries.push(query);
+            const response = await read(paths[name], query, (result) => {
+              if (
+                result.page !== page ||
+                result.size !== query.size ||
+                result.total !== sourcePage.total ||
+                result.pages !== sourcePage.pages ||
+                !Array.isArray(result.items)
+              )
+                throw new Error("Localized numbered page changed: " + name);
+              return result;
+            });
+            rows.push(...response.items);
+          }
+          descriptor.validate(rows);
+          if (
+            rows.length !== sourcePage.ids.length ||
+            rows.some((row, index) => row.id !== sourcePage.ids[index])
+          )
+            throw new Error("Localized collection identity or order changed: " + name);
+          stagedNumbered.push([descriptor.cache, freeze(copy(rows))]);
+        } catch (error) {
+          queries.forEach((query) => PortfolioApi.invalidate(paths[name], query));
+          throw error;
+        }
       }
-      staged.push([resource.cache, freeze(structuredClone(rows))]);
+      const stagedCategories = await stageCategories(locale, source);
+      if (pending.size) {
+        await Promise.allSettled([...pending.values()]);
+        continue;
+      }
+      if (changeVersion !== version) continue;
+      siteByLocale.set(locale, freeze(copy(site)));
+      journeyByLocale.set(locale, freeze(copy(journey)));
+      stagedNumbered.forEach(([cache, rows]) => cache.set(locale, rows));
+      categoriesByLocale.set(locale, stagedCategories);
+      return;
     }
-    for (const { path, response } of responses) {
-      if (Object.hasOwn(numbered, path.slice(1))) continue;
-      if (response.meta.locale !== locale)
-        throw new Error("Unexpected translation locale");
-      Object.assign(catalogs[locale], response.included.translations[locale]);
-    }
-    staged.forEach(([cache, rows]) => cache.set(locale, rows));
-    // Other concurrent locale loads may have completed while this request was in flight.
-    PORTFOLIO_LOCALES[locale] = catalogs[locale];
-    siteByLocale.set(locale, freeze(structuredClone(site.data)));
-    journeyByLocale.set(locale, freeze(structuredClone(journey.data)));
   }
-  /** Resolve a category skill owner; card and dialog skills already arrive complete. */
-  function ownerRecord(owner) {
-    const canonical = owner,
-      split = canonical.indexOf("-"),
-      type = canonical.slice(0, split),
-      id = canonical.slice(split + 1);
-    const table = {
-      category: "skillCategories",
-    }[type];
-    if (!table) throw new Error("Unknown skill owner: " + owner);
-    return { type, id, table, record: find(table, id), key: canonical };
-  }
-  /** Report complete card skills or a category relationship preview for the shared UI. */
+  /** Report the visible locale's skill labels, IDs, and continuation metadata. */
   function skillsState(owner) {
     if (!owner.startsWith("category-")) {
       const collection = owner.startsWith("experience-")
@@ -330,68 +445,55 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
         hasMore: false,
       };
     }
-    const { record } = ownerRecord(owner),
-      ids = record?.skillIds || [];
+    const id = owner.slice("category-".length);
+    const record = find("skillCategories", id);
+    const ids = record?.skillIds || [];
     return {
-      ids,
+      ids: [...ids],
       total: record?.skillsPage?.total ?? ids.length,
       nextCursor: record?.skillsPage?.nextCursor || null,
       hasMore: record?.skillsPage?.hasMore || false,
     };
   }
-  /** Fetch one additional relationship page and notify only skill presentations. */
+  /** Load one category skill continuation using the visible locale's cursor. */
   function loadSkills(owner) {
     if (!owner.startsWith("category-")) return Promise.resolve();
-    const descriptor = ownerRecord(owner),
-      key = "skills:" + descriptor.key,
-      state = skillsState(owner);
+    const id = owner.slice("category-".length);
+    const locale = I18n.locale;
+    const state = categoriesByLocale.get(locale);
+    const record = state?.snapshot.skillCategories.find((row) => row.id === id);
+    if (!record) return Promise.reject(new Error("Unknown skill owner: " + owner));
+    const key = `skills:${locale}:${id}`;
     if (pending.has(key)) return pending.get(key);
-    if (!state.hasMore) return Promise.resolve();
+    if (!record.skillsPage?.hasMore) return Promise.resolve();
     const query = {
-      ownerType: descriptor.type,
-      ownerId: descriptor.id,
-      cursor: state.nextCursor,
+      locale,
+      ownerType: "category",
+      ownerId: id,
+      cursor: record.skillsPage.nextCursor,
       limit: PORTFOLIO_RUNTIME.pagination.skills,
     };
-    const promise = PortfolioApi.request("/skills", query)
-      .then((response) => {
-        if (
-          response.page.hasMore &&
-          response.page.nextCursor === state.nextCursor
-        )
-          throw new Error("Skill cursor did not advance.");
-        const old = find(descriptor.table, descriptor.id),
-          next = {
-            ...old,
-            skillIds: [
-              ...new Set([
-                ...old.skillIds,
-                ...response.data.map((row) => row.id),
-              ]),
-            ],
-            skillsPage: response.page,
-          };
-        accept(response, descriptor.table, next);
-        emit("portfolio:skillschange", descriptor.key);
-      })
-      .catch((error) => {
-        PortfolioApi.invalidate("/skills", query);
-        throw error;
+    const promise = read(paths.skills, query, (response) =>
+      acceptSkillPage(state, id, response, query),
+    )
+      .then(() => {
+        changeVersion++;
+        if (I18n.locale === locale) emit("portfolio:skillschange", owner);
       })
       .finally(() => pending.delete(key));
     pending.set(key, promise);
     return promise;
   }
-  snapshot = freeze(initial);
   return Object.freeze({
-    /** Read the immutable shared skill-category snapshot. */
+    /** Read immutable categories and skills for the visible locale. */
     get snapshot() {
-      return snapshot;
+      return activeSnapshot();
     },
     replace,
     validate,
     find,
     skillLabel,
+    categoryLabel,
     initialize,
     loadPage,
     loadSkills,
@@ -399,31 +501,36 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     prepareLocale,
     validateJourney,
     replaceJourney,
-    /** Validate and replace Experience records through the shared numbered collection boundary. */
+    /** Import complete Experience records with their direct API fields. */
     replaceExperiences: (rows, notify) =>
       replaceNumbered("experiences", rows, notify),
-    /** Validate and replace Projects through the shared numbered collection boundary. */
+    /** Import complete Project records with their direct API fields. */
     replaceProjects: (rows, notify) =>
       replaceNumbered("projects", rows, notify),
     validateProjects,
-    /** Read loaded Projects for the active locale without renaming API fields. */
+    /** Read loaded Project records for the visible locale. */
     get projects() {
       return projectsByLocale.get(I18n.locale) || Object.freeze([]);
     },
     validateExperiences,
-    /** Return loaded cards for the active locale with exactly the API field names. */
+    /** Read loaded Experience records for the visible locale. */
     get experiences() {
       return experiencesByLocale.get(I18n.locale) || Object.freeze([]);
     },
-    /** Return complete localized records in server array order, with no presentation aliases. */
+    /** Read the visible locale's full ordered journey. */
     get journey() {
       return journeyByLocale.get(I18n.locale) || Object.freeze([]);
     },
-    /** Read immutable content for the active locale, never the latest completed request. */
+    /** Read the visible locale's site content groups. */
     get site() {
       return siteByLocale.get(I18n.locale);
     },
-    /** Return pagination metadata with detached IDs so callers cannot mutate store state. */
-    page: (name) => ({ ...pages[name], ids: [...pages[name].ids] }),
+    page(name) {
+      const state = name === "categories"
+        ? categoryState().page
+        : numberedPages[name];
+      if (!state) throw new Error("Unknown page resource: " + name);
+      return { ...state, ids: [...state.ids] };
+    },
   });
 });

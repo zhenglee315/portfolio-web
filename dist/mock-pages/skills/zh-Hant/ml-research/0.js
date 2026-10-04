@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hant/ml-research/0", [{"id":"training-orchestration","label":"訓練任務編排"},{"id":"mlflow-integration","label":"MLflow 整合"},{"id":"xgboost","label":"XGBoost"},{"id":"lstm","label":"LSTM"},{"id":"random-forest","label":"隨機森林"},{"id":"svm","label":"SVM"}]);

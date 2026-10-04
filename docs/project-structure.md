@@ -15,7 +15,9 @@ portfolio-web/
 │   ├── experiences/        # Direct localized paginated Experience cards
 │   ├── journey/            # Direct localized Journey arrays in server order
 │   ├── site/               # Complete site payload per locale
-│   └── locales/            # Business translations only
+│   ├── skill-categories/   # Ordered localized categories and full membership IDs
+│   ├── skills/             # Localized {id,label} skill rows
+│   └── locales/            # Backend seed dictionary only; excluded from the web bundle
 ├── src/
 │   ├── index.html
 │   ├── app.js
@@ -40,6 +42,7 @@ portfolio-web/
 ├── spec/                   # OpenAPI backend handoff
 ├── docs/
 ├── dist/                   # Generated and committed release output
+│   └── mock-pages/         # Request-time localized JS response chunks
 ├── artifacts/              # Ignored reports and packages
 ├── package.json
 ├── .gitattributes
@@ -55,10 +58,12 @@ portfolio-web/
 | ----------------------------- | ------------------------------------------------------------ |
 | `config/`                     | 建置設定；不放網頁業務資料                                   |
 | `src/`                        | 網頁程式來源；業務資料另在 mock 維護                         |
-| `mock/`                       | 16 個業務 JSON：網站內容、關聯、職涯、專案、技能與翻譯       |
+| `mock/`                       | 18 個前端 API JSON，另保留四個後端 seed-only JSON             |
 | `mock/journey/`               | 三份完整旅程陣列；不排序、不查表，欄位說明在同目錄 README.md |
 | `mock/site/`                  | 三份完整 SiteData；欄位英文註解見同目錄 README.md            |
-| `mock/locales/`               | 三語業務文字來源；API 每次僅投影請求語言                     |
+| `mock/skill-categories/`      | 三語分類標籤、穩定 ID 及完整技能關聯順序                     |
+| `mock/skills/`                | 三語技能 ID 與直接顯示標籤                                   |
+| `mock/locales/`               | 舊後端 seed 用翻譯字典；不參與前端 API 回應                  |
 | `src/config/`                 | 固定語言清單、導覽與執行參數                                 |
 | `src/locales/`                | 三語固定 UI 文案，直接隨前端建置                             |
 | `src/assets/maps/`            | 版本化 SVG 國界，不透過 API 取得                             |
@@ -72,6 +77,7 @@ portfolio-web/
 | `src/assets/fonts/`           | 字型檔、CSS、來源校驗與授權                                  |
 | `src/assets/icons/`           | 工程師素材與 Bootstrap 供應商資產                            |
 | `src/assets/icons/bootstrap/` | 固定版本 SVG、來源與授權                                     |
+| `dist/mock-pages/`            | 建置產生的三語 API 分頁 JS；按請求載入並支援 `file://`          |
 | `scripts/`                    | 建置、預覽、測試、包裝及供應商同步工具                       |
 | `tests/`                      | 資料／建置契約與實際瀏覽器回歸測試                           |
 | `spec/`                       | 機器可讀 API schema 與確認狀態，供後端實作                   |
@@ -99,8 +105,8 @@ portfolio-web/
 | `src/locales/en.json`                             | 英文固定 UI 文案與 fallback                                                                         |
 | `src/locales/zh-Hans.json`                        | 簡體中文固定 UI 文案                                                                                |
 | `src/locales/zh-Hant.json`                        | 繁體中文固定 UI 文案                                                                                |
-| `src/api/mock-transport.js`                       | 6 路由、Experience／Projects 頁碼分頁及分類 cursor 分頁、關聯 include、少量技能預覽、延遲／失敗注入 |
-| `src/api/client.js`                               | locale 請求、語言隔離快取、去重、版本檢查及已讀資源重取                                             |
+| `src/api/mock-transport.js`                       | 六支 `/portfolio` GET 的按需靜態片段傳輸；測試仍可注入完整資料、延遲及失敗                           |
+| `src/api/client.js`                               | locale 請求、語言隔離快取、去重及已讀資源重取                                                         |
 | `src/core/registry.js`                            | 功能註冊、相依解析及共用 DOM／尺寸／開關工具                                                        |
 | `src/core/data-contracts.js`                      | 純資料驗證：Site、Journey 與正規化集合契約；不修改快取與 DOM                                        |
 | `src/core/store.js`                               | API 啟動／增量合併、分頁狀態、委派契約驗證、不可變原樣資料與語言快取                                |
@@ -124,7 +130,13 @@ portfolio-web/
 | `mock/projects/README.md`                         | Projects 逐欄英文註解與空值維護規則                                                                 |
 | `docs/projects-development.md`                    | Projects 同名欄位、共用分頁與詳情模組                                                               |
 | `tests/projects.test.cjs`                         | Projects 直接契約、三語、六筆分頁、空值與原子切換                                                   |
-| `mock/skills.json`                                | 唯一技能字典與分類關聯                                                                              |
+| `mock/skill-categories/en.json`                  | 英文分類標籤、分類順序與完整技能 ID 關聯                                                            |
+| `mock/skill-categories/zh-Hans.json`             | 簡體分類標籤，保持相同分類及技能 ID 順序                                                            |
+| `mock/skill-categories/zh-Hant.json`             | 繁體分類標籤，保持相同分類及技能 ID 順序                                                            |
+| `mock/skills/en.json`                            | 英文技能 ID 與直接顯示標籤                                                                          |
+| `mock/skills/zh-Hans.json`                       | 簡體技能標籤，保持相同技能 ID 順序                                                                   |
+| `mock/skills/zh-Hant.json`                       | 繁體技能標籤，保持相同技能 ID 順序                                                                   |
+| `mock/skills.json`                               | 僅供後端種子匯入的舊技能字典與分類關聯                                                              |
 | `src/assets/maps/world.svg`                       | 本地 SVG 國家輪廓，不依賴外部地圖服務                                                               |
 | `src/features/chatme.js`                          | 桌面／手機浮框、進場後淡入、定位、互動與閒置淡出                                                    |
 | `src/features/city-bubble.js`                     | 城市浮框內容、定位、hover／鍵盤／觸控互動                                                           |
@@ -144,9 +156,9 @@ portfolio-web/
 | `src/features/site-content.js`                    | 同名 site 欄位綁定、姓名／SEO／教育摘要、聯絡與旅程摘要                                             |
 | `src/features/skill-layout.js`                    | 技能標籤模板、3/4 寬度量測及展開狀態                                                                |
 | `src/features/stop-carousel.js`                   | 地點滑動列、溢出箭頭、邊界及鍵盤操作                                                                |
-| `mock/locales/en.json`                            | 英文專案／技能實體與記錄文字，亦為翻譯回退來源                                                      |
-| `mock/locales/zh-Hans.json`                       | 簡體中文，鍵及插值參數與英文一致                                                                    |
-| `mock/locales/zh-Hant.json`                       | 繁體中文，鍵及插值參數與英文一致                                                                    |
+| `mock/locales/en.json`                            | 僅供後端種子匯入的英文翻譯字典                                                                      |
+| `mock/locales/zh-Hans.json`                       | 僅供後端種子匯入的簡體翻譯字典                                                                      |
+| `mock/locales/zh-Hant.json`                       | 僅供後端種子匯入的繁體翻譯字典                                                                      |
 | `src/styles/index.css`                            | 唯一樣式入口，宣告主題／基礎／版面／元件的載入順序                                                  |
 | `src/styles/theme.css`                            | 全部 authored CSS 色彩、字型、主要尺寸、動畫時間與 RWD 模式                                         |
 | `src/styles/base.css`                             | 元素預設、通用文字連結、焦點與 reduced-motion 規則                                                  |
@@ -182,7 +194,7 @@ portfolio-web/
 | scripts/package.mjs            | 驗證後以 manifest 白名單產生網站封裝及離線 ZIP                                                           |
 | scripts/vendor-icons.mjs       | 從官方固定版本同步 SVG／授權，產生 src/core/icons.js；只有這個維護動作需要網路                           |
 | tests/fixtures.cjs             | 共用讀取真實 JSON fixture 與建立完整測試快照                                                             |
-| tests/api.test.cjs             | 16 個 API 契約案例：路由、cursor、快取、重試、空集合及原子合併                                           |
+| tests/api.test.cjs             | API 契約案例：路由、cursor、快取、重試、空集合及原子合併                                                   |
 | tests/api-browser.cjs          | 大量資料的實際 UI 分頁、失敗重試、detail 按需載入、三語及離線驗證                                        |
 | tests/helpers.cjs              | 以 VM 建立隔離的資料／服務測試環境                                                                       |
 | tests/data.test.cjs            | 三語契約、關聯驗證、原子更新、重排／空集合、月份業務規則、模組生命週期                                   |
@@ -200,9 +212,11 @@ portfolio-web/
 | mock/README.md                 | 全部 mock 檔案責任、資料界線與維護流程                                                                   |
 | mock/site/README.md            | SiteData 逐欄用途、型別及英文註解                                                                        |
 | mock/journey/README.md         | 旅程逐欄英文註解、順序、座標與可空欄位說明                                                               |
+| mock/skill-categories/README.md | 分類來源、六筆預覽與 `included.skills` 去重規則                                                         |
+| mock/skills/README.md         | 直接技能標籤、分類內順序與游標接續規則                                                                  |
 | docs/journey-development.md    | 第 2 支 API 與地圖模組、命名及自動布局對照                                                               |
 | docs/site-development.md       | 第 1 支 API 與 DOM／模組命名對照、資料流及修改步驟                                                       |
-| docs/api-interface-format.md   | 6 支 GET 的完整輸入／回應、欄位、錯誤、版本及 lazy loading 契約                                          |
+| docs/api-interface-format.md   | 6 支 `/portfolio` GET 的完整輸入／回應、欄位、錯誤及 lazy loading 契約                                  |
 | docs/sidebar-navigation.md     | 桌面图示列／手機抽屜責任、命名、動態樣式與維護步驟                                                       |
 | docs/appearance-development.md | 背景功能、設定格式、離線儲存、主題 token 及動畫生命週期                                                  |
 | docs/current-page-features.md  | 55 項功能、來源／模組入口與每項英文實作註解                                                              |
@@ -223,7 +237,8 @@ portfolio-web/
 | 檔案／規則                                | 責任                                                                                                                                                                                    |
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | dist/index.html                           | 由 src/index.html 產生，引用單一 app.js 與 styles.css                                                                                                                                   |
-| dist/app.js                               | 按 config/build.json 順序組合的 classic script，含原始檔路徑註記與英文註解                                                                                                              |
+| dist/app.js                               | 按 config/build.json 順序組合的 classic script、前端設定與小型 mock 片段索引；不含全部 API 資料                                                                                           |
+| dist/mock-pages/\*\*                   | 依語言、資源與分頁產生的靜態 JS 回應片段；transport 在請求時才讀取                                                                                                                         |
 | dist/styles.css                           | 展開 src/styles/index.css 的所有樣式模組；保留本地字型 CSS 引用                                                                                                                         |
 | dist/build-manifest.json                  | 每個發布檔案的 SHA-256 清單，建置可重現且不加入時間戳                                                                                                                                   |
 | dist/assets/\*\*                          | src/assets 原樣複製；不得分別編輯兩份                                                                                                                                                   |
@@ -246,7 +261,7 @@ portfolio-web/
 | -------------------------------- | ------------------------------------------------------------ |
 | `docs/project-structure.md`      | 各資料夾與維護中檔案的責任索引                               |
 | `docs/function-reference.md`     | 由英文註解產生的具名函式、window 工廠與公開物件介面索引      |
-| `docs/backend-handoff.md`        | 後端實作、驗證、語言、錯誤與未實作 HTTP 邊界                 |
+| `docs/backend-handoff.md`        | 後端實作、驗證、語言、錯誤與前後端 HTTP 邊界                 |
 | `docs/final-verification.md`     | 本輪清理、資料邊界、4K、文件與完整測試結果                   |
 | `docs/images/desktop.png`        | 1440px 英文桌面實際畫面，README 預覽                         |
 | `docs/images/mobile.png`         | 390px 繁體中文手機實際畫面，README 預覽                      |
@@ -254,7 +269,7 @@ portfolio-web/
 | `scripts/capture-readme.cjs`     | 以本地網站重拍 README 截圖，不更改部署縮圖                   |
 | `tests/boundaries-browser.cjs`   | 0／1／6／7／19 筆、三語、手機／平板／4K 初始載入與分頁       |
 | `tests/spec.test.cjs`            | OpenAPI 引用、狀態、DTO 名稱與實際 mock 範例一致性           |
-| `spec/openapi.json`              | 六支 GET API 的 OpenAPI 3.1 schema；前四支已確認，兩支待討論 |
+| `spec/openapi.json`              | 六支 `/portfolio` GET API 的 OpenAPI 3.1 直接回應 schema    |
 | `spec/README.md`                 | API schema 使用、更新與驗證方式                              |
 
 ## README gallery assets / 圖集檔案

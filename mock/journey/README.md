@@ -1,6 +1,6 @@
 # Journey mock 欄位註解
 
-[en.json](en.json)、[zh-Hans.json](zh-Hans.json)、[zh-Hant.json](zh-Hant.json) 各保存完整的 Journey 陣列，對應 GET /api/v1/journey 成功回應的 data。JSON 不加入註解欄位；本文件是伴隨說明。
+[en.json](en.json)、[zh-Hans.json](zh-Hans.json)、[zh-Hant.json](zh-Hant.json) 各保存完整的 Journey 陣列，對應 GET /portfolio/journey 直接回傳的完整成功回應。JSON 不加入註解欄位；本文件是伴隨說明。
 
 ## 契約與命名
 
@@ -34,7 +34,7 @@
 
 ## 多語與其他 API
 
-三份記錄的順序、ID、日期、分類及座標應一致，顯示文字依 locale 不同。支援語言整份缺失時 transport 回退英文；必要欄位缺失或型別錯誤會被 store 委派的 dataContracts.validateJourney 拒絕，不逐欄補譯。
+三份記錄的順序、ID、日期、分類及座標應一致，顯示文字依 locale 不同。必要欄位缺失或型別錯誤由前端資料契約拒絕，不逐欄補譯。
 
 Journey、Experience、Projects 都使用三語直接文字，不使用 entities 或 mock/locales。Journey 與 Experience 的同筆職涯使用相同數字 ID，Projects 使用自己的主鍵；沒有 slug 對照表。正式後端可由自己的職涯表組裝回應，不需要為前端另外建立 mapping table。
 

@@ -1,6 +1,6 @@
 # Experience 開發對照
 
-第 3 支 `GET /api/v1/experiences` 已確認。第 5～6 支 API 保留原契約，尚待逐支討論。沒有新增 API、HTTP adapter 或資料庫。
+`GET /portfolio/experiences` 已對齊相鄰後端的頁碼回應。前端仍使用離線 mock，尚未接 HTTP adapter。
 
 ## 契約與命名
 
@@ -21,8 +21,8 @@
 ## 模組責任
 
 - `mock/experiences/{locale}.json`：三份完整直接文字陣列，按後端預期順序維護。它們是完整測試資料庫，transport 再切成每頁六筆。
-- `scripts/lib/mock-data.mjs`、`config/build.json`：明確登記來源，建置時嵌入離線 bundle。JSON 不加入註解，欄位英文註解放在 [mock 說明](../mock/experiences/README.md)。
-- `src/api/mock-transport.js`：依語言選擇陣列、檢查 page／size、切頁；不查 entities 或業務字典。
+- `scripts/lib/mock-data.mjs`、`config/build.json`：明確登記來源，建置時輸出 `dist/mock-pages/` 分頁 JS，可由 `file://` 按需載入。JSON 不加入註解，欄位英文註解放在 [mock 說明](../mock/experiences/README.md)。
+- `src/api/mock-transport.js`：依語言與 page／size 讀取對應靜態頁；測試注入完整資料時沿用相同分頁契約。不查 entities 或業務字典。
 - `src/api/client.js`：驗證 Page 回應、依 path/query/locale 快取、合併重複請求。translate 回傳 `{ path, query, response }` 描述，以識別沒有 meta 的 Experience 回應；這是內部請求紀錄，不是 API 額外包裝或欄位 mapping。
 - `src/core/data-contracts.js`：validateExperiences 驗證 ID、文字、日期、skills、可空 detail；失敗不提交資料。
 - `src/core/store.js`：experiencesByLocale 保存原樣不可變陣列；data.experiences 只讀取當前語言。loadPage 管理已成功載入頁碼、重試與列表狀態。
@@ -36,13 +36,13 @@
 2. 每頁容量固定六筆，末頁可以不足六筆；size 仍為 6。零筆時 total=0、pages=0、page=1、items=[]。超出末頁回空 items。
 3. 載入中去重，失敗保留舊資料及頁碼，重試同頁；收合只移除額外 DOM，重開不重新請求。
 4. 切換語言重取已載入頁碼，原子驗證完成後才切換。三語的 ID、總數、順序及非語言欄位應相同。失敗仍保留原語言，修正後可重試。
-5. 技能 +N = skills.length - 可見數。技能展開完全是前端顯示，不呼叫 /skills，沒有技能 cursor 或頁碼。
+5. 技能 +N = skills.length - 可見數。技能展開完全是前端顯示，不呼叫 /portfolio/skills，沒有技能 cursor 或頁碼。
 6. 此 Page 契約沒有 revision。重複 ID、total 改變或語言順序不一致會被拒絕，但前端不能保證資料庫跨請求的快照一致；後端保持穩定排序，資料變更時重新整理列表。
 7. `data.replaceExperiences` 只供完整當前語言陣列匯入／測試；獨立於 `data.replace` 的舊集合快照。它不修改 mock 或 API 快取。
 
 ## 清理與維護
 
-已移除 mock/careers.json、career.\* 業務翻譯鍵、Experience 的 organizationId／locationId／skillIds／text／teaching 轉換流程，以及 /skills 的 career owner。Projects 已於第 4 支完成直接文字整合；只有技能分類仍使用 skills 和 mock/locales，entities 已移除。第 5～6 支留待下一輪討論。
+已移除 mock/careers.json、career.\* 業務翻譯鍵、Experience 的 organizationId／locationId／skillIds／text／teaching 轉換流程，以及 /portfolio/skills 的 career owner。Projects 與技能分類都使用三語直接文字；技能分類和技能分別由 `mock/skill-categories/{locale}.json` 與 `mock/skills/{locale}.json` 提供。
 
 維護者修改內容應同步三語 JSON；新增記錄保持相同 ID 與順序，detail 可省略或 null，skills 無值使用 []。新增欄位需同步 validator、實際使用的模板及 API 文件，不添加只為舊命名相容而存在的轉換表。
 

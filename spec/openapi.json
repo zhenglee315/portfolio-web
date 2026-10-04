@@ -3,80 +3,60 @@
   "info": {
     "title": "Zheng Lee Portfolio API",
     "version": "1.0.0",
-    "description": "Backend handoff for a currently offline mock-driven website. Four endpoints approved; two skills endpoints await review. No production HTTP adapter or authentication is implemented. Text is plain and localized, never HTML."
+    "description": "Public GET contract implemented by the portfolio backend. Responses contain direct localized content or collection pages; no universal response wrapper."
   },
-  "servers": [
-    {
-      "url": "/api/v1",
-      "description": "Planned HTTP base path; not a deployed backend."
-    }
-  ],
   "paths": {
-    "/site": {
+    "/portfolio/site": {
       "get": {
         "operationId": "getSite",
-        "summary": "get Site",
-        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "summary": "Get localized portfolio site content",
+        "description": "Return brand, profile, social, and chatme directly. Missing site content returns 404.",
         "x-contract-status": "confirmed",
         "parameters": [
           {
             "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SiteResponse"
+                  "$ref": "#/components/schemas/SiteData"
                 },
                 "examples": {
                   "en": {
                     "value": {
-                      "data": {
-                        "brand": {
-                          "title": "ZL",
-                          "titleSub": "WILSON",
-                          "copyrightYear": 2026
-                        },
-                        "profile": {
-                          "firstName": "Zheng",
-                          "familyName": "Lee",
-                          "nickName": "Wilson",
-                          "content": "Senior software engineer with over five years of experience designing and building Python backends and manufacturing data platforms at Delta Electronics and Foxconn. Worked on systems used in daily production across 48+ plants and 100+ production lines, including analytics supporting Apple product manufacturing. Main areas of work include shared backend services, database performance optimisation, data pipeline development, asynchronous processing and machine-learning deployment.",
-                          "eduCode": "UCL",
-                          "program": "MSc Software Systems Engineering",
-                          "introContent": "SOFTWARE · PLATFORMS · APPLIED AI",
-                          "footerContent": "Changing the world through code, making everyday life better and easier."
-                        },
-                        "social": {
-                          "linkedin": "https://www.linkedin.com/in/zhenglee315",
-                          "github": "https://github.com/zhenglee315",
-                          "medium": "https://medium.com/@WilsonLeee",
-                          "email": "zhenglee315@gmail.com"
-                        },
-                        "chatme": {
-                          "title": "London · 20 hours/week",
-                          "titleSub": "OPEN TO INTERNSHIPS",
-                          "content": "I’m an MSc Software Systems Engineering student at UCL, seeking a paid software engineering internship to contribute my skills and help cover my living costs.\nI specialise in backend systems and AI agent application development.",
-                          "icon": "assets/icons/cow-engineer.svg"
-                        }
+                      "brand": {
+                        "title": "ZL",
+                        "titleSub": "WILSON",
+                        "copyrightYear": 2026
                       },
-                      "included": {
-                        "organizations": [],
-                        "countries": [],
-                        "locations": [],
-                        "skills": [],
-                        "translations": {
-                          "en": {}
-                        }
+                      "profile": {
+                        "firstName": "Zheng",
+                        "familyName": "Lee",
+                        "nickName": "Wilson",
+                        "content": "Senior software engineer with over five years of experience designing and building Python backends and manufacturing data platforms at Delta Electronics and Foxconn. Worked on systems used in daily production across 48+ plants and 100+ production lines, including analytics supporting Apple product manufacturing. Main areas of work include shared backend services, database performance optimisation, data pipeline development, asynchronous processing and machine-learning deployment.",
+                        "eduCode": "UCL",
+                        "program": "MSc Software Systems Engineering",
+                        "introContent": "SOFTWARE · PLATFORMS · APPLIED AI",
+                        "footerContent": "Changing the world through code, making everyday life better and easier."
                       },
-                      "page": null,
-                      "meta": {
-                        "apiVersion": 1,
-                        "revision": "portfolio-2026-09-21-projects",
-                        "locale": "en"
+                      "social": {
+                        "linkedin": "https://www.linkedin.com/in/zhenglee315",
+                        "github": "https://github.com/zhenglee315",
+                        "medium": "https://medium.com/@WilsonLeee",
+                        "email": "zhenglee315@gmail.com"
+                      },
+                      "chatme": {
+                        "title": "London · 20 hours/week",
+                        "titleSub": "OPEN TO INTERNSHIPS",
+                        "content": "I’m an MSc Software Systems Engineering student at UCL, seeking a paid software engineering internship to contribute my skills and help cover my living costs.\nI specialise in backend systems and AI agent application development.",
+                        "icon": "assets/icons/cow-engineer.svg"
                       }
                     }
                   }
@@ -87,26 +67,32 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/journey": {
+    "/portfolio/journey": {
       "get": {
         "operationId": "getJourney",
-        "summary": "get Journey",
-        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "summary": "Get localized portfolio journey",
+        "description": "Return the full localized journey array in saved order; an empty journey returns [].",
         "x-contract-status": "confirmed",
         "parameters": [
           {
             "$ref": "#/components/parameters/Locale"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
@@ -114,126 +100,109 @@
                 },
                 "examples": {
                   "en": {
-                    "value": {
-                      "data": [
-                        {
-                          "id": 1,
-                          "countryCode": "TWN",
-                          "countryName": "Taiwan",
-                          "city": "New Taipei",
-                          "latitude": 25.03,
-                          "longitude": 121.432,
-                          "type": "education",
+                    "value": [
+                      {
+                        "id": 1,
+                        "countryCode": "TWN",
+                        "countryName": "Taiwan",
+                        "city": "New Taipei",
+                        "latitude": 25.03,
+                        "longitude": 121.432,
+                        "type": "education",
+                        "startMonth": "2017-09",
+                        "endMonth": "2019-07",
+                        "expected": false,
+                        "organizationName": "Fu Jen Catholic University",
+                        "organizationCode": "Fu Jen University",
+                        "organizationTitle": "MS Information Management",
+                        "detail": {
                           "startMonth": "2017-09",
-                          "endMonth": "2019-07",
-                          "expected": false,
-                          "organizationName": "Fu Jen Catholic University",
-                          "organizationCode": "Fu Jen University",
-                          "organizationTitle": "MS Information Management",
-                          "detail": {
-                            "startMonth": "2017-09",
-                            "endMonth": "2019-06",
-                            "content": "Python Instructor / Teaching Assistant"
-                          }
-                        },
-                        {
-                          "id": 2,
-                          "countryCode": "CHN",
-                          "countryName": "China",
-                          "city": "Shenzhen",
-                          "latitude": 22.543,
-                          "longitude": 114.058,
-                          "type": "work",
-                          "startMonth": "2020-08",
-                          "endMonth": "2021-07",
-                          "expected": false,
-                          "organizationName": "Foxconn Technology Group",
-                          "organizationCode": "Foxconn",
-                          "organizationTitle": "Data Analysis Engineer",
-                          "detail": null
-                        },
-                        {
-                          "id": 3,
-                          "countryCode": "CHN",
-                          "countryName": "China",
-                          "city": "Chengdu",
-                          "latitude": 30.572,
-                          "longitude": 104.067,
-                          "type": "work",
-                          "startMonth": "2021-08",
-                          "endMonth": "2023-08",
-                          "expected": false,
-                          "organizationName": "Foxconn Technology Group",
-                          "organizationCode": "Foxconn",
-                          "organizationTitle": "System Design & Data Analysis Engineer",
-                          "detail": null
-                        },
-                        {
-                          "id": 4,
-                          "countryCode": "CHN",
-                          "countryName": "China",
-                          "city": "Suzhou · Wujiang",
-                          "latitude": 31.138,
-                          "longitude": 120.645,
-                          "type": "work",
-                          "startMonth": "2023-08",
-                          "endMonth": "2026-03",
-                          "endDay": 14,
-                          "expected": false,
-                          "organizationName": "Delta Electronics",
-                          "organizationCode": "Delta Electronics",
-                          "organizationTitle": "Senior Software Design Engineer",
-                          "detail": null
-                        },
-                        {
-                          "id": 5,
-                          "countryCode": "TWN",
-                          "countryName": "Taiwan",
-                          "city": "Taoyuan",
-                          "latitude": 24.993,
-                          "longitude": 121.301,
-                          "type": "work",
-                          "startMonth": "2026-04",
-                          "endMonth": "2026-09",
-                          "expected": false,
-                          "organizationName": "The Gospel as Revealed to Me",
-                          "organizationCode": "AI Publishing",
-                          "organizationTitle": "Senior Agent Platform Engineer",
-                          "detail": null
-                        },
-                        {
-                          "id": 6,
-                          "countryCode": "GBR",
-                          "countryName": "United Kingdom",
-                          "city": "London",
-                          "latitude": 51.5246,
-                          "longitude": -0.134,
-                          "type": "education",
-                          "startMonth": "2026-09",
-                          "endMonth": "2027-08",
-                          "expected": true,
-                          "organizationName": "University College London",
-                          "organizationCode": "UCL",
-                          "organizationTitle": "MSc Software Systems Engineering",
-                          "detail": null
-                        }
-                      ],
-                      "included": {
-                        "organizations": [],
-                        "countries": [],
-                        "locations": [],
-                        "skills": [],
-                        "translations": {
-                          "en": {}
+                          "endMonth": "2019-06",
+                          "content": "Python Instructor / Teaching Assistant"
                         }
                       },
-                      "page": null,
-                      "meta": {
-                        "apiVersion": 1,
-                        "revision": "portfolio-2026-09-21-projects",
-                        "locale": "en"
+                      {
+                        "id": 2,
+                        "countryCode": "CHN",
+                        "countryName": "China",
+                        "city": "Shenzhen",
+                        "latitude": 22.543,
+                        "longitude": 114.058,
+                        "type": "work",
+                        "startMonth": "2020-08",
+                        "endMonth": "2021-07",
+                        "expected": false,
+                        "organizationName": "Foxconn Technology Group",
+                        "organizationCode": "Foxconn",
+                        "organizationTitle": "Data Analysis Engineer",
+                        "detail": null
+                      },
+                      {
+                        "id": 3,
+                        "countryCode": "CHN",
+                        "countryName": "China",
+                        "city": "Chengdu",
+                        "latitude": 30.572,
+                        "longitude": 104.067,
+                        "type": "work",
+                        "startMonth": "2021-08",
+                        "endMonth": "2023-08",
+                        "expected": false,
+                        "organizationName": "Foxconn Technology Group",
+                        "organizationCode": "Foxconn",
+                        "organizationTitle": "System Design & Data Analysis Engineer",
+                        "detail": null
+                      },
+                      {
+                        "id": 4,
+                        "countryCode": "CHN",
+                        "countryName": "China",
+                        "city": "Suzhou · Wujiang",
+                        "latitude": 31.138,
+                        "longitude": 120.645,
+                        "type": "work",
+                        "startMonth": "2023-08",
+                        "endMonth": "2026-03",
+                        "endDay": 14,
+                        "expected": false,
+                        "organizationName": "Delta Electronics",
+                        "organizationCode": "Delta Electronics",
+                        "organizationTitle": "Senior Software Design Engineer",
+                        "detail": null
+                      },
+                      {
+                        "id": 5,
+                        "countryCode": "TWN",
+                        "countryName": "Taiwan",
+                        "city": "Taoyuan",
+                        "latitude": 24.993,
+                        "longitude": 121.301,
+                        "type": "work",
+                        "startMonth": "2026-04",
+                        "endMonth": "2026-09",
+                        "expected": false,
+                        "organizationName": "The Gospel as Revealed to Me",
+                        "organizationCode": "AI Publishing",
+                        "organizationTitle": "Senior Agent Platform Engineer",
+                        "detail": null
+                      },
+                      {
+                        "id": 6,
+                        "countryCode": "GBR",
+                        "countryName": "United Kingdom",
+                        "city": "London",
+                        "latitude": 51.5246,
+                        "longitude": -0.134,
+                        "type": "education",
+                        "startMonth": "2026-09",
+                        "endMonth": "2027-08",
+                        "expected": true,
+                        "organizationName": "University College London",
+                        "organizationCode": "UCL",
+                        "organizationTitle": "MSc Software Systems Engineering",
+                        "detail": null
                       }
-                    }
+                    ]
                   }
                 }
               }
@@ -242,17 +211,17 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
     },
-    "/experiences": {
+    "/portfolio/experiences": {
       "get": {
         "operationId": "getExperiences",
-        "summary": "get Experiences",
-        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "summary": "Get a page of localized experiences",
+        "description": "Return numbered pages of six complete experience records, including all skill labels.",
         "x-contract-status": "confirmed",
         "parameters": [
           {
@@ -263,11 +232,14 @@
           },
           {
             "$ref": "#/components/parameters/Size"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
@@ -483,17 +455,17 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
     },
-    "/projects": {
+    "/portfolio/projects": {
       "get": {
         "operationId": "getProjects",
-        "summary": "get Projects",
-        "description": "Approved frontend contract. Preserve localized IDs, array order and totals.",
+        "summary": "Get a page of localized projects",
+        "description": "Return numbered pages of six projects, each with full detail and skill labels.",
         "x-contract-status": "confirmed",
         "parameters": [
           {
@@ -504,11 +476,14 @@
           },
           {
             "$ref": "#/components/parameters/Size"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
@@ -728,18 +703,18 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
     },
-    "/skill-categories": {
+    "/portfolio/skill-categories": {
       "get": {
         "operationId": "getSkillCategories",
-        "summary": "get Skill Categories",
-        "description": "Current mock behavior only; do not treat this endpoint as finalized backend design until the next API discussion.",
-        "x-contract-status": "pending-review",
+        "summary": "Get localized skill categories with previews",
+        "description": "Return a cursor page of categories. Each item previews at most six ordered skill IDs; included.skills contains only referenced localized labels without duplicates. Continue each category through /portfolio/skills.",
+        "x-contract-status": "confirmed",
         "parameters": [
           {
             "$ref": "#/components/parameters/Locale"
@@ -749,11 +724,14 @@
           },
           {
             "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
@@ -762,10 +740,10 @@
                 "examples": {
                   "en": {
                     "value": {
-                      "data": [
+                      "items": [
                         {
                           "id": "backend-apis",
-                          "labelKey": "skillCategory.backend-apis",
+                          "label": "Backend & APIs",
                           "skillIds": [
                             "python",
                             "fastapi",
@@ -778,12 +756,12 @@
                             "limit": 6,
                             "total": 8,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6YmFja2VuZC1hcGlzIiwib2Zmc2V0Ijo2fQ"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6YmFja2VuZC1hcGlzIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJyZXN0In0"
                           }
                         },
                         {
                           "id": "ai-agents",
-                          "labelKey": "skillCategory.ai-agents",
+                          "label": "AI & agents",
                           "skillIds": [
                             "mcp",
                             "fastmcp",
@@ -796,12 +774,12 @@
                             "limit": 6,
                             "total": 8,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6YWktYWdlbnRzIiwib2Zmc2V0Ijo2fQ"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6YWktYWdlbnRzIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJjaHJvbWEifQ"
                           }
                         },
                         {
                           "id": "platform-security",
-                          "labelKey": "skillCategory.platform-security",
+                          "label": "Platform & security",
                           "skillIds": [
                             "kubernetes",
                             "docker",
@@ -814,12 +792,12 @@
                             "limit": 6,
                             "total": 10,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6cGxhdGZvcm0tc2VjdXJpdHkiLCJvZmZzZXQiOjZ9"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6cGxhdGZvcm0tc2VjdXJpdHkiLCJsb2NhbGUiOiJlbiIsInBvc2l0aW9uIjo1LCJpZCI6InNzbyJ9"
                           }
                         },
                         {
                           "id": "data-storage",
-                          "labelKey": "skillCategory.data-storage",
+                          "label": "Data & storage",
                           "skillIds": [
                             "postgresql",
                             "sql",
@@ -832,12 +810,12 @@
                             "limit": 6,
                             "total": 13,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6ZGF0YS1zdG9yYWdlIiwib2Zmc2V0Ijo2fQ"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6ZGF0YS1zdG9yYWdlIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJzcWxhbGNoZW15In0"
                           }
                         },
                         {
                           "id": "workflows-delivery",
-                          "labelKey": "skillCategory.workflows-delivery",
+                          "label": "Workflows & delivery",
                           "skillIds": [
                             "celery",
                             "rabbitmq",
@@ -850,12 +828,12 @@
                             "limit": 6,
                             "total": 7,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6d29ya2Zsb3dzLWRlbGl2ZXJ5Iiwib2Zmc2V0Ijo2fQ"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6d29ya2Zsb3dzLWRlbGl2ZXJ5IiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJrZXR0bGUtZXRsIn0"
                           }
                         },
                         {
                           "id": "ml-research",
-                          "labelKey": "skillCategory.ml-research",
+                          "label": "ML & research",
                           "skillIds": [
                             "training-orchestration",
                             "mlflow-integration",
@@ -868,12 +846,12 @@
                             "limit": 6,
                             "total": 14,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6bWwtcmVzZWFyY2giLCJvZmZzZXQiOjZ9"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6bWwtcmVzZWFyY2giLCJsb2NhbGUiOiJlbiIsInBvc2l0aW9uIjo1LCJpZCI6InN2bSJ9"
                           }
                         },
                         {
                           "id": "web-integrations",
-                          "labelKey": "skillCategory.web-integrations",
+                          "label": "Web & integrations",
                           "skillIds": [
                             "vue-3",
                             "echarts",
@@ -886,248 +864,187 @@
                             "limit": 6,
                             "total": 7,
                             "hasMore": true,
-                            "nextCursor": "eyJyZXZpc2lvbiI6InBvcnRmb2xpby0yMDI2LTA5LTIxLXByb2plY3RzIiwicmVzb3VyY2UiOiJza2lsbHM6Y2F0ZWdvcnk6d2ViLWludGVncmF0aW9ucyIsIm9mZnNldCI6Nn0"
+                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6d2ViLWludGVncmF0aW9ucyIsImxvY2FsZSI6ImVuIiwicG9zaXRpb24iOjUsImlkIjoiZ29vZ2xlLXRyYW5zbGF0ZSJ9"
                           }
                         }
                       ],
-                      "included": {
-                        "organizations": [],
-                        "countries": [],
-                        "locations": [],
-                        "skills": [
-                          {
-                            "id": "python",
-                            "labelKey": "skill.python"
-                          },
-                          {
-                            "id": "fastapi",
-                            "labelKey": "skill.fastapi"
-                          },
-                          {
-                            "id": "django",
-                            "labelKey": "skill.django"
-                          },
-                          {
-                            "id": "django-rest-framework",
-                            "labelKey": "skill.django-rest-framework"
-                          },
-                          {
-                            "id": "flask",
-                            "labelKey": "skill.flask"
-                          },
-                          {
-                            "id": "rest",
-                            "labelKey": "skill.rest"
-                          },
-                          {
-                            "id": "mcp",
-                            "labelKey": "skill.mcp"
-                          },
-                          {
-                            "id": "fastmcp",
-                            "labelKey": "skill.fastmcp"
-                          },
-                          {
-                            "id": "rag",
-                            "labelKey": "skill.rag"
-                          },
-                          {
-                            "id": "langchain",
-                            "labelKey": "skill.langchain"
-                          },
-                          {
-                            "id": "ollama",
-                            "labelKey": "skill.ollama"
-                          },
-                          {
-                            "id": "chroma",
-                            "labelKey": "skill.chroma"
-                          },
-                          {
-                            "id": "kubernetes",
-                            "labelKey": "skill.kubernetes"
-                          },
-                          {
-                            "id": "docker",
-                            "labelKey": "skill.docker"
-                          },
-                          {
-                            "id": "linux",
-                            "labelKey": "skill.linux"
-                          },
-                          {
-                            "id": "jwt",
-                            "labelKey": "skill.jwt"
-                          },
-                          {
-                            "id": "rbac",
-                            "labelKey": "skill.rbac"
-                          },
-                          {
-                            "id": "sso",
-                            "labelKey": "skill.sso"
-                          },
-                          {
-                            "id": "postgresql",
-                            "labelKey": "skill.postgresql"
-                          },
-                          {
-                            "id": "sql",
-                            "labelKey": "skill.sql"
-                          },
-                          {
-                            "id": "redis",
-                            "labelKey": "skill.redis"
-                          },
-                          {
-                            "id": "kafka",
-                            "labelKey": "skill.kafka"
-                          },
-                          {
-                            "id": "apache-nifi",
-                            "labelKey": "skill.apache-nifi"
-                          },
-                          {
-                            "id": "sqlalchemy",
-                            "labelKey": "skill.sqlalchemy"
-                          },
-                          {
-                            "id": "celery",
-                            "labelKey": "skill.celery"
-                          },
-                          {
-                            "id": "rabbitmq",
-                            "labelKey": "skill.rabbitmq"
-                          },
-                          {
-                            "id": "airflow",
-                            "labelKey": "skill.airflow"
-                          },
-                          {
-                            "id": "gitlab",
-                            "labelKey": "skill.gitlab"
-                          },
-                          {
-                            "id": "jenkins-ci-cd",
-                            "labelKey": "skill.jenkins-ci-cd"
-                          },
-                          {
-                            "id": "kettle-etl",
-                            "labelKey": "skill.kettle-etl"
-                          },
-                          {
-                            "id": "training-orchestration",
-                            "labelKey": "skill.training-orchestration"
-                          },
-                          {
-                            "id": "mlflow-integration",
-                            "labelKey": "skill.mlflow-integration"
-                          },
-                          {
-                            "id": "xgboost",
-                            "labelKey": "skill.xgboost"
-                          },
-                          {
-                            "id": "lstm",
-                            "labelKey": "skill.lstm"
-                          },
-                          {
-                            "id": "random-forest",
-                            "labelKey": "skill.random-forest"
-                          },
-                          {
-                            "id": "svm",
-                            "labelKey": "skill.svm"
-                          },
-                          {
-                            "id": "vue-3",
-                            "labelKey": "skill.vue-3"
-                          },
-                          {
-                            "id": "echarts",
-                            "labelKey": "skill.echarts"
-                          },
-                          {
-                            "id": "html",
-                            "labelKey": "skill.html"
-                          },
-                          {
-                            "id": "smtp",
-                            "labelKey": "skill.smtp"
-                          },
-                          {
-                            "id": "slack",
-                            "labelKey": "skill.slack"
-                          },
-                          {
-                            "id": "google-translate",
-                            "labelKey": "skill.google-translate"
-                          }
-                        ],
-                        "translations": {
-                          "en": {
-                            "skillCategory.backend-apis": "Backend & APIs",
-                            "skillCategory.ai-agents": "AI & agents",
-                            "skillCategory.platform-security": "Platform & security",
-                            "skillCategory.data-storage": "Data & storage",
-                            "skillCategory.workflows-delivery": "Workflows & delivery",
-                            "skillCategory.ml-research": "ML & research",
-                            "skillCategory.web-integrations": "Web & integrations",
-                            "skill.python": "Python",
-                            "skill.fastapi": "FastAPI",
-                            "skill.django": "Django",
-                            "skill.django-rest-framework": "Django REST Framework",
-                            "skill.flask": "Flask",
-                            "skill.rest": "REST",
-                            "skill.mcp": "MCP",
-                            "skill.fastmcp": "FastMCP",
-                            "skill.rag": "RAG",
-                            "skill.langchain": "LangChain",
-                            "skill.ollama": "Ollama",
-                            "skill.chroma": "Chroma",
-                            "skill.kubernetes": "Kubernetes",
-                            "skill.docker": "Docker",
-                            "skill.linux": "Linux",
-                            "skill.jwt": "JWT",
-                            "skill.rbac": "RBAC",
-                            "skill.sso": "SSO",
-                            "skill.postgresql": "PostgreSQL",
-                            "skill.sql": "SQL",
-                            "skill.redis": "Redis",
-                            "skill.kafka": "Kafka",
-                            "skill.apache-nifi": "Apache NiFi",
-                            "skill.sqlalchemy": "SQLAlchemy",
-                            "skill.celery": "Celery",
-                            "skill.rabbitmq": "RabbitMQ",
-                            "skill.airflow": "Airflow",
-                            "skill.gitlab": "GitLab",
-                            "skill.jenkins-ci-cd": "Jenkins CI/CD",
-                            "skill.kettle-etl": "Kettle-ETL",
-                            "skill.training-orchestration": "Training orchestration",
-                            "skill.mlflow-integration": "MLflow integration",
-                            "skill.xgboost": "XGBoost",
-                            "skill.lstm": "LSTM",
-                            "skill.random-forest": "Random forest",
-                            "skill.svm": "SVM",
-                            "skill.vue-3": "Vue 3",
-                            "skill.echarts": "ECharts",
-                            "skill.html": "HTML",
-                            "skill.smtp": "SMTP",
-                            "skill.slack": "Slack",
-                            "skill.google-translate": "Google Translate"
-                          }
-                        }
-                      },
                       "page": {
                         "limit": 12,
                         "total": 7,
                         "hasMore": false,
                         "nextCursor": null
                       },
-                      "meta": {
-                        "apiVersion": 1,
-                        "revision": "portfolio-2026-09-21-projects",
-                        "locale": "en"
+                      "included": {
+                        "skills": [
+                          {
+                            "id": "python",
+                            "label": "Python"
+                          },
+                          {
+                            "id": "fastapi",
+                            "label": "FastAPI"
+                          },
+                          {
+                            "id": "django",
+                            "label": "Django"
+                          },
+                          {
+                            "id": "django-rest-framework",
+                            "label": "Django REST Framework"
+                          },
+                          {
+                            "id": "flask",
+                            "label": "Flask"
+                          },
+                          {
+                            "id": "rest",
+                            "label": "REST"
+                          },
+                          {
+                            "id": "mcp",
+                            "label": "MCP"
+                          },
+                          {
+                            "id": "fastmcp",
+                            "label": "FastMCP"
+                          },
+                          {
+                            "id": "rag",
+                            "label": "RAG"
+                          },
+                          {
+                            "id": "langchain",
+                            "label": "LangChain"
+                          },
+                          {
+                            "id": "ollama",
+                            "label": "Ollama"
+                          },
+                          {
+                            "id": "chroma",
+                            "label": "Chroma"
+                          },
+                          {
+                            "id": "kubernetes",
+                            "label": "Kubernetes"
+                          },
+                          {
+                            "id": "docker",
+                            "label": "Docker"
+                          },
+                          {
+                            "id": "linux",
+                            "label": "Linux"
+                          },
+                          {
+                            "id": "jwt",
+                            "label": "JWT"
+                          },
+                          {
+                            "id": "rbac",
+                            "label": "RBAC"
+                          },
+                          {
+                            "id": "sso",
+                            "label": "SSO"
+                          },
+                          {
+                            "id": "postgresql",
+                            "label": "PostgreSQL"
+                          },
+                          {
+                            "id": "sql",
+                            "label": "SQL"
+                          },
+                          {
+                            "id": "redis",
+                            "label": "Redis"
+                          },
+                          {
+                            "id": "kafka",
+                            "label": "Kafka"
+                          },
+                          {
+                            "id": "apache-nifi",
+                            "label": "Apache NiFi"
+                          },
+                          {
+                            "id": "sqlalchemy",
+                            "label": "SQLAlchemy"
+                          },
+                          {
+                            "id": "celery",
+                            "label": "Celery"
+                          },
+                          {
+                            "id": "rabbitmq",
+                            "label": "RabbitMQ"
+                          },
+                          {
+                            "id": "airflow",
+                            "label": "Airflow"
+                          },
+                          {
+                            "id": "gitlab",
+                            "label": "GitLab"
+                          },
+                          {
+                            "id": "jenkins-ci-cd",
+                            "label": "Jenkins CI/CD"
+                          },
+                          {
+                            "id": "kettle-etl",
+                            "label": "Kettle-ETL"
+                          },
+                          {
+                            "id": "training-orchestration",
+                            "label": "Training orchestration"
+                          },
+                          {
+                            "id": "mlflow-integration",
+                            "label": "MLflow integration"
+                          },
+                          {
+                            "id": "xgboost",
+                            "label": "XGBoost"
+                          },
+                          {
+                            "id": "lstm",
+                            "label": "LSTM"
+                          },
+                          {
+                            "id": "random-forest",
+                            "label": "Random forest"
+                          },
+                          {
+                            "id": "svm",
+                            "label": "SVM"
+                          },
+                          {
+                            "id": "vue-3",
+                            "label": "Vue 3"
+                          },
+                          {
+                            "id": "echarts",
+                            "label": "ECharts"
+                          },
+                          {
+                            "id": "html",
+                            "label": "HTML"
+                          },
+                          {
+                            "id": "smtp",
+                            "label": "SMTP"
+                          },
+                          {
+                            "id": "slack",
+                            "label": "Slack"
+                          },
+                          {
+                            "id": "google-translate",
+                            "label": "Google Translate"
+                          }
+                        ]
                       }
                     }
                   }
@@ -1138,24 +1055,18 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "409": {
-            "$ref": "#/components/responses/StaleCursor"
-          },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
     },
-    "/skills": {
+    "/portfolio/skills": {
       "get": {
         "operationId": "getSkills",
-        "summary": "get Skills",
-        "description": "Current mock behavior only; do not treat this endpoint as finalized backend design until the next API discussion.",
-        "x-contract-status": "pending-review",
+        "summary": "Get localized skills in a category",
+        "description": "Return ordered localized {id,label} skills for ownerType=category and ownerId. A preview nextCursor can continue after its first six skills.",
+        "x-contract-status": "confirmed",
         "parameters": [
           {
             "$ref": "#/components/parameters/Locale"
@@ -1171,11 +1082,14 @@
           },
           {
             "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/IsCaching"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response. Example is generated from the current English mock.",
+            "description": "Direct localized response; the English example is projected from the matching mock fixture.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1184,101 +1098,45 @@
                 "examples": {
                   "en": {
                     "value": {
-                      "data": [
+                      "items": [
                         {
                           "id": "python",
-                          "labelKey": "skill.python"
+                          "label": "Python"
                         },
                         {
                           "id": "fastapi",
-                          "labelKey": "skill.fastapi"
+                          "label": "FastAPI"
                         },
                         {
                           "id": "django",
-                          "labelKey": "skill.django"
+                          "label": "Django"
                         },
                         {
                           "id": "django-rest-framework",
-                          "labelKey": "skill.django-rest-framework"
+                          "label": "Django REST Framework"
                         },
                         {
                           "id": "flask",
-                          "labelKey": "skill.flask"
+                          "label": "Flask"
                         },
                         {
                           "id": "rest",
-                          "labelKey": "skill.rest"
+                          "label": "REST"
                         },
                         {
                           "id": "grpc",
-                          "labelKey": "skill.grpc"
+                          "label": "gRPC"
                         },
                         {
                           "id": "groovy",
-                          "labelKey": "skill.groovy"
+                          "label": "Groovy"
                         }
                       ],
-                      "included": {
-                        "organizations": [],
-                        "countries": [],
-                        "locations": [],
-                        "skills": [
-                          {
-                            "id": "python",
-                            "labelKey": "skill.python"
-                          },
-                          {
-                            "id": "fastapi",
-                            "labelKey": "skill.fastapi"
-                          },
-                          {
-                            "id": "django",
-                            "labelKey": "skill.django"
-                          },
-                          {
-                            "id": "django-rest-framework",
-                            "labelKey": "skill.django-rest-framework"
-                          },
-                          {
-                            "id": "flask",
-                            "labelKey": "skill.flask"
-                          },
-                          {
-                            "id": "rest",
-                            "labelKey": "skill.rest"
-                          },
-                          {
-                            "id": "grpc",
-                            "labelKey": "skill.grpc"
-                          },
-                          {
-                            "id": "groovy",
-                            "labelKey": "skill.groovy"
-                          }
-                        ],
-                        "translations": {
-                          "en": {
-                            "skill.python": "Python",
-                            "skill.fastapi": "FastAPI",
-                            "skill.django": "Django",
-                            "skill.django-rest-framework": "Django REST Framework",
-                            "skill.flask": "Flask",
-                            "skill.rest": "REST",
-                            "skill.grpc": "gRPC",
-                            "skill.groovy": "Groovy"
-                          }
-                        }
-                      },
                       "page": {
                         "limit": 12,
                         "total": 8,
                         "hasMore": false,
                         "nextCursor": null
-                      },
-                      "meta": {
-                        "apiVersion": 1,
-                        "revision": "portfolio-2026-09-21-projects",
-                        "locale": "en"
                       }
                     }
                   }
@@ -1292,11 +1150,8 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
-          "409": {
-            "$ref": "#/components/responses/StaleCursor"
-          },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -1306,7 +1161,11 @@
     "schemas": {
       "Locale": {
         "type": "string",
-        "enum": ["en", "zh-Hans", "zh-Hant"]
+        "enum": [
+          "en",
+          "zh-Hans",
+          "zh-Hant"
+        ]
       },
       "PositiveId": {
         "type": "integer",
@@ -1329,10 +1188,6 @@
         "type": "string",
         "pattern": "^[a-zA-Z0-9-]+$"
       },
-      "TextKey": {
-        "type": "string",
-        "description": "Legacy skill/category translation key; not used by direct-text resources."
-      },
       "SiteData": {
         "type": "object",
         "properties": {
@@ -1352,7 +1207,11 @@
                 "description": "Explicit display year."
               }
             },
-            "required": ["title", "titleSub", "copyrightYear"],
+            "required": [
+              "title",
+              "titleSub",
+              "copyrightYear"
+            ],
             "additionalProperties": true
           },
           "profile": {
@@ -1427,7 +1286,12 @@
                 "description": "Plain email address; empty string hides this link. No Markdown."
               }
             },
-            "required": ["linkedin", "github", "medium", "email"],
+            "required": [
+              "linkedin",
+              "github",
+              "medium",
+              "email"
+            ],
             "additionalProperties": true
           },
           "chatme": {
@@ -1451,11 +1315,21 @@
                 "description": "Bundled local asset path; parent traversal is rejected."
               }
             },
-            "required": ["title", "titleSub", "content", "icon"],
+            "required": [
+              "title",
+              "titleSub",
+              "content",
+              "icon"
+            ],
             "additionalProperties": true
           }
         },
-        "required": ["brand", "profile", "social", "chatme"],
+        "required": [
+          "brand",
+          "profile",
+          "social",
+          "chatme"
+        ],
         "additionalProperties": true
       },
       "CareerDetail": {
@@ -1485,7 +1359,11 @@
             "description": "Localized secondary role or teaching detail."
           }
         },
-        "required": ["startMonth", "endMonth", "content"],
+        "required": [
+          "startMonth",
+          "endMonth",
+          "content"
+        ],
         "additionalProperties": true
       },
       "JourneyItem": {
@@ -1496,7 +1374,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["work", "education"]
+            "enum": [
+              "work",
+              "education"
+            ]
           },
           "countryCode": {
             "type": "string",
@@ -1592,7 +1473,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["work", "education"]
+            "enum": [
+              "work",
+              "education"
+            ]
           },
           "countryCode": {
             "type": "string",
@@ -1808,12 +1692,9 @@
               },
               {
                 "type": "null"
-              },
-              {
-                "const": ""
               }
             ],
-            "description": "Returned completely with the list; empty values or an all-empty object hide the opener."
+            "description": "Complete project detail or null; no separate detail request."
           },
           "skills": {
             "anyOf": [
@@ -1840,7 +1721,8 @@
           "projectTitle",
           "intro",
           "detail",
-          "skills"
+          "skills",
+          "expected"
         ],
         "additionalProperties": true,
         "allOf": [
@@ -1851,7 +1733,9 @@
                   "const": true
                 }
               },
-              "required": ["expected"]
+              "required": [
+                "expected"
+              ]
             },
             "then": {
               "properties": {
@@ -1891,7 +1775,12 @@
             ]
           }
         },
-        "required": ["limit", "total", "hasMore", "nextCursor"],
+        "required": [
+          "limit",
+          "total",
+          "hasMore",
+          "nextCursor"
+        ],
         "additionalProperties": true,
         "allOf": [
           {
@@ -1901,7 +1790,9 @@
                   "const": true
                 }
               },
-              "required": ["hasMore"]
+              "required": [
+                "hasMore"
+              ]
             },
             "then": {
               "properties": {
@@ -1927,12 +1818,16 @@
           "id": {
             "$ref": "#/components/schemas/SkillId"
           },
-          "labelKey": {
-            "$ref": "#/components/schemas/TextKey"
+          "label": {
+            "type": "string",
+            "description": "Skill label in the requested language."
           }
         },
-        "required": ["id", "labelKey"],
-        "additionalProperties": true
+        "required": [
+          "id",
+          "label"
+        ],
+        "additionalProperties": false
       },
       "SkillCategory": {
         "type": "object",
@@ -1940,169 +1835,72 @@
           "id": {
             "$ref": "#/components/schemas/SkillId"
           },
-          "labelKey": {
-            "$ref": "#/components/schemas/TextKey"
+          "label": {
+            "type": "string",
+            "description": "Category label in the requested language."
           },
           "skillIds": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SkillId"
             },
-            "uniqueItems": true
+            "maxItems": 6,
+            "uniqueItems": true,
+            "description": "Ordered preview IDs; labels are in included.skills."
           },
           "skillsPage": {
-            "$ref": "#/components/schemas/CursorPage"
-          }
-        },
-        "required": ["id", "labelKey", "skillIds", "skillsPage"],
-        "additionalProperties": true
-      },
-      "Included": {
-        "type": "object",
-        "properties": {
-          "organizations": {
-            "type": "array",
-            "maxItems": 0
-          },
-          "countries": {
-            "type": "array",
-            "maxItems": 0
-          },
-          "locations": {
-            "type": "array",
-            "maxItems": 0
-          },
-          "skills": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Skill"
-            }
-          },
-          "translations": {
-            "type": "object",
-            "minProperties": 1,
-            "maxProperties": 1,
-            "propertyNames": {
-              "$ref": "#/components/schemas/Locale"
-            },
-            "additionalProperties": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/SkillPreviewPage"
           }
         },
         "required": [
-          "organizations",
-          "countries",
-          "locations",
-          "skills",
-          "translations"
+          "id",
+          "label",
+          "skillIds",
+          "skillsPage"
         ],
-        "additionalProperties": true
-      },
-      "Meta": {
-        "type": "object",
-        "properties": {
-          "apiVersion": {
-            "const": 1
-          },
-          "revision": {
-            "type": "string",
-            "minLength": 1
-          },
-          "locale": {
-            "$ref": "#/components/schemas/Locale"
-          }
-        },
-        "required": ["apiVersion", "revision", "locale"],
-        "additionalProperties": true
-      },
-      "SiteResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/SiteData"
-          },
-          "included": {
-            "$ref": "#/components/schemas/Included"
-          },
-          "page": {
-            "type": "null"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
-          }
-        },
-        "required": ["data", "included", "page", "meta"],
-        "additionalProperties": true
-      },
-      "JourneyResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/JourneyItem"
-            }
-          },
-          "included": {
-            "$ref": "#/components/schemas/Included"
-          },
-          "page": {
-            "type": "null"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
-          }
-        },
-        "required": ["data", "included", "page", "meta"],
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "CategoriesResponse": {
         "type": "object",
         "properties": {
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SkillCategory"
             }
           },
-          "included": {
-            "$ref": "#/components/schemas/Included"
-          },
           "page": {
             "$ref": "#/components/schemas/CursorPage"
           },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
+          "included": {
+            "$ref": "#/components/schemas/SkillCategoriesIncluded"
           }
         },
-        "required": ["data", "included", "page", "meta"],
-        "additionalProperties": true
+        "required": [
+          "items",
+          "page",
+          "included"
+        ],
+        "additionalProperties": false
       },
       "SkillsResponse": {
         "type": "object",
         "properties": {
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Skill"
             }
           },
-          "included": {
-            "$ref": "#/components/schemas/Included"
-          },
           "page": {
             "$ref": "#/components/schemas/CursorPage"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
           }
         },
-        "required": ["data", "included", "page", "meta"],
-        "additionalProperties": true
+        "required": [
+          "items",
+          "page"
+        ],
+        "additionalProperties": false
       },
       "ExperiencesPage": {
         "type": "object",
@@ -2133,9 +1931,15 @@
             "maxItems": 6
           }
         },
-        "required": ["total", "pages", "page", "size", "items"],
+        "required": [
+          "total",
+          "pages",
+          "page",
+          "size",
+          "items"
+        ],
         "additionalProperties": true,
-        "description": "Exact Page envelope: pages=ceil(total/6), items is the requested slice; page starts at one. Empty collection: total=0,pages=0,page=1,size=6,items=[]. Beyond last page: empty items. No data/included/meta wrapper."
+        "description": "Direct numbered page: pages=ceil(total/6), zero for an empty collection; an out-of-range page keeps the requested page and returns items=[]."
       },
       "ProjectsPage": {
         "type": "object",
@@ -2166,60 +1970,84 @@
             "maxItems": 6
           }
         },
-        "required": ["total", "pages", "page", "size", "items"],
+        "required": [
+          "total",
+          "pages",
+          "page",
+          "size",
+          "items"
+        ],
         "additionalProperties": true,
-        "description": "Exact Page envelope: pages=ceil(total/6), items is the requested slice; page starts at one. Empty collection: total=0,pages=0,page=1,size=6,items=[]. Beyond last page: empty items. No data/included/meta wrapper."
+        "description": "Direct numbered page: pages=ceil(total/6), zero for an empty collection; an out-of-range page keeps the requested page and returns items=[]."
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": [
-                  "INVALID_LOCALE",
-                  "INVALID_PAGE",
-                  "INVALID_SIZE",
-                  "INVALID_QUERY",
-                  "INVALID_LIMIT",
-                  "INVALID_CURSOR",
-                  "INVALID_OWNER",
-                  "NOT_FOUND",
-                  "METHOD_NOT_ALLOWED",
-                  "STALE_CURSOR",
-                  "INVALID_FIXTURE",
-                  "TEMPORARILY_UNAVAILABLE"
-                ]
-              },
-              "message": {
-                "type": "string",
-                "description": "Human-readable diagnostic, not translated UI copy."
-              },
-              "retryable": {
-                "type": "boolean"
-              }
-            },
-            "required": ["code", "message", "retryable"],
-            "additionalProperties": true
-          },
-          "meta": {
-            "type": "object",
-            "properties": {
-              "apiVersion": {
-                "const": 1
-              },
-              "revision": {
-                "type": "string"
-              }
-            },
-            "required": ["apiVersion", "revision"],
-            "additionalProperties": true
+          "detail": {
+            "type": "string",
+            "description": "Machine-readable error code, for example INVALID_CURSOR."
           }
         },
-        "required": ["error", "meta"],
-        "additionalProperties": true
+        "required": [
+          "detail"
+        ],
+        "additionalProperties": false
+      },
+      "JourneyResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/JourneyItem"
+        },
+        "description": "All localized journey stops in saved playback order."
+      },
+      "SkillPreviewPage": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CursorPage"
+          },
+          {
+            "properties": {
+              "limit": {
+                "const": 6
+              }
+            }
+          }
+        ],
+        "description": "First six skills of one category; use nextCursor with /portfolio/skills."
+      },
+      "SkillCategoriesIncluded": {
+        "type": "object",
+        "properties": {
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skill"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "skills"
+        ],
+        "additionalProperties": false,
+        "description": "Only localized labels referenced by this category page, each skill once."
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "additionalProperties": false,
+        "description": "FastAPI request validation errors, including a missing ownerId."
       }
     },
     "parameters": {
@@ -2231,7 +2059,7 @@
           "$ref": "#/components/schemas/Locale",
           "default": "en"
         },
-        "description": "Frontend always sends its active locale; omitted mock requests default to en."
+        "description": "Portfolio content language; defaults to en. A cursor belongs to the same locale."
       },
       "Page": {
         "name": "page",
@@ -2251,7 +2079,9 @@
         "required": false,
         "schema": {
           "type": "integer",
-          "enum": [6],
+          "enum": [
+            6
+          ],
           "default": 6
         },
         "description": "Fixed page capacity; final page may have fewer items."
@@ -2274,15 +2104,18 @@
         "schema": {
           "type": "string"
         },
-        "description": "Opaque cursor for this resource/owner/revision. Omit on first request."
+        "description": "Opaque cursor for this resource, category owner and locale. Omit on the first request; forward nextCursor unchanged."
       },
       "OwnerType": {
         "name": "ownerType",
         "in": "query",
-        "required": true,
+        "required": false,
         "schema": {
           "type": "string",
-          "enum": ["category"]
+          "enum": [
+            "category"
+          ],
+          "default": "category"
         }
       },
       "OwnerId": {
@@ -2292,32 +2125,22 @@
         "schema": {
           "$ref": "#/components/schemas/SkillId"
         },
-        "description": "Category ID without UI owner prefix."
+        "description": "Required category slug. An unknown category returns 404 NOT_FOUND."
+      },
+      "IsCaching": {
+        "name": "is_caching",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "default": false
+        },
+        "description": "Allow up to 60 seconds of HTTP response caching when true."
       }
     },
     "responses": {
       "BadRequest": {
-        "description": "Invalid locale, page, size, query, limit, cursor or owner.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
-            }
-          }
-        }
-      },
-      "Unavailable": {
-        "description": "Retryable 503; preserve current data and retry the same page.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
-            }
-          }
-        }
-      },
-      "StaleCursor": {
-        "description": "Dataset revision changed; reload from a consistent snapshot.",
+        "description": "Invalid locale, page, size, limit, cursor, or skill owner. Body is {\"detail\":\"ERROR_CODE\"}.",
         "content": {
           "application/json": {
             "schema": {
@@ -2327,7 +2150,7 @@
         }
       },
       "NotFound": {
-        "description": "The requested category owner does not exist.",
+        "description": "Site content or skill category is missing; body is {\"detail\":\"NOT_FOUND\"}.",
         "content": {
           "application/json": {
             "schema": {
@@ -2335,16 +2158,25 @@
             }
           }
         }
+      },
+      "ValidationError": {
+        "description": "FastAPI rejected a missing or invalid query parameter.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationErrorResponse"
+            }
+          }
+        }
       }
     }
   },
   "x-backend-notes": [
-    "Journey and numbered collections use positive safe JSON numbers; SQL int8 is allowed only within the specified maximum.",
-    "Sort in the backend. Each locale must return the same IDs, order and total.",
-    "Numbered pages have no revision token: use a stable unique tie-breaker and documented consistency policy.",
-    "date order, endDay calendar validity and page arithmetic require application validation.",
-    "Use JSON serializers for normal input and line breaks; do not pre-escape HTML.",
-    "No /projects/{id} endpoint. Project detail and skills return with each list page.",
-    "Additional object fields may be retained but never auto-rendered."
+    "All six GET paths live below /portfolio and return direct content or collection pages.",
+    "Locale en, zh-Hans, and zh-Hant select localized text; IDs and ordering remain stable across languages.",
+    "Numbered collections use page and fixed size=6. Category and skill collections use opaque, locale-scoped keyset cursors.",
+    "Category previews contain at most six IDs and batch only their referenced labels in included.skills.",
+    "Project detail and skills return with the project page; no /projects/{id} endpoint.",
+    "Read-only errors use FastAPI {detail: code}; missing required ownerId receives request validation status 422."
   ]
 }

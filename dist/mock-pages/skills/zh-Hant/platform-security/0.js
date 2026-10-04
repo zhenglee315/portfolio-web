@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hant/platform-security/0", [{"id":"kubernetes","label":"Kubernetes"},{"id":"docker","label":"Docker"},{"id":"linux","label":"Linux"},{"id":"jwt","label":"JWT"},{"id":"rbac","label":"RBAC"},{"id":"sso","label":"SSO"}]);

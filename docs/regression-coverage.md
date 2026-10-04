@@ -2,7 +2,11 @@
 
 驗收日期：2026-09-21。範圍是 [功能清單](current-page-features.md) 的全部 **55 項功能**，不是僅檢查首頁載入。
 
-最新全專案驗證見 [final-verification.md](final-verification.md)，包含三語 30 組尺寸、0／1／6／7／19 筆啟動與 4K。以下保留各次歷史驗收結果。
+最新全專案驗證見 [final-verification.md](final-verification.md)，包含三語 30 組尺寸、0／1／6／7／19 筆啟動與 4K。以下保留各次歷史驗收結果；當時的 revision 與技能字典描述不再代表現行契約。
+
+現行六支 mock 使用 `/portfolio/*`，Site／Journey 直接回物件／陣列，Experience／Projects 回頁碼資料，技能分類／技能回語言化 cursor 頁。三語技能 fixture 直接提供 `label`；回應沒有共用 envelope 或 revision。語言切換重取已讀分類與技能頁，使用目標語言 cursor 續頁；原有離線與 UI 回歸仍須搭配更新後的 API 契約測試。
+
+建置後 mock 回應位於 `dist/mock-pages/` 的獨立 JS 片段；首次只讀 Site、Journey 和列表第一頁，額外專案或分類技能頁待操作才讀取。`app.js` 僅含程式、設定與片段索引。離線 `file://` 與託管版本共用同一組靜態片段，瀏覽器端尚未連接後端 HTTP API。以下較早的測試筆數及「網路 lazy loading」敘述均屬當次歷史驗收，不代表本次建置檔案數量。
 
 ## 冷啟動修正（2026-09-22）
 
@@ -96,7 +100,7 @@ Playwright 與瀏覽器環境設定見 [README](../README.md)。每次執行結�
 | LANG-03    | 文案與格式本地化     | `tests/data.test.cjs`、`tests/browser.cjs`、`tests/interactions-browser.cjs`                  | 全部翻譯鍵／插值、title／meta 與內容                                                       |
 | LANG-04    | 切換時保留互動狀態   | `tests/browser.cjs`、`tests/journey-browser.cjs`                                              | 地圖／詳細頁／技能／城市浮框的選取狀態保存                                                 |
 | SHARED-01  | RWD 與自適應內容     | `tests/browser.cjs`、`tests/chat-entry-browser.cjs`、`tests/navigation-browser.cjs`           | 手機、長畫面、超寬與不水平溢出                                                             |
-| SHARED-02  | 本地與離線開啟       | `tests/browser.cjs`、`tests/build.test.cjs`、`tests/interactions-browser.cjs`                 | file://、offline=true、無 HTTP 資源請求、fonts／mascot 載入                                |
+| SHARED-02  | 本地與離線開啟       | `tests/browser.cjs`、`tests/build.test.cjs`、`tests/interactions-browser.cjs`                 | file://、offline=true、本地分頁腳本與 fonts／mascot 載入、無外部 HTTP 資源請求            |
 | SHARED-03  | 鍵盤與語意支援       | `tests/navigation-browser.cjs`、`tests/journey-browser.cjs`、`tests/interactions-browser.cjs` | 焦點、Escape、原生 dialog 與各鍵盤選單                                                     |
 | SHARED-04  | 減少動態效果偏好     | `tests/browser.cjs`、`tests/chat-idle-browser.cjs`、`tests/interactions-browser.cjs`          | reduced-motion 的停止／無動畫／直接關閉                                                    |
 | SHARED-05  | 統一圖示與視覺資產   | `tests/build.test.cjs`、`tests/interactions-browser.cjs`                                      | 本地圖示、主題 token、資產與 manifest 校驗                                                 |
@@ -124,15 +128,15 @@ Playwright 與瀏覽器環境設定見 [README](../README.md)。每次執行結�
 | 驗證           | 情境                                                                                                                                   |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | 初始 API 邊界  | 5 個初始資源；site／journey 是獨立完整內容，列表分頁；Projects 首頁含完整 detail／skills；不讀第二頁                                   |
-| 游標契約       | 錯誤資源／owner、過期 revision、非法 cursor、limit 上限；空／終止頁                                                                    |
-| 快取與併發     | 等價 query 合併，快取複本隔離，terminal 不再請求，跨 revision 拒絕                                                                     |
+| 游標契約       | 錯誤資源／owner／語言、非法 cursor、limit 上限；空／終止頁                                                                            |
+| 快取與併發     | 等價 query 合併，快取複本隔離，terminal 不再請求                                                                                      |
 | 原子合併與重試 | 503 及錯誤外鍵保留既有資料與 cursor，下一次重試可成功，不重用已拒絕快取                                                                |
 | 專案分頁       | 126 筆測試 fixture，初始 6 張、第二頁 12 張；失敗保留頁碼，快取重開不重取                                                              |
 | 經歷與技能     | 81 筆經歷每頁六筆；120 筆專案技能一次完整提供，展開不發請求                                                                            |
 | 詳細視窗       | 完整 detail 隨頁取得，開啟和重開不發請求，切換語言保留已載入資料                                                                       |
-| 離線與 RWD     | file://、offline context、零 HTTP 請求、無水平溢出或 console/page error                                                                |
+| 離線與 RWD     | file://、offline context、本地靜態片段可載入、零外部 HTTP 請求、無水平溢出或 console/page error                            |
 | Site／前端分工 | social 直接綁定入口；site 精確四個群組，三份完整語言 JSON，不含語言清單、導覽、動畫參數或地圖                                          |
-| 語言請求／快取 | 自動 locale、單語 include、非法語言 400、只重取已讀頁、切回快取、首次還原語言、失敗重試及快速連續切換；chatme 桌面／手機三語與內容換行 |
+| 語言請求／快取 | 自動 locale、三語直接 label、非法語言 400、只重取已讀頁與語言 cursor、切回快取、首次還原語言、失敗重試及快速連續切換；chatme 三語換行 |
 
 完整內容三語回歸 tests/browser.cjs 會匯入完整 fixture 以檢查全部 15 筆 detail；真正分頁／延遲／失敗生命週期則由 api-browser.cjs 驗證，兩者不互相替代。
 

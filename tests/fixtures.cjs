@@ -24,14 +24,9 @@ function frontend() {
     },
   };
 }
-/** Build complete catalogs only for full-snapshot regression scenarios. */
-function catalogs(data = fixture()) {
-  return Object.fromEntries(
-    Object.entries(frontend().locales).map(([locale, values]) => [
-      locale,
-      { ...values, ...data.locales[locale] },
-    ]),
-  );
+/** Business labels arrive in localized API responses; UI catalogs stay independent. */
+function catalogs() {
+  return frontend().locales;
 }
 /** Return a detached dataset; each test can enlarge it without mutating files or another test. */
 function fixture() {
@@ -40,18 +35,20 @@ function fixture() {
       fs.readFileSync(path.join(root, "config/build.json")),
     ).mock;
   const data = {
-    revision: config.revision,
-    locales: {},
     site: {},
     journey: {},
     experiences: {},
     projects: {},
+    skillCategories: {},
+    skills: {},
   };
   for (const name of config.files) {
     const value = JSON.parse(
       fs.readFileSync(path.join(root, "mock", name + ".json")),
     );
-    if (name.startsWith("locales/")) data.locales[name.slice(8)] = value;
+    if (name.startsWith("skill-categories/"))
+      data.skillCategories[name.slice(17)] = value;
+    else if (name.startsWith("skills/")) data.skills[name.slice(7)] = value;
     else if (name.startsWith("journey/")) data.journey[name.slice(8)] = value;
     else if (name.startsWith("experiences/"))
       data.experiences[name.slice(12)] = value;
@@ -65,8 +62,8 @@ function fixture() {
 function snapshot(data = fixture()) {
   return {
     schemaVersion: 1,
-    skills: data.skills.items,
-    skillCategories: data.skills.categories,
+    skills: data.skills.en,
+    skillCategories: data.skillCategories.en,
   };
 }
 module.exports = { fixture, snapshot, frontend, catalogs };

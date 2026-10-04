@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/zh-Hans/web-integrations/0", [{"id":"vue-3","label":"Vue 3"},{"id":"echarts","label":"ECharts"},{"id":"html","label":"HTML"},{"id":"smtp","label":"SMTP"},{"id":"slack","label":"Slack"},{"id":"google-translate","label":"Google Translate"}]);

@@ -119,7 +119,7 @@ Portfolio.register("dataContracts", [], () => {
         if (typeof row[key] !== "string")
           throw new Error("Invalid Project field: " + key);
       CareerDates.validatePeriod(row);
-      if (row.expected !== undefined && typeof row.expected !== "boolean")
+      if (typeof row.expected !== "boolean")
         throw new Error("Invalid Project expected");
       if (row.expected && row.endMonth === null)
         throw new Error("Expected project requires endMonth");
@@ -131,7 +131,7 @@ Portfolio.register("dataContracts", [], () => {
           ))
       )
         throw new Error("Invalid Project skills");
-      if (row.detail === null || row.detail === "") continue;
+      if (row.detail === null) continue;
       if (
         !row.detail ||
         typeof row.detail !== "object" ||
@@ -196,9 +196,26 @@ Portfolio.register("dataContracts", [], () => {
       throw new Error("Invalid site asset: chatme.icon");
     return site;
   }
-  /** Validate identifiers, references and dates before replacing any visible content. */
+  /** Validate the shared cursor metadata used by category and skill pages. */
+  function validateCursorPage(page) {
+    if (
+      !page ||
+      !Number.isSafeInteger(page.limit) ||
+      page.limit < 1 ||
+      page.limit > 50 ||
+      !Number.isSafeInteger(page.total) ||
+      page.total < 0 ||
+      typeof page.hasMore !== "boolean" ||
+      (page.hasMore
+        ? typeof page.nextCursor !== "string" || !page.nextCursor
+        : page.nextCursor !== null)
+    )
+      throw new Error("Invalid cursor page");
+    return page;
+  }
+  /** Validate identifiers and category-to-skill references before publishing content. */
   function validate(value) {
-    if (value.schemaVersion !== 1)
+    if (!value || value.schemaVersion !== 1)
       throw new Error("Unsupported portfolio schema version");
     const tables = {};
     for (const table of ["skills", "skillCategories"]) {
@@ -207,11 +224,14 @@ Portfolio.register("dataContracts", [], () => {
       tables[table] = new Map();
       for (const row of value[table]) {
         if (
+          !row ||
           typeof row.id !== "string" ||
           !/^[a-zA-Z0-9-]+$/.test(row.id) ||
           tables[table].has(row.id)
         )
-          throw new Error(`Invalid or duplicate ${table} ID: ${row.id}`);
+          throw new Error(`Invalid or duplicate ${table} ID: ${row?.id}`);
+        if (typeof row.label !== "string" || !row.label.trim())
+          throw new Error(`Invalid ${table} label: ${row.id}`);
         tables[table].set(row.id, row);
       }
     }
@@ -220,23 +240,65 @@ Portfolio.register("dataContracts", [], () => {
       if (!tables[table].has(id))
         throw new Error(`Unknown ${table} reference: ${id}`);
     };
-    /** Require every content reference to resolve in at least one loaded locale. */
-    const textKey = (key) => {
-      if (
-        !Object.values(PORTFOLIO_LOCALES).some(
-          (catalog) => typeof catalog[key] === "string",
-        )
-      )
-        throw new Error(`Unknown text key: ${key}`);
-    };
-    value.skills.forEach((row) => textKey(row.labelKey));
     value.skillCategories.forEach((row) => {
-      textKey(row.labelKey);
       if (!Array.isArray(row.skillIds))
         throw new Error(`Invalid category: ${row.id}`);
-      row.skillIds.forEach((id) => reference("skills", id));
+      const seen = new Set();
+      row.skillIds.forEach((id) => {
+        if (seen.has(id)) throw new Error(`Duplicate category skill: ${id}`);
+        seen.add(id);
+        reference("skills", id);
+      });
+      if (row.skillsPage !== undefined) {
+        validateCursorPage(row.skillsPage);
+        if (row.skillsPage.total < row.skillIds.length)
+          throw new Error(`Invalid category skill total: ${row.id}`);
+      }
     });
     return value;
+  }
+  /** Validate one category page and the exact labels referenced by its previews. */
+  function validateCategoriesPage(response) {
+    const page = validateCursorPage(response?.page);
+    if (
+      !Array.isArray(response.items) ||
+      response.items.length > page.limit ||
+      (page.hasMore && !response.items.length) ||
+      !Array.isArray(response.included?.skills)
+    )
+      throw new Error("Invalid skill category page");
+    const previewIds = new Set();
+    for (const category of response.items) {
+      if (!Array.isArray(category?.skillIds) || category.skillIds.length > 6)
+        throw new Error("Invalid category preview");
+      validateCursorPage(category.skillsPage);
+      if (category.skillsPage.limit !== 6)
+        throw new Error("Invalid category preview limit");
+      category.skillIds.forEach((id) => previewIds.add(id));
+    }
+    validate({
+      schemaVersion: 1,
+      skills: response.included.skills,
+      skillCategories: response.items,
+    });
+    if (
+      response.included.skills.length !== previewIds.size ||
+      response.included.skills.some((skill) => !previewIds.has(skill.id))
+    )
+      throw new Error("Invalid included skill labels");
+    return response;
+  }
+  /** Validate one category-owned skill continuation page. */
+  function validateSkillsPage(response) {
+    const page = validateCursorPage(response?.page);
+    if (
+      !Array.isArray(response.items) ||
+      response.items.length > page.limit ||
+      (page.hasMore && !response.items.length)
+    )
+      throw new Error("Invalid skill page");
+    validate({ schemaVersion: 1, skills: response.items, skillCategories: [] });
+    return response;
   }
   return Object.freeze({
     validateJourney,
@@ -244,5 +306,7 @@ Portfolio.register("dataContracts", [], () => {
     validateProjects,
     validateSite,
     validate,
+    validateCategoriesPage,
+    validateSkillsPage,
   });
 });

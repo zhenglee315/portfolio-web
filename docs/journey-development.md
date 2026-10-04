@@ -1,6 +1,6 @@
 # Journey API 與地圖開發對照
 
-第 2 支 GET /api/v1/journey 已依確認格式實作。第 5～6 支保留既有契約，尚未進入下一輪討論。請求 locale 與回應 envelope 沿用 site；page 為 null，included 的關聯陣列與業務翻譯為空。
+`GET /portfolio/journey` 依請求 locale 直接回傳完整有序陣列；沒有 page、included、meta 或 revision。六支 mock API 均對齊相鄰後端路徑與直接回應格式。
 
 ## 原樣命名與資料流
 
@@ -53,7 +53,7 @@ MapGeometry.project 接收 latitude／longitude。緯度在計算時限制至約
 
 ## 維護與驗證
 
-三語 mock 需同時維護，資料版本與檔案清單在 config/build.json。API 格式見 [API 規格](api-interface-format.md)，逐欄英文註解見 [mock/journey/README.md](../mock/journey/README.md)。
+三語 mock 需同時維護，檔案清單在 config/build.json；沒有資料 revision。API 格式見 [API 規格](api-interface-format.md)，逐欄英文註解見 [mock/journey/README.md](../mock/journey/README.md)。
 
 - tests/api.test.cjs：沒有 entity／翻譯表也可讀 Journey；不排序、數字 ID、nullable endMonth／detail、endDay、座標範圍、驗證失敗原子保留及重試。
 - tests/journey-browser.cjs：播放／抵達／手動暫停、三語、1／24 站、圖示、手機與桌面標籤不重疊、新座標、null detail 與文字 escaping。

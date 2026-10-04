@@ -19,10 +19,13 @@ async function main() {
         viewport: { width: 1440, height: 1000 },
       }),
       errors = [],
-      requests = [];
+      requests = [],
+      mockPageRequests = [];
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("request", (request) => {
       if (/^https?:/.test(request.url())) requests.push(request.url());
+      if (request.url().includes("/mock-pages/"))
+        mockPageRequests.push(request.url());
     });
     await page.goto(
       pathToFileURL(path.resolve(__dirname, "../dist/index.html")).href,
@@ -31,6 +34,9 @@ async function main() {
     await page.waitForFunction(
       () => document.documentElement.dataset.ready === "true",
     );
+    assert(mockPageRequests.some((url) => url.endsWith("/projects/en/0.js")));
+    assert(!mockPageRequests.some((url) => url.endsWith("/projects/en/1.js")));
+    assert(!mockPageRequests.some((url) => /\/skills\/en\/[^/]+\/1\.js$/.test(url)));
     const original = snapshot(),
       catalogs = fullCatalogs();
     const experiences = fixture().experiences.en;
@@ -39,6 +45,8 @@ async function main() {
       const data = Portfolio.get("data");
       while (data.page("projects").hasMore) await data.loadPage("projects");
     });
+    assert(mockPageRequests.some((url) => url.endsWith("/projects/en/1.js")));
+    assert(mockPageRequests.some((url) => url.endsWith("/projects/en/2.js")));
     // Import a complete snapshot for rendering/mutation checks; api-browser covers lazy transport separately.
     await page.evaluate(
       ({ original, catalogs }) => {

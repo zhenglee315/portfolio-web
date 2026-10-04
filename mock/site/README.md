@@ -1,8 +1,8 @@
 # Site mock 欄位註解
 
-此目錄的 [en.json](en.json)、[zh-Hans.json](zh-Hans.json)、[zh-Hant.json](zh-Hant.json) 各是一份完整的 `SiteData`，對應 `/api/v1/site?locale=...` 成功回應的 `data`，不是包含 `meta`／`included` 的完整 envelope。
+此目錄的 [en.json](en.json)、[zh-Hans.json](zh-Hans.json)、[zh-Hant.json](zh-Hant.json) 各是一份完整的 `SiteData`，對應 `/portfolio/site?locale=...` 直接回傳的完整成功回應。
 
-三份 JSON 使用相同 camelCase key。前端直接讀 `data.site`，沒有舊欄位轉換層。這是目前已落地的格式，不是提案；完整傳輸契約見 [API 規格](../../docs/api-interface-format.md)。
+三份 JSON 使用相同 camelCase key。API 直接回傳 SiteData；store 保存後，畫面讀內部狀態 `data.site.brand` 等四組欄位，沒有舊欄位轉換層。完整傳輸契約見 [API 規格](../../docs/api-interface-format.md)。
 
 ## 逐欄用途與英文註解
 
@@ -33,7 +33,7 @@
 ## 多語與 fallback
 
 - 三份都是完整內容，不是英文加中文差異覆寫；欄位缺失不會自動逐欄補英文，store 委派 dataContracts.validateSite 拒絕無效 site。
-- transport 對支援語言的整份缺失提供英文 fallback；但正常交付仍應保留三份已登記的檔案，建置時缺檔會失敗。未知 locale 回 400。
+- 三份語言資料都必須交付；缺檔會使建置失敗。後端不支援的 locale 回 400，缺少 site 內容回 404。
 - 目前姓名在三語都使用本人提供的 Zheng／Lee。不要自行推測中文姓名；若之後提供漢字名／姓，再更新對應語言的值。
 - 英文與其他非純漢字姓名使用名、空格、姓；純漢字名字／姓氏使用姓在前且不加空格。此規則集中於 `siteContent.fullName`。
 

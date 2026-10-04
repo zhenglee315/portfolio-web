@@ -31,25 +31,26 @@ export function loadFrontend(root, config) {
 }
 /**
  * Read only the mock files registered in config/build.json; missing files fail the build.
- * Site, Journey, Experience and Projects locale files contain direct content; locales/{locale} contains
- * translation keys for skills and categories only. Companion Markdown is never bundled.
+ * Every registered locale file contains the localized API content. Companion Markdown is never bundled.
  */
 export function loadMock(root, config) {
   const directory = path.join(root, "mock"),
     result = {
-      revision: config.revision,
-      locales: {},
       site: {},
       journey: {},
       experiences: {},
       projects: {},
+      skillCategories: {},
+      skills: {},
     };
   for (const name of config.files) {
     const file = path.resolve(directory, name + ".json");
     if (!file.startsWith(directory + path.sep))
       throw new Error("Unsafe mock path: " + name);
     const value = JSON.parse(fs.readFileSync(file, "utf8"));
-    if (name.startsWith("locales/")) result.locales[name.slice(8)] = value;
+    if (name.startsWith("skill-categories/"))
+      result.skillCategories[name.slice(17)] = value;
+    else if (name.startsWith("skills/")) result.skills[name.slice(7)] = value;
     else if (name.startsWith("journey/")) result.journey[name.slice(8)] = value;
     else if (name.startsWith("experiences/"))
       result.experiences[name.slice(12)] = value;
@@ -61,7 +62,8 @@ export function loadMock(root, config) {
   if (
     !result.site?.en ||
     !Array.isArray(result.journey?.en) ||
-    !result.locales.en ||
+    !Array.isArray(result.skillCategories?.en) ||
+    !Array.isArray(result.skills?.en) ||
     !Array.isArray(result.experiences?.en) ||
     !Array.isArray(result.projects?.en)
   )

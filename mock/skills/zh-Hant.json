@@ -1,0 +1,270 @@
+[
+  {
+    "id": "python",
+    "label": "Python"
+  },
+  {
+    "id": "fastapi",
+    "label": "FastAPI"
+  },
+  {
+    "id": "django",
+    "label": "Django"
+  },
+  {
+    "id": "django-rest-framework",
+    "label": "Django REST Framework"
+  },
+  {
+    "id": "flask",
+    "label": "Flask"
+  },
+  {
+    "id": "rest",
+    "label": "REST"
+  },
+  {
+    "id": "grpc",
+    "label": "gRPC"
+  },
+  {
+    "id": "groovy",
+    "label": "Groovy"
+  },
+  {
+    "id": "mcp",
+    "label": "MCP"
+  },
+  {
+    "id": "fastmcp",
+    "label": "FastMCP"
+  },
+  {
+    "id": "rag",
+    "label": "RAG"
+  },
+  {
+    "id": "langchain",
+    "label": "LangChain"
+  },
+  {
+    "id": "ollama",
+    "label": "Ollama"
+  },
+  {
+    "id": "chroma",
+    "label": "Chroma"
+  },
+  {
+    "id": "prompt-engineering",
+    "label": "提示工程"
+  },
+  {
+    "id": "human-in-the-loop-review",
+    "label": "人工參與審核"
+  },
+  {
+    "id": "kubernetes",
+    "label": "Kubernetes"
+  },
+  {
+    "id": "docker",
+    "label": "Docker"
+  },
+  {
+    "id": "linux",
+    "label": "Linux"
+  },
+  {
+    "id": "jwt",
+    "label": "JWT"
+  },
+  {
+    "id": "rbac",
+    "label": "RBAC"
+  },
+  {
+    "id": "sso",
+    "label": "SSO"
+  },
+  {
+    "id": "prometheus",
+    "label": "Prometheus"
+  },
+  {
+    "id": "rancher",
+    "label": "Rancher"
+  },
+  {
+    "id": "ubuntu",
+    "label": "Ubuntu"
+  },
+  {
+    "id": "red-hat-linux",
+    "label": "Red Hat Linux"
+  },
+  {
+    "id": "postgresql",
+    "label": "PostgreSQL"
+  },
+  {
+    "id": "sql",
+    "label": "SQL"
+  },
+  {
+    "id": "redis",
+    "label": "Redis"
+  },
+  {
+    "id": "kafka",
+    "label": "Kafka"
+  },
+  {
+    "id": "apache-nifi",
+    "label": "Apache NiFi"
+  },
+  {
+    "id": "sqlalchemy",
+    "label": "SQLAlchemy"
+  },
+  {
+    "id": "oracle",
+    "label": "Oracle"
+  },
+  {
+    "id": "mongodb",
+    "label": "MongoDB"
+  },
+  {
+    "id": "s3-compatible-storage",
+    "label": "相容 S3 的儲存"
+  },
+  {
+    "id": "rustfs",
+    "label": "RustFS"
+  },
+  {
+    "id": "oracle-goldengate",
+    "label": "Oracle GoldenGate"
+  },
+  {
+    "id": "data-warehousing",
+    "label": "資料倉儲"
+  },
+  {
+    "id": "tableau",
+    "label": "Tableau"
+  },
+  {
+    "id": "celery",
+    "label": "Celery"
+  },
+  {
+    "id": "rabbitmq",
+    "label": "RabbitMQ"
+  },
+  {
+    "id": "airflow",
+    "label": "Airflow"
+  },
+  {
+    "id": "gitlab",
+    "label": "GitLab"
+  },
+  {
+    "id": "jenkins-ci-cd",
+    "label": "Jenkins CI/CD"
+  },
+  {
+    "id": "kettle-etl",
+    "label": "Kettle-ETL"
+  },
+  {
+    "id": "tableau-prep-builder",
+    "label": "Tableau Prep Builder"
+  },
+  {
+    "id": "training-orchestration",
+    "label": "訓練任務編排"
+  },
+  {
+    "id": "mlflow-integration",
+    "label": "MLflow 整合"
+  },
+  {
+    "id": "xgboost",
+    "label": "XGBoost"
+  },
+  {
+    "id": "lstm",
+    "label": "LSTM"
+  },
+  {
+    "id": "random-forest",
+    "label": "隨機森林"
+  },
+  {
+    "id": "svm",
+    "label": "SVM"
+  },
+  {
+    "id": "adaboost",
+    "label": "AdaBoost"
+  },
+  {
+    "id": "ann",
+    "label": "ANN"
+  },
+  {
+    "id": "ensemble-methods",
+    "label": "集成方法"
+  },
+  {
+    "id": "feature-selection",
+    "label": "特徵選取"
+  },
+  {
+    "id": "class-imbalance-handling",
+    "label": "類別不平衡處理"
+  },
+  {
+    "id": "lasso",
+    "label": "Lasso"
+  },
+  {
+    "id": "pso",
+    "label": "PSO"
+  },
+  {
+    "id": "pearson-correlation",
+    "label": "Pearson 相關係數"
+  },
+  {
+    "id": "vue-3",
+    "label": "Vue 3"
+  },
+  {
+    "id": "echarts",
+    "label": "ECharts"
+  },
+  {
+    "id": "html",
+    "label": "HTML"
+  },
+  {
+    "id": "smtp",
+    "label": "SMTP"
+  },
+  {
+    "id": "slack",
+    "label": "Slack"
+  },
+  {
+    "id": "google-translate",
+    "label": "Google Translate"
+  },
+  {
+    "id": "web-scraping",
+    "label": "網路爬蟲"
+  }
+]

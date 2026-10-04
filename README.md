@@ -137,7 +137,7 @@ The [feature inventory](docs/current-page-features.md) documents 55 features acr
 
 Clone or download the repository and work from its root directory.
 
-**View the existing build:** open `dist/index.html` directly in a modern browser. No server or installation is needed. External social links still need internet access; email links use the device's mail application.
+**View the existing build:** open `dist/index.html` directly in a modern browser. No server or installation is needed. Keep its adjacent `mock-pages/` and other assets in place so later pages can load offline. `src/index.html` is the build template, not the page to open; its CSS and scripts are generated into `dist/`. External social links still need internet access; email links use the device's mail application.
 
 **Develop:** install Node.js 22 or newer, then run:
 
@@ -156,14 +156,15 @@ Open `http://127.0.0.1:4173`. Stop the preview with Ctrl+C. The build uses Node'
 | Career map and dates                       | `mock/journey/{locale}.json`                     |
 | Experience cards                           | `mock/experiences/{locale}.json`                 |
 | Projects, complete details and skills      | `mock/projects/{locale}.json`                    |
-| Skill categories and their labels          | `mock/skills.json`, `mock/locales/{locale}.json` |
+| Skill categories and their labels          | `mock/skill-categories/{locale}.json`            |
+| Skill labels                               | `mock/skills/{locale}.json`                      |
 | Fixed UI translations                      | `src/locales/{locale}.json`                      |
 | Navigation and runtime defaults            | `src/config/`                                    |
 | Theme colors, typography and shared tokens | `src/styles/theme.css`                           |
 
 Locale filenames use `en`, `zh-Hans` and `zh-Hant`. Preserve the same numeric record IDs, order and totals across languages. Content is plain text; use normal line breaks rather than HTML or Markdown. See [mock field comments](mock/README.md).
 
-After editing data, update `config/build.json`'s mock revision and rebuild. Register new modules and mock files explicitly. Edit `src/`, never generated `dist/` files.
+After editing data, rebuild to refresh `dist/app.js` and the generated `dist/mock-pages/` chunks. Register new modules and mock files explicitly in `config/build.json`. Edit `src/`, never generated `dist/` files. The legacy `mock/skills.json` and `mock/locales/` files remain seed inputs for the sibling backend importer; they are not bundled by this frontend.
 
 ### Architecture and API
 
@@ -175,9 +176,9 @@ mock JSON → transport → API client → validated store → feature modules �
 CSS: theme → base → motion → layout → components
 ```
 
-Six mock GET resources are present. Site, Journey, Experiences and Projects have approved contracts; Skill Categories and Skills remain pending discussion. Experiences and Projects use `{total, pages, page, size, items}` with `size=6`; project details and skills arrive with each page.
+Six mock GET resources match the sibling backend's `/portfolio/*` paths. Site returns an object, Journey an array, Experiences and Projects use `{total, pages, page, size, items}` with `size=6`, and the two skill resources use cursor pages. Responses have no shared envelope or revision. Project details and skills arrive with each page.
 
-The transport is asynchronous but makes no HTTP requests. All fixture bytes are embedded for `file://` support, so current lazy loading limits processing and DOM growth, not initial network bytes. A future HTTP build must replace the transport and stop embedding complete mocks.
+The build turns localized mock JSON into separate JS response chunks under `dist/mock-pages/`. `app.js` contains the frontend code, configuration and a small chunk manifest, rather than every mock record. On first view the transport loads Site, Journey and only the initial Experience, Project and skill-category pages. Opening more projects or a category's remaining skills loads the corresponding chunk when needed; the client caches loaded responses. Classic local scripts allow this to work when `dist/index.html` is opened with `file://`, without an HTTP server. Hosted previews load the same static chunks over HTTP. A future backend integration can replace the mock transport while keeping the API client and response shapes.
 
 Read [OpenAPI 3.1](spec/openapi.json), [API behavior](docs/api-interface-format.md) and [backend handoff](docs/backend-handoff.md). API field names remain consistent through mocks, store and rendering; no display-field mapping tables are required.
 
@@ -196,7 +197,7 @@ Read [OpenAPI 3.1](spec/openapi.json), [API behavior](docs/api-interface-format.
 | `scripts/`      | Build, preview, packaging and documentation tools              |
 | `tests/`        | Contract, maintenance and browser regression tests             |
 | `docs/`         | Architecture, function reference, verification and screenshots |
-| `dist/`         | Reproducible offline/deployment output, committed with source  |
+| `dist/`         | Reproducible offline/deployment output, including `mock-pages/` |
 | `artifacts/`    | Ignored reports and release archives                           |
 | `.openai/`      | Existing Sites hosting configuration                           |
 
@@ -210,7 +211,7 @@ node scripts/document-functions.mjs --check
 node scripts/package.mjs
 ```
 
-Packaging verifies the build and writes an offline ZIP and hosting archive under `artifacts/`. Extract `Zheng-Lee-Portfolio-Offline.zip` and open its `index.html`, keeping adjacent assets in place.
+Packaging verifies the build and writes an offline ZIP and hosting archive under `artifacts/`. Extract `Zheng-Lee-Portfolio-Offline.zip` and open its `index.html`, keeping adjacent assets and `mock-pages/` in place.
 
 Full browser tests need Playwright and Chromium/Edge in the development environment. Use an existing installation through `PLAYWRIGHT_MODULE` and optionally `BROWSER_EXECUTABLE`, or install optional tools without changing the manifest:
 
@@ -254,7 +255,7 @@ Screenshots are documentation assets, not deployment thumbnails. Third-party att
 
 ### 如何使用
 
-下載或複製專案後，**直接用瀏覽器開啟 `dist/index.html` 即可離線瀏覽**，不需要安裝套件或啟動伺服器。社群連結仍需要網路，Email 使用裝置的郵件程式。
+下載或複製專案後，**直接用瀏覽器開啟 `dist/index.html` 即可離線瀏覽**，不需要安裝套件或啟動伺服器。請保留同層的 `mock-pages/` 和其他資源，後續分頁才可離線載入。`src/index.html` 是建置模板，瀏覽器應開啟產生後的 `dist/index.html`；CSS 與腳本也在建置時輸出至 `dist/`。社群連結仍需要網路，Email 使用裝置的郵件程式。
 
 開發時需 Node.js 22 以上，在專案根目錄執行：
 
@@ -269,9 +270,9 @@ node scripts/serve.cjs
 
 業務資料集中於 `mock/`，固定 UI 翻譯在 `src/locales/`；程式在 `src/`，建置結果在 `dist/`。Site、Journey、Experience、Projects 各提供 en／zh-Hans／zh-Hant 三份 JSON，保留相同欄位、數字 ID、排序與總筆數。
 
-個人介紹及社群修改 `mock/site/`；旅程修改 `mock/journey/`；經歷修改 `mock/experiences/`；專案與完整詳情修改 `mock/projects/`。技能分類使用 `mock/skills.json` 及 `mock/locales/`。普通文字與換行即可，不需要寫 HTML 或 Markdown。
+個人介紹及社群修改 `mock/site/`；旅程修改 `mock/journey/`；經歷修改 `mock/experiences/`；專案與完整詳情修改 `mock/projects/`。技能分類與標籤分別使用 `mock/skill-categories/{locale}.json`、`mock/skills/{locale}.json`。舊 `mock/skills.json` 與 `mock/locales/` 只供相鄰後端匯入程式使用，不打包到前端。普通文字與換行即可，不需要寫 HTML 或 Markdown。
 
-配色與共用參數集中於 `src/styles/theme.css`，各元件樣式由 `src/styles/index.css` 統一載入。新模組或 JSON 需登記 `config/build.json`；修改資料後同步 revision 並重建，不直接手改 dist。
+配色與共用參數集中於 `src/styles/theme.css`，各元件樣式由 `src/styles/index.css` 統一載入。新模組或 JSON 需登記 `config/build.json`；修改資料後重新建置 `dist/app.js` 與 `dist/mock-pages/`，不直接手改 dist。
 
 ### 工程結構與 API
 
@@ -279,9 +280,11 @@ node scripts/serve.cjs
 
 [完整資料夾與檔案說明](docs/project-structure.md) 列出每個維護中檔案的用途；[函式索引](docs/function-reference.md) 由英文註解產生，測試會檢查是否過期。
 
-目前六支 mock GET API 的前四支已確認，最後兩支技能 API 待討論。Experience／Projects 使用 page、size=6，回傳 total／pages／page／size／items；專案詳情與技能隨列表完整返回，欄位一路保持同名。
+六支 mock GET API 對齊相鄰後端的 `/portfolio/*` 路徑與直接回應格式，沒有共用 envelope 或 revision。Experience／Projects 使用 page、size=6；分類與技能使用綁定語言、資源及分類的 cursor。專案詳情與技能隨列表完整返回，欄位一路保持同名。
 
-後端可參考 [OpenAPI](spec/openapi.json)、[API 行為規格](docs/api-interface-format.md) 與 [交接文件](docs/backend-handoff.md)。目前沒有 AJAX、資料庫或 CMS；為支援離線，完整 mock 已嵌入 app.js，現有 lazy loading 延後資料處理及 DOM。接正式 HTTP 時需替換 transport 並停止嵌入完整 mock。
+建置時會把三種語言的 mock JSON 產生為 `dist/mock-pages/` 下的獨立 JS 回應片段；`app.js` 保留前端程式、設定及小型片段索引，不再嵌入全部資料。首次顯示只載入 Site、Journey，以及經歷、專案、技能分類的第一頁；使用者展開後續專案或分類中剩餘技能時，才載入對應片段，已載入的回應則由 client 快取。這些本地腳本可在 `file://` 下按需載入，無須 HTTP 伺服器；託管版本則透過 HTTP 取得相同靜態檔案。接上正式後端時，可替換 mock transport，保留 API client 與回應格式。
+
+後端可參考 [OpenAPI](spec/openapi.json)、[API 行為規格](docs/api-interface-format.md) 與 [交接文件](docs/backend-handoff.md)。目前不需要資料庫或 CMS。
 
 ### 驗證與交付
 
@@ -293,6 +296,6 @@ node scripts/package.mjs
 
 完整瀏覽器測試使用開發環境的 Playwright 與 Chromium／Edge，安裝或外部工具路徑設定見上方英文段落。執行 `node scripts/test.mjs` 會跑完整測試，輸出 `artifacts/test-results.json`；[最後驗證報告](docs/final-verification.md) 記錄實際結果與涵蓋範圍。
 
-離線 ZIP 解壓縮後開啟 index.html，保留旁邊的 assets。具名函式或註解變更後執行 `node scripts/document-functions.mjs`；README 圖片可用 `node scripts/capture-readme.cjs` 從本地網站重拍。
+離線 ZIP 解壓縮後開啟 index.html，保留旁邊的 assets 與 `mock-pages/`。具名函式或註解變更後執行 `node scripts/document-functions.mjs`；README 圖片可用 `node scripts/capture-readme.cjs` 從本地網站重拍。
 
 Bootstrap 圖示與字型保留來源及授權；中文使用作業系統字型，因此裝置間可能有些微排版差異。

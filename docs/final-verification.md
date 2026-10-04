@@ -1,5 +1,13 @@
 # Final verification / 最後驗證
 
+The current mock contract uses all six `/portfolio/*` routes, three localized skill/category fixtures, direct responses and locale-bound cursors without revision. A backend HTTP adapter has not yet been verified here. / 現行 mock 契約為六支 `/portfolio/*`、三語分類與技能直接文字、無包裝回應及綁定語言的 cursor；尚未驗證後端 HTTP adapter。
+
+## Latest: on-demand offline mock pages / 最新：離線按需分頁（2026-10-05）
+
+**13/13 suites and 40 contract/maintenance cases passed.** The deterministic build generated 126 files, including 69 localized mock page chunks. Opening `dist/index.html` with `file://` loaded the initial pages; the browser requested later project pages only after paging and category skill continuations only after expansion. The offline ZIP contains the chunks and passed its build check. / **13／13 組、40 個契約與維護案例通過。** 建置產生 126 個檔案，包含 69 個三語 mock 分頁片段。以 `file://` 開啟時先載入首頁所需頁，後續專案及分類技能片段在操作後才讀取；離線 ZIP 也包含這些片段並通過建置檢查。
+
+The previous results below are historical records. / 以下較早的數字為歷史紀錄。
+
 ## Latest: maintainability audit / 最新：可維護性檢查（2026-09-23）
 
 **13/13 suites passed after cleanup, including 36 contract/maintenance cases; 57 JavaScript files passed syntax checks.** Source and generated output match. / 整理後完整重跑，13／13 組及 36 個契約／維護案例通過，57 份 JavaScript 語法檢查通過，來源與建置產物一致。執行結果在 `artifacts/test-results.json`。
@@ -30,7 +38,7 @@ Actual desktop, mobile, tablet and 4K views were inspected; the [README](../READ
 - 10 viewport widths × 3 locales: 320, 390, 760, 761, 1024, 1080, 1440, 1920, 2560 and 3840 CSS pixels. / 手機、平板、桌面與 3840px 4K，另驗證 breakpoint 兩側。
 - Offline startup with 0, 1, 6, 7 and 19 records in every locale; complete pagination and dialogs at mobile, tablet and 4K sizes. / 空、單筆、六筆邊界及多頁資料的真正初次載入、完整分頁與詳細視窗。
 - Larger fixtures: 126 projects, 81 experiences and 120 skills per record; errors, retry, cache, concurrency and locale switching. / 大量資料、失敗重試、快取、併發及語系切換。
-- Six API specifications, response examples, safe numeric IDs, nullable fields, date rules and HTML escaping. / 六支 API 範例與欄位驗證，前四支已確認，後兩支待討論。
+- Six API specifications, response examples, safe numeric IDs, nullable fields, date rules and HTML escaping. / 六支 API 範例與欄位驗證；下方執行數字屬舊版契約的歷史紀錄。
 - Source ownership, CSS import graph, theme token consumers, asset references, mock registration, English function comments, generated function index and local Markdown links. / 來源責任、樣式調度、資產引用、mock 登記、英文註解與文件一致性。
 
 ## Cleanup / 清理
@@ -51,4 +59,4 @@ Browser setup is in [README](../README.md). The latest machine-readable run is w
 
 ## Limits / 範圍限制
 
-Browser tests use local Edge (Chromium) and emulated viewport sizes; these are not physical-device, Safari or Firefox certification. The 4K test covers a 3840px CSS viewport, not every OS scaling setting. No production HTTP API or database exists yet; OpenAPI consistency checks do not replace backend validation or integration tests. / 使用本機 Edge 與模擬尺寸，未宣稱實體裝置、Safari、Firefox 或所有系統縮放均已驗收；尚未有正式 HTTP API 與資料庫，後端仍需執行自己的驗證及整合測試。
+Browser tests use local Edge (Chromium) and emulated viewport sizes; these are not physical-device, Safari or Firefox certification. The 4K test covers a 3840px CSS viewport, not every OS scaling setting. The sibling backend implements HTTP routes and a database, but this frontend has not run an HTTP integration suite against them. / 使用本機 Edge 與模擬尺寸，未宣稱實體裝置、Safari、Firefox 或所有系統縮放均已驗收；相鄰後端已有 HTTP 路由與資料庫，但本前端尚未對其執行 HTTP 整合測試。

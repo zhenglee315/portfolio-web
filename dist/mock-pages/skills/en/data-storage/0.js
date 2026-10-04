@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/en/data-storage/0", [{"id":"postgresql","label":"PostgreSQL"},{"id":"sql","label":"SQL"},{"id":"redis","label":"Redis"},{"id":"kafka","label":"Kafka"},{"id":"apache-nifi","label":"Apache NiFi"},{"id":"sqlalchemy","label":"SQLAlchemy"}]);

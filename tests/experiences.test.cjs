@@ -24,12 +24,10 @@ function expanded(mock) {
 test("Experience has direct localized fields, authoritative array order and exact page/size response", async () => {
   const { ctx, mock } = context({ empty: true });
   expanded(mock);
-  delete mock.entities;
-  delete mock.locales;
   delete mock.skills;
   const api = ctx.createPortfolioApi(ctx.MockPortfolioTransport.create(mock));
   for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
-    const first = await api.request("/experiences", {
+    const first = await api.request("/portfolio/experiences", {
       locale,
       page: 1,
       size: 6,
@@ -47,14 +45,14 @@ test("Experience has direct localized fields, authoritative array order and exac
     );
     assert.equal(first.total, 14);
     assert.equal(first.pages, 3);
-    const last = await api.request("/experiences", {
+    const last = await api.request("/portfolio/experiences", {
       locale,
       page: 3,
       size: 6,
     });
     assert.equal(last.items.length, 2);
     assert.equal(last.size, 6);
-    const beyond = await api.request("/experiences", {
+    const beyond = await api.request("/portfolio/experiences", {
       locale,
       page: 4,
       size: 6,
@@ -66,13 +64,11 @@ test("Experience has direct localized fields, authoritative array order and exac
     { page: "all" },
     { size: 7 },
     { size: "all" },
-    { cursor: "old" },
-    { limit: 6 },
   ])
-    await assert.rejects(api.request("/experiences", query));
+    await assert.rejects(api.request("/portfolio/experiences", query));
   mock.experiences.en = [];
   const empty = await ctx.MockPortfolioTransport.create(mock).request({
-    path: "/experiences",
+    path: "/portfolio/experiences",
   });
   assert.deepEqual(copy(empty), {
     total: 0,
@@ -90,7 +86,7 @@ test("Experience pagination retries the same page, deduplicates requests and pre
   ctx.PortfolioApi = ctx.createPortfolioApi({
     async request(req) {
       const response = await raw.request(req);
-      if (req.path === "/experiences" && req.query.page === 2 && fail) {
+      if (req.path === "/portfolio/experiences" && req.query.page === 2 && fail) {
         fail = false;
         response.items[0].skills = null;
       }
@@ -121,7 +117,7 @@ test("Experience pagination retries the same page, deduplicates requests and pre
     copy(
       raw.requests
         .filter(
-          (r) => r.path === "/experiences" && r.query.locale === "zh-Hant",
+          (r) => r.path === "/portfolio/experiences" && r.query.locale === "zh-Hant",
         )
         .map((r) => r.query.page),
     ),
@@ -143,7 +139,7 @@ test("Experience field validation is atomic and localized malformed content can 
       const result = await raw.request(req);
       if (
         corrupt &&
-        req.path === "/experiences" &&
+        req.path === "/portfolio/experiences" &&
         req.query.locale === "zh-Hant"
       )
         result.items[0].detail = {

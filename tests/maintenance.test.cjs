@@ -10,7 +10,11 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 function files(directory) {
   return fs
     .readdirSync(path.join(root, directory), { recursive: true })
-    .filter((file) => fs.statSync(path.join(root, directory, file)).isFile())
+    .filter(
+      (file) =>
+        !file.split(path.sep).includes(".DS_Store") &&
+        fs.statSync(path.join(root, directory, file)).isFile(),
+    )
     .map((file) => path.posix.join(directory, file.replaceAll(path.sep, "/")));
 }
 test("authored files have documented ownership and code entry comments", () => {
@@ -32,13 +36,20 @@ test("authored files have documented ownership and code entry comments", () => {
       );
   }
   const config = JSON.parse(read("config/build.json"));
+  const seedOnly = new Set([
+    "mock/skills.json",
+    "mock/locales/en.json",
+    "mock/locales/zh-Hans.json",
+    "mock/locales/zh-Hant.json",
+  ]);
   assert.deepEqual(
     files("mock")
-      .filter((file) => file.endsWith(".json"))
+      .filter((file) => file.endsWith(".json") && !seedOnly.has(file))
       .sort(),
     config.mock.files.map((file) => `mock/${file}.json`).sort(),
-    "Every business JSON must be registered exactly once",
+    "Every bundled API fixture must be registered exactly once",
   );
+  for (const file of seedOnly) assert(files("mock").includes(file));
 });
 test("named function comments and generated reference stay synchronized", async () => {
   const { functionDocument, scanFunctions } = await import(

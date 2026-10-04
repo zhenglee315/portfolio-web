@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/en/ml-research/0", [{"id":"training-orchestration","label":"Training orchestration"},{"id":"mlflow-integration","label":"MLflow integration"},{"id":"xgboost","label":"XGBoost"},{"id":"lstm","label":"LSTM"},{"id":"random-forest","label":"Random forest"},{"id":"svm","label":"SVM"}]);

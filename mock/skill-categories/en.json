@@ -1,0 +1,111 @@
+[
+  {
+    "id": "backend-apis",
+    "label": "Backend & APIs",
+    "skillIds": [
+      "python",
+      "fastapi",
+      "django",
+      "django-rest-framework",
+      "flask",
+      "rest",
+      "grpc",
+      "groovy"
+    ]
+  },
+  {
+    "id": "ai-agents",
+    "label": "AI & agents",
+    "skillIds": [
+      "mcp",
+      "fastmcp",
+      "rag",
+      "langchain",
+      "ollama",
+      "chroma",
+      "prompt-engineering",
+      "human-in-the-loop-review"
+    ]
+  },
+  {
+    "id": "platform-security",
+    "label": "Platform & security",
+    "skillIds": [
+      "kubernetes",
+      "docker",
+      "linux",
+      "jwt",
+      "rbac",
+      "sso",
+      "prometheus",
+      "rancher",
+      "ubuntu",
+      "red-hat-linux"
+    ]
+  },
+  {
+    "id": "data-storage",
+    "label": "Data & storage",
+    "skillIds": [
+      "postgresql",
+      "sql",
+      "redis",
+      "kafka",
+      "apache-nifi",
+      "sqlalchemy",
+      "oracle",
+      "mongodb",
+      "s3-compatible-storage",
+      "rustfs",
+      "oracle-goldengate",
+      "data-warehousing",
+      "tableau"
+    ]
+  },
+  {
+    "id": "workflows-delivery",
+    "label": "Workflows & delivery",
+    "skillIds": [
+      "celery",
+      "rabbitmq",
+      "airflow",
+      "gitlab",
+      "jenkins-ci-cd",
+      "kettle-etl",
+      "tableau-prep-builder"
+    ]
+  },
+  {
+    "id": "ml-research",
+    "label": "ML & research",
+    "skillIds": [
+      "training-orchestration",
+      "mlflow-integration",
+      "xgboost",
+      "lstm",
+      "random-forest",
+      "svm",
+      "adaboost",
+      "ann",
+      "ensemble-methods",
+      "feature-selection",
+      "class-imbalance-handling",
+      "lasso",
+      "pso",
+      "pearson-correlation"
+    ]
+  },
+  {
+    "id": "web-integrations",
+    "label": "Web & integrations",
+    "skillIds": [
+      "vue-3",
+      "echarts",
+      "html",
+      "smtp",
+      "slack",
+      "google-translate",
+      "web-scraping"
+    ]
+  }
+]

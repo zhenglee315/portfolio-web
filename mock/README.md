@@ -2,11 +2,11 @@
 
 本目錄保存網站的模擬業務資料。JSON 必須維持標準格式，不加入 `//`、`/* */` 或 `_comment` 欄位；本文件及 [site 欄位註解](site/README.md) 是資料的伴隨註解，不會被打包進 API 回應。
 
-目前第 1～4 支 site／journey／experiences／projects 已確認；共六支 API，第 5／6 支技能分類與技能仍保留現有格式，待下一輪討論。
+六支 `/portfolio` GET API 的資料格式均已確認。`site`、`journey` 直接回傳完整資料；`experiences`、`projects` 使用頁碼分頁；`skill-categories`、`skills` 使用游標分頁。
 
 ## 檔案與資料用途
 
-共 16 個 JSON，由 [建置清單](../config/build.json) 的 `mock.files` 明確登記，沒有掃描整個目錄自動載入文件。
+供前端模擬 API 使用的 18 個 JSON 由 [建置清單](../config/build.json) 的 `mock.files` 明確登記，沒有掃描整個目錄自動載入文件。建置會依請求分頁產生 `dist/mock-pages/` 的靜態 JS 回應片段。另保留 `skills.json` 與三份 `locales/*.json` 供後端資料庫種子匯入；這四份不會進入前端 API mock 片段。
 
 | 檔案                       | 說明                                                  | English maintenance note                                                           |
 | -------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -22,28 +22,34 @@
 | `projects/en.json`         | 英文完整專案                                          | Full localized projects with complete detail and skills.                           |
 | `projects/zh-Hans.json`    | 簡體完整專案                                          | Matching numeric identities, dates and array order.                                |
 | `projects/zh-Hant.json`    | 繁體完整專案                                          | Matching keys and total counts; no field mappings.                                 |
-| `skills.json`              | items 技能字典與 categories 分類關聯                  | Unique skills and ordered category relationships, projected into bounded previews. |
-| `locales/en.json`          | 其他資源的英文業務字典                                | English labels for skills and categories only.                                     |
-| `locales/zh-Hans.json`     | 其他資源的簡體中文字典                                | Simplified Chinese business translations for skills and categories.                |
-| `locales/zh-Hant.json`     | 其他資源的繁體中文字典                                | Traditional Chinese business translations for skills and categories.               |
+| `skill-categories/en.json`      | 英文分類標籤與完整技能 ID 順序                     | Full category membership source; the API trims each preview to six IDs.            |
+| `skill-categories/zh-Hans.json` | 簡體分類標籤與相同技能 ID 順序                     | Localized category labels with stable IDs and membership order.                    |
+| `skill-categories/zh-Hant.json` | 繁體分類標籤與相同技能 ID 順序                     | Localized category labels with stable IDs and membership order.                    |
+| `skills/en.json`                | 英文技能 ID 與直接顯示標籤                         | Each skill is `{id,label}`; the API pages skills within a category.                |
+| `skills/zh-Hans.json`           | 簡體技能 ID 與直接顯示標籤                         | Simplified Chinese labels with the same IDs and order.                             |
+| `skills/zh-Hant.json`           | 繁體技能 ID 與直接顯示標籤                         | Traditional Chinese labels with the same IDs and order.                            |
+| `skills.json`                   | **僅供後端 seed** 的舊技能與分類關聯               | Backend seed source only; excluded from frontend API mock bundle.                  |
+| `locales/en.json`               | **僅供後端 seed** 的英文翻譯鍵                     | Backend seed dictionary only; not a frontend response input.                       |
+| `locales/zh-Hans.json`          | **僅供後端 seed** 的簡體翻譯鍵                     | Backend seed dictionary only; not a frontend response input.                       |
+| `locales/zh-Hant.json`          | **僅供後端 seed** 的繁體翻譯鍵                     | Backend seed dictionary only; not a frontend response input.                       |
 
-site、journey、experiences、projects 的三語 JSON 都是直接文字；mock/locales 只供剩餘兩支技能 API。固定 UI 文案在 src/locales。
+六組三語 API JSON 都包含直接可顯示的文字；技能 API 使用 `label`，不要求前端查翻譯鍵。固定 UI 文案在 `src/locales`。
 
 ## 修改流程
 
-1. 修改 site／journey／experiences／projects 時，在各自三份 `{locale}.json` 保留相同欄位名稱與型別；翻譯值可以不同，姓名及品牌也可以維持相同。
-2. 修改技能分類時，維護穩定 skill ID 與分類關聯；業務翻譯鍵及插值參數需在三份 `locales` 一致。
-3. 更新 `config/build.json` 的 `mock.revision`，避免把新資料與舊分頁 cursor 混用；新增／移除 JSON 也需同步 `mock.files`。
+1. 修改任一 API 資源時，在該組三份 `{locale}.json` 保留相同欄位名稱、型別、ID 與排序；僅顯示文字依語言不同。
+2. 修改技能分類時，維護穩定的分類／技能 ID 與關聯順序；同步 `skills/{locale}.json` 的標籤。舊 `skills.json` 與 `locales/*.json` 若作為後端 seed 來源，也要保持對應一致。
+3. 新增／移除前端 API 資料檔時，同步 `config/build.json` 的 `mock.files`；後端 seed-only 檔不加進前端 bundle。
 4. 執行 `node scripts/build.mjs`、`node scripts/test.mjs`。測試環境設定見 [README](../README.md)。
-5. 若修改契約，同步 [API 規格](../docs/api-interface-format.md)、本目錄說明及 [開發對照](../docs/site-development.md)。
+5. 若修改契約，同步 [API 規格](../docs/api-interface-format.md)、本目錄說明及各資源 README。
 
 Journey 逐欄英文註解見 [journey/README.md](journey/README.md)，地圖接線與自動布局見 [Journey 開發對照](../docs/journey-development.md)。
 
 ## 模擬 API 與離線限制
 
-建置讀取 JSON → mock transport 投影回應 → client 快取／去重 → store 委派 dataContracts 驗證／保存 → 功能模組呈現。元件不可直接讀 fixture 或自行依語言開 JSON 檔案。
+建置讀取 18 份 API JSON → 輸出按頁分開的 `dist/mock-pages/` JS → mock transport 按請求載入 → client 快取／去重 → store 委派資料契約驗證／保存 → 功能模組呈現。元件不可直接讀 fixture 或自行依語言開 JSON 檔案。
 
-目前沒有 AJAX。為支援 `file://`，所有 mock bytes 都已嵌入 `dist/app.js`。lazy loading 延後的是資源讀取、資料合併及 DOM 渲染；接正式 HTTP transport 後才會延後網路下載。
+`dist/app.js` 只保存前端程式、設定與片段索引，不嵌入完整 mock。首次進站載入 Site、Journey 及列表第一頁；後續專案與分類技能頁在使用者操作時才讀取對應片段。這些 JS 檔可直接由 `file://` 載入，不需要本機伺服器；託管時則以 HTTP 按需下載相同的靜態檔案。離線交付時須保留 `dist/mock-pages/`，修改來源後須重新建置。
 
 語言、導覽和執行參數在 `src/config/`，固定 UI 文案在 `src/locales/`，地圖／圖示／字型在 `src/assets/`；它們不是本目錄的業務資料。
 
@@ -54,3 +60,5 @@ Journey 逐欄英文註解見 [journey/README.md](journey/README.md)，地圖接
 Experience 欄位英文註解與分頁規則見 [experiences/README.md](experiences/README.md)。Experience 不查 entities、skills 或 locales 字典。
 
 Projects 欄位英文註解見 [projects/README.md](projects/README.md)，接線見 [Projects 開發文件](../docs/projects-development.md)。已移除無使用者的舊 entities 與 project 翻譯鍵來源。
+
+技能分類與技能的完整來源、六筆預覽、直接標籤及游標接續分別見 [skill-categories/README.md](skill-categories/README.md) 和 [skills/README.md](skills/README.md)。

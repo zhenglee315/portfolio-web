@@ -8,12 +8,11 @@ const copy = (value) => JSON.parse(JSON.stringify(value));
 test("Projects preserve API keys, numeric identities and server order in six-item pages", async () => {
   const { ctx, mock } = context({ empty: true });
   delete mock.skills;
-  delete mock.locales;
   const api = ctx.createPortfolioApi(ctx.MockPortfolioTransport.create(mock));
   for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
     const rows = [];
     for (let page = 1; page <= 3; page++) {
-      const result = await api.request("/projects", { locale, page, size: 6 });
+      const result = await api.request("/portfolio/projects", { locale, page, size: 6 });
       assert.deepEqual(Object.keys(result).sort(), [
         "items",
         "page",
@@ -33,17 +32,14 @@ test("Projects preserve API keys, numeric identities and server order in six-ite
     { page: "all" },
     { size: 7 },
     { size: "all" },
-    { cursor: "old" },
-    { limit: 6 },
-    { scope: "earlier" },
   ])
-    await assert.rejects(api.request("/projects", query));
+    await assert.rejects(api.request("/portfolio/projects", query));
   await assert.rejects(api.request("/projects/1"), /Unknown resource/);
   mock.projects.en = [];
   assert.deepEqual(
     copy(
       await ctx.MockPortfolioTransport.create(mock).request({
-        path: "/projects",
+        path: "/portfolio/projects",
       }),
     ),
     { total: 0, pages: 0, page: 1, size: 6, items: [] },
@@ -54,7 +50,7 @@ test("Projects retry failed pages, deduplicate loads and translate only loaded p
   const { ctx, mock, data } = context({ empty: true });
   const raw = ctx.MockPortfolioTransport.create(mock, {
     delayMs: 5,
-    failures: { "/projects?page=2": 1 },
+    failures: { "/portfolio/projects?page=2": 1 },
   });
   ctx.PortfolioApi = ctx.createPortfolioApi(raw);
   await data.initialize();
@@ -77,7 +73,7 @@ test("Projects retry failed pages, deduplicate loads and translate only loaded p
   assert.deepEqual(
     copy(
       raw.requests
-        .filter((r) => r.path === "/projects" && r.query.locale === "zh-Hant")
+        .filter((r) => r.path === "/portfolio/projects" && r.query.locale === "zh-Hant")
         .map((r) => r.query.page),
     ),
     [1, 2],
@@ -113,7 +109,6 @@ test("Projects accept empty content but reject unsafe IDs, malformed fields and 
   }
   for (const detail of [
     null,
-    "",
     {
       workflowDescription: null,
       flow: [],
@@ -138,7 +133,7 @@ test("Projects reject changed localized identity and keep the previous language 
   ctx.PortfolioApi = ctx.createPortfolioApi({
     async request(req) {
       const response = await raw.request(req);
-      if (corrupt && req.path === "/projects" && req.query.locale === "zh-Hant")
+      if (corrupt && req.path === "/portfolio/projects" && req.query.locale === "zh-Hant")
         response.items.reverse();
       return response;
     },

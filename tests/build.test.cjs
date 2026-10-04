@@ -30,6 +30,26 @@ test("release manifest files match their recorded digest", () => {
     [...Object.keys(manifest.files), "build-manifest.json"].sort(),
   );
 });
+test("offline build keeps localized mock content in request-time chunks", () => {
+  const bundle = fs.readFileSync(path.join(dist, "app.js"), "utf8");
+  const source = bundle.match(/^window\.PORTFOLIO_MOCK = (.+);$/m);
+  assert(source, "app.js must declare a mock asset manifest");
+  const mock = JSON.parse(source[1]);
+  assert.equal(mock.kind, "lazy");
+  assert.equal(mock.prefix, "mock-pages");
+  for (const resource of ["site", "journey", "experiences", "projects", "skills"])
+    assert.equal(Object.hasOwn(mock, resource), false, `${resource} was embedded`);
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(dist, "build-manifest.json")),
+  );
+  const chunks = Object.keys(manifest.files).filter((name) =>
+    name.startsWith("mock-pages/"),
+  );
+  assert(chunks.length > 18, "localized resources should be split into pages");
+  for (const name of chunks)
+    assert.match(fs.readFileSync(path.join(dist, name), "utf8"),
+      /^window\.PortfolioMockChunks\(/);
+});
 test("HTML and CSS references resolve to bundled files", () => {
   for (const file of ["index.html", "styles.css", "assets/fonts/fonts.css"]) {
     const contents = fs.readFileSync(path.join(dist, file), "utf8");

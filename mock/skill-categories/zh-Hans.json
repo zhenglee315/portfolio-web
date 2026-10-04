@@ -1,0 +1,111 @@
+[
+  {
+    "id": "backend-apis",
+    "label": "后端与 API",
+    "skillIds": [
+      "python",
+      "fastapi",
+      "django",
+      "django-rest-framework",
+      "flask",
+      "rest",
+      "grpc",
+      "groovy"
+    ]
+  },
+  {
+    "id": "ai-agents",
+    "label": "AI 与智能代理",
+    "skillIds": [
+      "mcp",
+      "fastmcp",
+      "rag",
+      "langchain",
+      "ollama",
+      "chroma",
+      "prompt-engineering",
+      "human-in-the-loop-review"
+    ]
+  },
+  {
+    "id": "platform-security",
+    "label": "平台与安全",
+    "skillIds": [
+      "kubernetes",
+      "docker",
+      "linux",
+      "jwt",
+      "rbac",
+      "sso",
+      "prometheus",
+      "rancher",
+      "ubuntu",
+      "red-hat-linux"
+    ]
+  },
+  {
+    "id": "data-storage",
+    "label": "数据与保存",
+    "skillIds": [
+      "postgresql",
+      "sql",
+      "redis",
+      "kafka",
+      "apache-nifi",
+      "sqlalchemy",
+      "oracle",
+      "mongodb",
+      "s3-compatible-storage",
+      "rustfs",
+      "oracle-goldengate",
+      "data-warehousing",
+      "tableau"
+    ]
+  },
+  {
+    "id": "workflows-delivery",
+    "label": "工作流程与交付",
+    "skillIds": [
+      "celery",
+      "rabbitmq",
+      "airflow",
+      "gitlab",
+      "jenkins-ci-cd",
+      "kettle-etl",
+      "tableau-prep-builder"
+    ]
+  },
+  {
+    "id": "ml-research",
+    "label": "机器学习与研究",
+    "skillIds": [
+      "training-orchestration",
+      "mlflow-integration",
+      "xgboost",
+      "lstm",
+      "random-forest",
+      "svm",
+      "adaboost",
+      "ann",
+      "ensemble-methods",
+      "feature-selection",
+      "class-imbalance-handling",
+      "lasso",
+      "pso",
+      "pearson-correlation"
+    ]
+  },
+  {
+    "id": "web-integrations",
+    "label": "网页与集成",
+    "skillIds": [
+      "vue-3",
+      "echarts",
+      "html",
+      "smtp",
+      "slack",
+      "google-translate",
+      "web-scraping"
+    ]
+  }
+]

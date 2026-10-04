@@ -1,0 +1,1 @@
+window.PortfolioMockChunks("skills/en/ml-research/1", [{"id":"adaboost","label":"AdaBoost"},{"id":"ann","label":"ANN"},{"id":"ensemble-methods","label":"Ensemble methods"},{"id":"feature-selection","label":"Feature selection"},{"id":"class-imbalance-handling","label":"Class-imbalance handling"},{"id":"lasso","label":"Lasso"}]);

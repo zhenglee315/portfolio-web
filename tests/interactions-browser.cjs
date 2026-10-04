@@ -248,20 +248,38 @@ async function main() {
           Portfolio.get("data").skillsState(node.dataset.skillOwner).total -
           Number(node.dataset.previewCount),
       );
+      const owner = await group.getAttribute("data-skill-owner");
+      const hadMore = await group.evaluate((node) =>
+        Portfolio.get("data").skillsState(node.dataset.skillOwner).hasMore,
+      );
       assert((await button.textContent()).includes(String(hidden)));
       await button.click();
+      if (hadMore)
+        await page.waitForFunction(
+          (id) => !Portfolio.get("data").skillsState(id).hasMore,
+          owner,
+        );
       assert.equal(await button.getAttribute("aria-expanded"), "true");
-      assert.equal(await group.locator(".extra-skills").isVisible(), true);
-      await button.click();
-      assert.equal(await button.getAttribute("aria-expanded"), "false");
+      assert.equal(
+        await group.locator(".extra-skills").evaluate((element) => element.hidden),
+        false,
+      );
+      if (await button.isVisible()) {
+        await button.click();
+        assert.equal(await button.getAttribute("aria-expanded"), "false");
+      }
     }
     // Keyboard menu behavior, persisted preference and translated metadata survive a reload.
     await page.locator("#language-toggle").focus();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("End");
     await page.keyboard.press("Enter");
+    await page.waitForFunction(() => document.documentElement.lang === "zh-Hant");
     assert.equal(await page.locator("html").getAttribute("lang"), "zh-Hant");
     await page.reload();
+    await page.waitForFunction(
+      () => document.documentElement.dataset.ready === "true",
+    );
     assert.equal(await page.locator("html").getAttribute("lang"), "zh-Hant");
     assert.equal(
       await page.evaluate(

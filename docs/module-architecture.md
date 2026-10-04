@@ -6,28 +6,29 @@
 
 本次保留既有頁面設計、三語、RWD、時間軸、地圖播放與離線能力，將「資料、計算、渲染、互動、調度」分開。採用 classic deferred script 與明確的模組註冊器；維護來源在 `src/`，由 Node 內建模組的建置程式組合成單一輸出。完整 `dist/` 仍可直接用 `file://` 開啟。
 
-目前已有 6 支非同步 in-memory mock API，沒有 AJAX、HTTP server、資料庫或管理後台。業務資料統一在 mock/\*.json；API 版本與資料契約見 [api-interface-format.md](api-interface-format.md)。`data.replace()` 保留給集合快照匯入／測試（僅含 skills／skillCategories），正式接線入口改為 transport。
+目前前端已有 6 支非同步 mock API，由靜態分頁片段按需提供，尚未使用相鄰 `portfolio-modern` 後端的 HTTP 路由。測試可向 transport 注入完整記憶體資料集；網站本身只讀已請求的片段。三語 API fixture 在 mock/ 下，資料契約見 [api-interface-format.md](api-interface-format.md)。`data.replace()` 保留給集合快照匯入／測試（僅含 skills／skillCategories），正式接線入口是 transport。
 
 ## 2. 重複性評估與處理
 
 | 功能群         | 重複／耦合問題                                         | 本次處理                                                                          | 保留獨立的部分                                      |
 | -------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------- |
 | 導覽           | 名稱、錨點、圖示容易各自修改；手機開關混在主程式       | 保留 src/config/navigation.json 單一前端設定；抽出 mobileMenu                     | URL／歷史與抽屜開關分開                             |
-| Overview／聯絡 | Email、地點、學位與頁尾重複固定文字                    | /site 集中聯絡內容；siteContent 從資料衍生摘要                                    | 個人 profile 是可編輯文案，不自動改寫敘述           |
+| Overview／聯絡 | Email、地點、學位與頁尾重複固定文字                    | /portfolio/site 集中聯絡內容；siteContent 從資料衍生摘要                          | 個人 profile 是可編輯文案，不自動改寫敘述           |
 | 實習對話框     | 桌面／手機需要相同內容、計時與狀態                     | chatme 共用流程；開關使用 core.disclosure                                         | 定位、3 秒倒數、hover 保持由此模組管理              |
 | Journey        | 職涯、地圖點與選取狀態依索引綁定                       | Journey 直接取得地區與經緯度；選取用數字 id；journey 與 cityBubble 分責           | 地圖播放不抽象成一般輪播，城市 tooltip 不等同 modal |
 | Experience     | 與 Journey 重複地點、公司、日期                        | Experience 使用 data.experiences 直接文字；與 Journey 共用數字 id、日期與圖示函式 | 經歷時間軸自己的視覺布局                            |
 | Projects       | 摘要／dialog 內容重複；排序應遵從後端陣列              | content 共用模板；projects 管 dialog；collectionDisclosure 管集合展開             | 專案 dialog 保留原生 modal 焦點行為                 |
 | Skills         | 四種位置各需標籤、計數、收合、寬度量測                 | skills 統一 tags／layout／capture／restore                                        | 各用途保有自己的穩定 owner ID                       |
-| 多語言         | 英文散在資料檔與字典；切換時多處手動協調               | UI 與業務字典分離；i18n 提供翻譯，languageMenu 管選單，app 統一刷新               | 翻譯查找與選單互動不混在一起                        |
+| 多語言         | 三語內容與固定 UI 文案；切換時多處手動協調             | 業務資料使用三語直接文字；i18n 處理固定 UI，languageMenu 管選單，app 統一刷新     | 固定 UI 翻譯與選單互動不混在一起                    |
 | 共用呈現       | frame 排程、開關狀態、SVG 建立、escaping、RWD 判斷重複 | core 共用小型 primitives；JS 手機模式讀 CSS token                                 | 不把所有互動做成巨大、參數眾多的通用元件            |
 
 ## 3. 分層與模組入口
 
 ```mermaid
 flowchart TD
-  Source[mock JSON 與業務翻譯] --> Transport[Mock transport: 6 GET resources]
-  Transport --> Client[API client: cache / dedup / revision]
+  Source[三語 mock JSON] --> Chunks[建置時輸出 dist/mock-pages 分頁 JS]
+  Chunks --> Transport[Mock transport: 按需載入 6 GET resources]
+  Transport --> Client[API client: cache / dedup]
   Client --> Data[data-store: pages / localized view]
   Contracts[dataContracts: validation] --> Data
   Dates[CareerDates 純日期規則] --> Data
@@ -43,8 +44,8 @@ flowchart TD
 
 | 檔案／註冊名稱                                                | 責任                                         | 公開入口與使用者                                                                                                                                                                                                                                                     |
 | ------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/api/mock-transport.js`／MockPortfolioTransport           | JSON 的 API 投影、游標、關聯 include         | create(database, options).request({method,path,query})；測試可注入延遲與失敗                                                                                                                                                                                         |
-| `src/api/client.js`／PortfolioApi                             | 同鍵去重、成功快取、revision 檢查            | request(path,query)、invalidate(path,query)、translate(locale)；store 使用                                                                                                                                                                                           |
+| `src/api/mock-transport.js`／MockPortfolioTransport           | 六支直接回應、技能游標與預覽技能；網站按需讀取片段 | request({method,path,query})；測試可注入完整資料、延遲與失敗                                                                                                                                                                                                       |
+| `src/api/client.js`／PortfolioApi                             | 同鍵去重、成功快取與回應結構檢查             | request(path,query)、invalidate(path,query)、translate(locale)；store 使用                                                                                                                                                                                           |
 | `src/features/pagination.js`／paging                          | 共用集合的 loading／retry／更多按鈕          | control(name)；content 使用，事件委派呼叫 data.loadPage                                                                                                                                                                                                              |
 | `src/core/registry.js`／Portfolio                             | 註冊、相依解析、一次性初始化與 UI primitives | `register(name, dependencies, factory)`、`get(name)`、`start()`；所有功能使用                                                                                                                                                                                        |
 | `mock/site/{locale}.json`／data.site                          | 完整當前語言的 API 內容，保持四個群組名稱    | siteContent、chatme                                                                                                                                                                                                                                                  |
@@ -79,8 +80,8 @@ data.site、data.journey、data.experiences、data.projects 分別按語言快�
 | 集合            | 欄位與關係                                                                                                          |
 | --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | projects        | 正整數 id、organizationName／Code／Title、專案日期、projectName／Title、intro、detail、skills；完整直接文字，無查表 |
-| skills          | 字串 id、labelKey；技能分類的共用實體                                                                               |
-| skillCategories | 字串 id、labelKey、skillIds；分類順序與技能關係                                                                     |
+| skills          | 字串 id、按語言快取的直接 label；技能分類的共用實體                                                                |
+| skillCategories | 字串 id、按語言快取的直接 label、skillIds；分類順序與技能關係                                                      |
 
 data.view 與舊 company／title／role 欄位別名已移除，無 organizations／countries／locations 資料表。原始記錄不做命名轉換。numbered 登記兩個資源的 cache／validator，definition 登記路由與分頁參數，都是功能調度而非欄位 mapping。
 
@@ -141,27 +142,27 @@ node scripts/test.mjs
 
 ## 8. Mock API、分頁與未來邊界
 
-- config/build.json 的 mock.files 登記 16 個業務 JSON；其中 mock/site、mock/journey、mock/experiences 與 mock/projects 各三份 JSON 保存直接語言內容；frontend 區另外登記 localization／navigation／runtime、UI 字典來源及靜態 SVG。scripts/lib/mock-data.mjs 分別載入後由 build 嵌入本地 app.js。mock transport 私有化資料庫，features 不碰原始 fixture。
-- initialize 先取 /site，再取完整輕量 /journey，然後並行載入經歷、專案與分類的第一頁。所有 UI 在初始化完成後統一啟動。初始失敗提供重新載入入口。
+- config/build.json 的 mock.files 登記 18 個三語 API JSON：mock/site、journey、experiences、projects、skill-categories、skills 各三份。frontend 區另登記 localization／navigation／runtime、UI 字典來源及靜態 SVG。scripts/lib/mock-data.mjs 讀取來源後，由 build 輸出 `dist/mock-pages/` 按頁 JS；`app.js` 僅保存程式、設定與小型片段索引。舊 mock/skills.json 與 mock/locales/ 只供相鄰後端匯入，不進前端輸出。
+- initialize 先取 /portfolio/site，再取完整輕量 /portfolio/journey，然後並行載入經歷、專案與分類的第一頁。所有 UI 在初始化完成後統一啟動。初始失敗提供重新載入入口。
 - store 保留每個集合的 ids／total／nextCursor／hasMore／loading／error。pagechange 只更新載入控制；成功頁面再用 datachange 協調既有功能刷新。
 - Projects 與 Experience 共用 page／size=6 追加模式；detail 與 skills 隨專案列表完整返回。無獨立詳情路由，失敗不推進頁碼。
 - Experience／Projects 技能隨卡片完整返回；只有分類技能使用 cursor。shared skill 元件仍統一處理寬度預覽與展開；語言切換只重取已讀頁。
-- client 去重與快取成功回應，store 合併前驗證；拒絕的 domain 回應逐出快取。revision 不同時拒絕混合並要求重新整理，不做背景跨版本合併。
-- 完整 JSON 仍在離線 app.js，lazy 是 API 存取與 DOM 層級。正式 HTTP build 應換 transport 並停用完整 mock 嵌入，才降低下載量。沒有列表虛擬化。
+- client 去重與快取成功回應，store 合併前驗證；拒絕的 domain 回應逐出快取。六支回應都沒有 envelope 或 revision，跨頁一致性靠 total、ID 與順序檢查。
+- mock transport 於首次進站載入 Site、Journey 及各列表第一頁；後續專案與分類技能頁在使用者操作時才讀取片段，故首次下載／本地讀取量與 DOM 均隨分頁受限。`file://` 使用本地 classic script，託管版透過 HTTP 取得同一靜態片段；正式後端接線時再替換 transport。沒有列表虛擬化。
 
-下一階段只需在相同 request 契約下接 HTTP transport，無須讓每個 UI 自行 fetch。資料庫、CMS、認證、連線逾時、HTTP 快取、遠端離線快照仍待實作。每支 API 的 schema、排序、cursor 與錯誤格式見 [API 文件](api-interface-format.md)。
+前端仍需在相同 request 契約下接相鄰後端的 HTTP transport，無須讓每個 UI 自行 fetch。CMS、前端 HTTP 逾時／快取與遠端離線快照仍待實作。每支 API 的 schema、排序、cursor 與錯誤格式見 [API 文件](api-interface-format.md)。
 
 social 直接以 linkedin／github／medium／email 綁定入口。profile 直接提供文字與姓名／教育欄位；不再使用翻譯鍵或從 Journey 查詢教育摘要。
 
 ### 語言、固定設定與資料生命週期
 
-`I18n` 在 API client 前初始化，從 src/config/localization.json 取得固定支援清單，再還原有效的 localStorage 偏好。PORTFOLIO_NAVIGATION 與 MAP_DATA 直接取前端建置資料，不由 /site 設定。沒有 cookie 或動態選單 API。
+`I18n` 在 API client 前初始化，從 src/config/localization.json 取得固定支援清單，再還原有效的 localStorage 偏好。PORTFOLIO_NAVIGATION 與 MAP_DATA 直接取前端建置資料，不由 /portfolio/site 設定。沒有 cookie 或動態選單 API。
 
-`data.initialize` 驗證並凍結 /site 的四個群組，存入 siteByLocale；data.site 回傳目前語言物件。PORTFOLIO_RUNTIME 由 build 直接提供前端設定，沒有 API 內容轉接或欄位別名。
+`data.initialize` 驗證並凍結 /portfolio/site 的四個群組，存入 siteByLocale；data.site 回傳目前語言物件。PORTFOLIO_RUNTIME 由 build 直接提供前端設定，沒有 API 內容轉接或欄位別名。
 
-`I18n.setLanguage` 先等待 loader；loader 經 PortfolioApi.translate 重放已成功取得的資源／cursor／owner，使用新 locale 與獨立快取。store 暫存並合併目標字典，再切換 UI；失敗不切換。切換期間新增的已讀資源會補齊，序號檢查避免晚到的舊選擇覆蓋最新語言。既有 ID、日期、排序不依語言變化，prepareLocale 更新業務字典及依 locale 快取的 site 直接文字，data.site 取得當前語言完整四個群組，保留分頁狀態。
+`I18n.setLanguage` 先等待 loader；loader 經 PortfolioApi.translate 重放已成功取得的資源與已讀頁，使用新 locale 與獨立快取。技能 cursor 綁定語言，分類預覽及技能續頁須使用新語言取得的 cursor。store 暫存目標語言的直接 label 與內容，再切換 UI；失敗不切換。切換期間新增的已讀資源會補齊，序號檢查避免晚到的舊選擇覆蓋最新語言。既有 ID、日期、排序不依語言變化，保留分頁與互動狀態。
 
-翻譯鍵驗證接受目前已載入語言中的有效鍵，不要求第一次使用中文時先下載英文業務內容。固定英文 UI fallback 一直隨前端存在；其他 API 的業務字典缺譯由 transport 在目標語言回傳英文值；site／journey／experiences 只對整份支援語言物件缺失回退英文，已存在物件的必要欄位缺失會被 store 拒絕。維護測試仍檢查完整三語來源的鍵與插值一致性。
+固定英文 UI fallback 一直隨前端存在；業務 API 使用三語直接文字，必要欄位缺失會被 store 拒絕。維護測試檢查三語 fixture 的 ID、欄位與分類關聯一致性。
 
 ## Journey 的獨立資料與呈現
 
