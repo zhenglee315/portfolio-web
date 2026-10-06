@@ -196,22 +196,41 @@ Portfolio.register("dataContracts", [], () => {
       throw new Error("Invalid site asset: chatme.icon");
     return site;
   }
-  /** Validate the shared cursor metadata used by category and skill pages. */
-  function validateCursorPage(page) {
+  /** Select numbered metadata without copying item arrays into normalized state. */
+  function pageMetadata(response) {
+    const { total, pages, page, size } = response;
+    return { total, pages, page, size };
+  }
+  /** Validate numbered metadata shared by responses and normalized collection state. */
+  function validatePageMetadata(value) {
     if (
-      !page ||
-      !Number.isSafeInteger(page.limit) ||
-      page.limit < 1 ||
-      page.limit > 50 ||
-      !Number.isSafeInteger(page.total) ||
-      page.total < 0 ||
-      typeof page.hasMore !== "boolean" ||
-      (page.hasMore
-        ? typeof page.nextCursor !== "string" || !page.nextCursor
-        : page.nextCursor !== null)
+      !value ||
+      !Number.isSafeInteger(value.total) ||
+      value.total < 0 ||
+      !Number.isSafeInteger(value.page) ||
+      value.page < 1 ||
+      value.size !== 6 ||
+      !Number.isSafeInteger(value.pages) ||
+      value.pages !== Math.ceil(value.total / value.size)
     )
-      throw new Error("Invalid cursor page");
-    return page;
+      throw new Error("Invalid numbered pagination metadata");
+    return value;
+  }
+  /** Require exactly one complete numbered response, including empty and beyond-end pages. */
+  function validatePage(response) {
+    validatePageMetadata(response);
+    if (
+      Object.keys(response).sort().join(",") !==
+        "items,page,pages,size,total" ||
+      !Array.isArray(response.items) ||
+      response.items.length !==
+        Math.min(
+          response.size,
+          Math.max(0, response.total - (response.page - 1) * response.size),
+        )
+    )
+      throw new Error("Invalid numbered pagination response");
+    return response;
   }
   /** Validate identifiers and category-to-skill references before publishing content. */
   function validate(value) {
@@ -250,57 +269,59 @@ Portfolio.register("dataContracts", [], () => {
         reference("skills", id);
       });
       if (row.skillsPage !== undefined) {
-        validateCursorPage(row.skillsPage);
+        validatePageMetadata(row.skillsPage);
         if (row.skillsPage.total < row.skillIds.length)
           throw new Error(`Invalid category skill total: ${row.id}`);
       }
     });
     return value;
   }
-  /** Validate one category page and the exact labels referenced by its previews. */
-  function validateCategoriesPage(response) {
-    const page = validateCursorPage(response?.page);
-    if (
-      !Array.isArray(response.items) ||
-      response.items.length > page.limit ||
-      (page.hasMore && !response.items.length) ||
-      !Array.isArray(response.included?.skills)
-    )
-      throw new Error("Invalid skill category page");
-    const previewIds = new Set();
-    for (const category of response.items) {
-      if (!Array.isArray(category?.skillIds) || category.skillIds.length > 6)
-        throw new Error("Invalid category preview");
-      validateCursorPage(category.skillsPage);
-      if (category.skillsPage.limit !== 6)
-        throw new Error("Invalid category preview limit");
-      category.skillIds.forEach((id) => previewIds.add(id));
-    }
-    validate({
-      schemaVersion: 1,
-      skills: response.included.skills,
-      skillCategories: response.items,
+  /** Normalize nested category previews while storing each localized skill label once. */
+  function categorySnapshot(response) {
+    const skills = new Map();
+    const skillCategories = response.items.map((row) => {
+      for (const skill of row.skills.items) {
+        if (skills.has(skill.id) && skills.get(skill.id).label !== skill.label)
+          throw new Error("Conflicting category skill label: " + skill.id);
+        skills.set(skill.id, skill);
+      }
+      return {
+        id: row.id,
+        label: row.label,
+        skillIds: row.skills.items.map((skill) => skill.id),
+        skillsPage: pageMetadata(row.skills),
+      };
     });
-    if (
-      response.included.skills.length !== previewIds.size ||
-      response.included.skills.some((skill) => !previewIds.has(skill.id))
-    )
-      throw new Error("Invalid included skill labels");
+    return { schemaVersion: 1, skills: [...skills.values()], skillCategories };
+  }
+  /** Validate a numbered category page and each directly embedded first skill page. */
+  function validateCategoriesPage(response) {
+    validatePage(response);
+    for (const row of response.items) {
+      if (
+        !row ||
+        typeof row.id !== "string" ||
+        typeof row.label !== "string" ||
+        !row.label.trim()
+      )
+        throw new Error("Invalid category item");
+      validateSkillsPage(row.skills);
+      if (row.skills.page !== 1)
+        throw new Error("Invalid category preview page");
+    }
+    validate(categorySnapshot(response));
     return response;
   }
-  /** Validate one category-owned skill continuation page. */
+  /** Validate one category-owned numbered page of localized skills. */
   function validateSkillsPage(response) {
-    const page = validateCursorPage(response?.page);
-    if (
-      !Array.isArray(response.items) ||
-      response.items.length > page.limit ||
-      (page.hasMore && !response.items.length)
-    )
-      throw new Error("Invalid skill page");
+    validatePage(response);
     validate({ schemaVersion: 1, skills: response.items, skillCategories: [] });
     return response;
   }
   return Object.freeze({
+    pageMetadata,
+    validatePage,
+    categorySnapshot,
     validateJourney,
     validateExperiences,
     validateProjects,

@@ -22,9 +22,9 @@ For editors, accept ordinary text with normal line breaks. Let the JSON serializ
 
 編輯器使用者正常輸入及換行即可，不需輸入跳脫符號。後端以 JSON serializer 編碼；前端當純文字顯示，正常保留換行。輸入驗證與編輯權限仍由後端負責。
 
-## Numbered collections / 經歷與專案分頁
+## Numbered collections / 共用頁碼分頁
 
-`GET /portfolio/experiences?locale=en&page=1&size=6` and `GET /portfolio/projects?locale=en&page=1&size=6` return exactly the five Page fields, without an envelope:
+Experiences, projects, skill categories and category skills use `page=1&size=6` and return exactly the five Page fields, without an envelope:
 
 ```json
 { "total": 0, "pages": 0, "page": 1, "size": 6, "items": [] }
@@ -34,9 +34,9 @@ page starts at one; size is always six. The frontend sends no `all`, `cursor`, `
 
 page 由一開始，size 固定六；空集合 pages=0，末頁仍回 size=6。第一次只取六筆，後續成功才前進頁碼，失敗重試同頁。Projects 的 detail 與 skills 一次完整回傳，卡片展開不再查另一支 API。
 
-The provided `paginate_orm` utility is compatible when invoked with validated integer page and size=6. Its generic `all` branch is not exposed by these two public routes. Enforce the endpoint limits before executing the query, and serialize rows into the documented localized DTO instead of exposing raw database column names.
+The provided `paginate_orm` utility is compatible when invoked with validated integer page and size=6. Its generic `all` branch is not exposed by these four public routes. Enforce the endpoint limits before executing the query, and serialize rows into the documented localized DTO instead of exposing raw database column names.
 
-既有 paginate_orm 可以沿用；這兩個 route 先驗證 page 和 size=6，不向前端開放 all。資料庫 row 轉成已確認 DTO，再交給 Page 回應，不把 ORM 原始欄位名直接當 API 契約。
+既有 paginate_orm 可以沿用；這四個 route 先驗證 page 和 size=6，不向前端開放 all。資料庫 row 轉成已確認 DTO，再交給 Page 回應，不把 ORM 原始欄位名直接當 API 契約。
 
 ## Identity and ordering / ID 與排序
 
@@ -44,13 +44,15 @@ Journey, Experience and Project IDs are positive JSON numbers up to 900719925474
 
 後端決定穩定順序，前端只依 items 陣列順序追加；Experience 的 order 保留但不在前端重新排序。排序需有唯一 tie-breaker，例如業務排序欄位後接主鍵；三語必須完全一致。不得把不同語言的缺譯記錄直接濾掉，否則分頁總數會不一致。
 
-None of the six responses has a revision token. The client rejects changed totals, duplicate IDs and inconsistent localized order, but cannot guarantee snapshot isolation across queries. Keep ordering stable during paging or provide a future separately agreed consistency mechanism. Skill cursors are bound to resource, locale, position and item ID; the frontend treats them as opaque.
+None of the six responses has a revision token. The client rejects changed totals, duplicate IDs and inconsistent localized order, but cannot guarantee snapshot isolation across queries. Keep ordering stable during paging or provide a future separately agreed consistency mechanism. The frontend scopes numbered pages and cache keys by resource, locale and category owner.
 
-六支 API 都沒有 revision token，前端能攔截部分資料變動，不能取代資料庫的一致性保證。技能游標綁定資源、語言、位置與項目 ID；前端只原樣帶回。切換語言時須重取已讀頁，不能沿用舊語言游標。
+六支 API 都沒有 revision token，前端能攔截部分資料變動，不能取代資料庫的一致性保證。頁碼與快取按資源、語言及分類區分；切換語言時須重取已讀頁碼，不能混入其他語言內容。
 
 ## Direct responses and skill pages / 直接回應與技能分頁
 
-`GET /portfolio/site` returns `{brand,profile,social,chatme}` directly; `GET /portfolio/journey` returns an ordered array directly. `GET /portfolio/skill-categories` returns `{items,page,included:{skills}}`, with localized category `label`, up to six preview `skillIds`, and each category's `skillsPage`. `GET /portfolio/skills?ownerType=category&ownerId=...` returns `{items,page}`, where each item is `{id,label}`. Both skill pages use `{limit,total,hasMore,nextCursor}`; category and skill limits default to 12 and accept 1–50. Pass a category's preview cursor to `/portfolio/skills` for its remaining labels. No response contains `data`, `meta`, `revision` or a translation-key dictionary.
+`GET /portfolio/site` returns `{brand,profile,social,chatme}` directly; `GET /portfolio/journey` returns an ordered array. The four collections share `{items,total,pages,page,size}` and fixed size=6. Each skill category contains `id`, localized `label` and `skills`, itself a five-field page with up to six `{id,label}` preview records (page=1). Continue through `/portfolio/skills?ownerType=category&ownerId=...&page=2&size=6`. No response contains `data`, `meta`, `revision` or a translation-key dictionary.
+
+四種分頁繼承後端 `COMMON/schema/resp/resp_common.py` 的 `RespRecords[T]`，以 `from_records()` 統一計算 pages。分類外層與 skills 內層皆使用同一結構；技能 preview 是第 1 頁，展開從第 2 頁接續。mock 原始資料和 store 仍以 skillIds 做內部正規化，這些不是公開 API 欄位。
 
 三語分類與技能 fixture 分別在 `mock/skill-categories/{locale}.json`、`mock/skills/{locale}.json`，直接保存 `label`。舊 `mock/skills.json` 與 `mock/locales/` 只供相鄰後端的匯入程式，不打包到前端。
 
@@ -75,7 +77,7 @@ OpenAPI describes structural validation; month ordering, actual calendar days, c
 
 The backend returns errors with `detail` and a non-2xx status. The future HTTP adapter should convert these to Error with status, code, retryable and body, matching the current transport interface. Do not return an HTML error page as successful JSON. Frontend displays its own localized retry text, rather than rendering server messages into HTML.
 
-目前 mock transport 支援 400／404／405／422／500／503 錯誤；無效或跨語言／資源游標回 400 `INVALID_CURSOR`。無效資料保留現有內容，503 可重試同頁。HTTP timeout、abort、CORS 與快取標頭的前端處理尚未實作，依部署方式另定。
+目前 mock transport 支援 400／404／405／422／500／503 錯誤；無效 page／size 分別回 400 `INVALID_PAGE`／`INVALID_SIZE`。無效資料保留現有內容，503 可重試同頁。HTTP timeout、abort、CORS 與快取標頭的前端處理尚未實作，依部署方式另定。
 
 Replace the transport behind `createPortfolioApi` with the same `request({method,path,query})` shape. Keep client/store/features boundaries. The current static build already loads generated `dist/mock-pages/` chunks on demand; a backend build should omit those mock chunks and fetch the corresponding API response from the server. Continue supplying local fonts/icons/map assets so optional API integration does not add third-party asset dependencies.
 

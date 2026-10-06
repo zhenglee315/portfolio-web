@@ -164,7 +164,7 @@ async function main() {
       ),
       0,
     );
-    // An error does not load the entire collection or destroy the retry cursor.
+    // An error does not load the entire collection or advance the retry page.
     await page.locator("#more-projects>summary").click();
     await page.waitForFunction(
       () => !!Portfolio.get("data").page("projects").error,
@@ -243,8 +243,9 @@ async function main() {
     assert.equal(
       await page.evaluate(
         () =>
-          testTransport.requests.filter((r) => r.path === "/portfolio/experiences")
-            .length,
+          testTransport.requests.filter(
+            (r) => r.path === "/portfolio/experiences",
+          ).length,
       ),
       1,
     );
@@ -260,7 +261,9 @@ async function main() {
     );
     const experienceRequests = await page.evaluate(
       () =>
-        testTransport.requests.filter((r) => r.path === "/portfolio/experiences").length,
+        testTransport.requests.filter(
+          (r) => r.path === "/portfolio/experiences",
+        ).length,
     );
     await page.locator("#more-experiences .collapse-collection").click();
     assert.equal(await page.locator(".experience-card").count(), 6);
@@ -277,8 +280,9 @@ async function main() {
     assert.equal(
       await page.evaluate(
         () =>
-          testTransport.requests.filter((r) => r.path === "/portfolio/experiences")
-            .length,
+          testTransport.requests.filter(
+            (r) => r.path === "/portfolio/experiences",
+          ).length,
       ),
       experienceRequests,
     );

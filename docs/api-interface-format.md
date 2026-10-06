@@ -1,6 +1,6 @@
 # Portfolio API interface format
 
-更新日期：2026-10-04。本文件記錄後端已實作的六支唯讀 Portfolio API 契約，以及前端三語 mock 資料的對應方式。路由直接位於 `/portfolio`；寫入與登入 API 不在本文件範圍。
+更新日期：2026-10-06。本文件記錄後端已實作的六支唯讀 Portfolio API 契約，以及前端三語 mock 資料的對應方式。路由直接位於 `/portfolio`；寫入與登入 API 不在本文件範圍。
 
 機器可讀規格：[OpenAPI 3.1](../spec/openapi.json)；匯入方式與確認範圍：[spec 說明](../spec/README.md)；後端路由驗證、分頁排序、語系與 transport 切換：[後端交接](backend-handoff.md)。OpenAPI 的成功範例與 mock 回應由自動測試核對，跨欄位日期和分頁算術仍須由後端驗證。
 
@@ -14,8 +14,8 @@
 | 2   | GET /portfolio/journey          | 完整輕量旅程、地圖、年資與首尾城市    | 無           |
 | 3   | GET /portfolio/experiences      | 經歷與完整技能                        | page／size=6 |
 | 4   | GET /portfolio/projects         | 單一專案列表，含完整 detail 與 skills | page／size=6 |
-| 5   | GET /portfolio/skill-categories | 技能分類與各類六筆技能預覽            | cursor       |
-| 6   | GET /portfolio/skills           | 分類技能與預覽後續頁                  | cursor       |
+| 5   | GET /portfolio/skill-categories | 技能分類與各類六筆技能預覽            | page／size=6 |
+| 6   | GET /portfolio/skills           | 分類技能與預覽後續頁                  | page／size=6 |
 
 Journey 保持完整輕量索引，讓地圖和總年資不依賴 Experience 已讀頁數。大量旅程的範圍查詢或虛擬化仍需另行設計。
 
@@ -26,7 +26,7 @@ Journey 保持完整輕量索引，讓地圖和總年資不依賴 Experience 已
 - 成功 HTTP 回應為 200 JSON。以下 TypeScript 的 `?` 代表可省略，其餘欄位必填。
 - JSON 欄位使用 camelCase；`is_caching` 是既有共用 query 名稱。Journey／Experience／Projects ID 為正整數 JSON number，最大 9007199254740991；技能與分類 ID 為穩定字串 slug。
 - 月份 YYYY-MM，結束月不可早於開始月。普通輸入與換行由 JSON serializer 編碼；前端 escaping，不執行 HTML／Markdown。
-- `/portfolio/site` 直接回傳物件，`/portfolio/journey` 直接回傳陣列；兩種集合分頁各使用下方的 `items` 與頁面資訊。成功回應沒有通用包裝層。
+- `/portfolio/site` 直接回傳物件，`/portfolio/journey` 直接回傳陣列；四種集合分頁皆使用下方的 `NumberedPage` 五欄位。成功回應沒有通用包裝層。
 
 ```ts
 type Month = string;
@@ -38,12 +38,6 @@ interface NumberedPage<T> {
   size: 6; // Capacity remains six on the final partial page.
   items: T[];
 }
-interface CursorPage {
-  limit: number; // Integer from 1 to 50.
-  total: number;
-  hasMore: boolean;
-  nextCursor: string | null;
-}
 interface Skill {
   id: string;
   label: string; // Already localized for the requested locale.
@@ -51,18 +45,13 @@ interface Skill {
 interface SkillCategory {
   id: string;
   label: string;
-  skillIds: string[]; // At most six ordered preview IDs.
-  skillsPage: CursorPage; // limit is always 6.
+  skills: NumberedPage<Skill>; // First page, with size=6.
 }
-interface SkillCategoriesPage {
-  items: SkillCategory[];
-  page: CursorPage;
-  included: { skills: Skill[] }; // Only IDs referenced by this page's previews, deduplicated.
-}
-interface SkillsPage { items: Skill[]; page: CursorPage }
+type SkillCategoriesPage = NumberedPage<SkillCategory>;
+type SkillsPage = NumberedPage<Skill>;
 ```
 
-技能 API 的 `label` 已是所選語言文字，前端無須再用翻譯鍵查表。`/portfolio/skill-categories` 僅把本頁預覽引用到的技能標籤放進 `included.skills`，`/portfolio/skills` 則直接在 `items` 回傳標籤。固定 UI 翻譯仍在 `src/locales`。
+技能 API 的 `label` 已是所選語言文字。分類的 `skills.items` 直接帶技能標籤，分類外層和內層技能都使用同一分頁結構；不再使用 `included`、`skillIds` 或 `skillsPage` 作為 API 欄位。固定 UI 翻譯仍在 `src/locales`。
 
 ## 3. 各 API 的輸入與資料
 
@@ -355,52 +344,53 @@ detail 隨列表完整回傳，null 不顯示詳情入口，五欄全空的物�
 
 ### GET /portfolio/skill-categories
 
-Query：`locale?`、`limit?=12`（1..50）、`cursor?`。直接回傳 `SkillCategoriesPage`。分類依資料庫保存的 `position`、`id` 穩定排序；`page.total` 是分類總數，不是本頁筆數。
+Query：`locale?`、`page?=1`、`size?=6`。分類依資料庫保存的 `position`、`id` 穩定排序；外層 `total` 是分類總數。外層與每類的 `skills` 都使用 `{items,total,pages,page,size}`，不另附 `included`。以下是只有一個分類、八個技能的簡化例；實際 mock 第一頁為六個分類，精確範例見 [OpenAPI](../spec/openapi.json)。
 
 ```json
 {
   "items": [{
     "id": "backend-apis",
     "label": "Backend & APIs",
-    "skillIds": ["python", "fastapi", "django", "django-rest-framework", "flask", "rest"],
-    "skillsPage": {"limit": 6, "total": 8, "hasMore": true, "nextCursor": "<opaque cursor>"}
+    "skills": {
+      "items": [
+        {"id": "python", "label": "Python"},
+        {"id": "fastapi", "label": "FastAPI"},
+        {"id": "django", "label": "Django"},
+        {"id": "django-rest-framework", "label": "Django REST Framework"},
+        {"id": "flask", "label": "Flask"},
+        {"id": "rest", "label": "REST"}
+      ],
+      "total": 8, "pages": 2, "page": 1, "size": 6
+    }
   }],
-  "page": {"limit": 1, "total": 7, "hasMore": true, "nextCursor": "<opaque cursor>"},
-  "included": {"skills": [
-    {"id": "python", "label": "Python"},
-    {"id": "fastapi", "label": "FastAPI"},
-    {"id": "django", "label": "Django"},
-    {"id": "django-rest-framework", "label": "Django REST Framework"},
-    {"id": "flask", "label": "Flask"},
-    {"id": "rest", "label": "REST"}
-  ]}
+  "total": 1, "pages": 1, "page": 1, "size": 6
 }
 ```
 
-上例以 `limit=1` 請求第一頁；預設 `limit=12` 時目前七個分類會同頁返回，精確範例見 [OpenAPI](../spec/openapi.json)。每類預覽最多六個 `skillIds`；`skillsPage.total` 是該分類技能總數。`included.skills` 只包含本頁預覽實際引用的技能，按第一次出現順序去重；分類或技能為空時仍回空陣列。分類游標來自頂層 `page.nextCursor`，單一分類預覽後續則用該分類的 `skillsPage.nextCursor` 呼叫 `/portfolio/skills`。
+分類預覽永遠是技能第 1 頁，最多六筆；`skills.total` 是該分類技能總数，`skills.pages` 決定是否需續頁。無技能分類保留分類本身，內層 `items=[]`、`total=0`、`pages=0`、`page=1`、`size=6`。分類集合為空時外層也使用此空頁格式。
 
 ### GET /portfolio/skills
 
-Query：`locale?`、`ownerType?=category`、`ownerId`（分類 ID，必要）、`limit?=12`（1..50）、`cursor?`。目前只支援 category owner；不接受 project owner。直接回傳 `SkillsPage`，技能依分類關聯的 `position`、`id` 排序，同一分類內不重複；同一技能可出現在多個分類。
+Query：`locale?`、`ownerType?=category`、`ownerId`（分類 ID，必要）、`page?=1`、`size?=6`。目前只支援 category owner。技能依分類關聯的 `position`、`id` 排序，同一分類內不重複；同一技能可出現在多個分類。接續上述預覽時請求 `ownerId=backend-apis&page=2&size=6`，使用相同 locale：
 
 ```json
 {
   "items": [
-    {"id": "python", "label": "Python"},
-    {"id": "fastapi", "label": "FastAPI"}
+    {"id": "grpc", "label": "gRPC"},
+    {"id": "groovy", "label": "Groovy"}
   ],
-  "page": {"limit": 2, "total": 8, "hasMore": true, "nextCursor": "<opaque cursor>"}
+  "total": 8, "pages": 2, "page": 2, "size": 6
 }
 ```
 
-上例以 `ownerId=backend-apis&limit=2` 請求首批技能；預設 `limit=12` 時該分類目前八筆會同頁返回。每筆 `label` 已是所選語言，回應不重複提供 `included.skills`。若要接續分類預覽，將 `skillsPage.nextCursor` 原樣作為本 API 的 `cursor`；後續頁再沿用本 API 的 `page.nextCursor`。游標綁定資源、分類與 locale，跨分類或跨語言使用回 400 `INVALID_CURSOR`。未知分類回 404 `NOT_FOUND`。
+兩支技能 API 的 page 為正整數，size 固定 6；非法值分別回 400 `INVALID_PAGE`／`INVALID_SIZE`。超出末頁返回空 `items`，保留真實 total、pages 及請求的 page。未知分類回 404 `NOT_FOUND`；缺少 ownerId 回 FastAPI 422，空白 ownerId 回 400 `INVALID_OWNER_ID`，不支援的 ownerType 回 400 `INVALID_OWNER`。
 
 ## 4. Lazy loading、快取與錯誤
 
 1. 初始 site → journey → 並行 experiences／projects／skill-categories 第一頁。Projects 初始六筆已包含全部 detail 與各自 skills。
 2. Experience／Projects 每次展開最多追加一頁六筆，成功才 page+1；失敗重試同頁。Projects 剩餘未讀筆數為 total-loadedCount；收合入口數量為 total-6，包含已快取但被隱藏卡片。收合重開不重複請求。
 3. 語言切換只重取已載入頁，確認 ID、順序及 total 一致後才切換；失敗保留原語言與資料。詳細視窗維持數字 selectedId，不觸發詳情请求。
-4. 游標只用於原資源、原分類與原 locale，前端原樣傳回；末頁 `hasMore=false`、`nextCursor=null`。語言切換要重新取得該語言的分類與技能游標。
+4. 分類與技能亦按 page／size=6 載入，成功後才前進；`page < pages` 表示還有下一頁。語言切換按目標 locale 重取已讀頁，分類預覽已是技能第 1 頁，技能續頁從第 2 頁開始。
 5. Client 按 path+query（含 locale）去重／快取成功回應；資料驗證失敗逐出該回應，使修正後可重試。
 6. NumberedPage 前端拒收 total 變更、重複 ID 和語言排序改變，但不能提供跨請求快照隔離。後端須固定排序；資料變動時重新載入。
 
@@ -414,7 +404,7 @@ Query：`locale?`、`ownerType?=category`、`ownerId`（分類 ID，必要）、
 
 | Status | Code／情況                                                                                         | 行為                         |
 | ------ | --------------------------------------------------------------------------------------------------- | ---------------------------- |
-| 400    | INVALID_LOCALE、INVALID_PAGE、INVALID_SIZE、INVALID_LIMIT、INVALID_CURSOR、INVALID_OWNER、INVALID_OWNER_ID | 修正 query                   |
+| 400    | INVALID_LOCALE、INVALID_PAGE、INVALID_SIZE、INVALID_OWNER、INVALID_OWNER_ID | 修正 query                   |
 | 404    | NOT_FOUND                                                                                           | site 或技能分類資料不存在    |
 | 422    | FastAPI query 驗證錯誤                                                                               | 例如省略必要的 `ownerId`     |
 | 405    | 不支援的 HTTP method                                                                                 | 這六支路由目前只提供 GET     |

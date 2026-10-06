@@ -249,19 +249,45 @@ async function main() {
           Number(node.dataset.previewCount),
       );
       const owner = await group.getAttribute("data-skill-owner");
-      const hadMore = await group.evaluate((node) =>
-        Portfolio.get("data").skillsState(node.dataset.skillOwner).hasMore,
+      const hadMore = await group.evaluate(
+        (node) =>
+          Portfolio.get("data").skillsState(node.dataset.skillOwner).hasMore,
       );
       assert((await button.textContent()).includes(String(hidden)));
       await button.click();
-      if (hadMore)
+      if (hadMore) {
+        // Expansion requests page 2; larger categories require an explicit next-page action.
         await page.waitForFunction(
-          (id) => !Portfolio.get("data").skillsState(id).hasMore,
+          (id) => Portfolio.get("data").skillsState(id).page === 2,
           owner,
         );
+        while (
+          await group.evaluate(
+            (node) =>
+              Portfolio.get("data").skillsState(node.dataset.skillOwner)
+                .hasMore,
+          )
+        ) {
+          const nextPage = await group.evaluate(
+            (node) =>
+              Portfolio.get("data").skillsState(node.dataset.skillOwner).page +
+              1,
+          );
+          const more = group.locator(".skills-load-more");
+          assert.equal(await more.isVisible(), true);
+          await more.click();
+          await page.waitForFunction(
+            ([id, expected]) =>
+              Portfolio.get("data").skillsState(id).page === expected,
+            [owner, nextPage],
+          );
+        }
+      }
       assert.equal(await button.getAttribute("aria-expanded"), "true");
       assert.equal(
-        await group.locator(".extra-skills").evaluate((element) => element.hidden),
+        await group
+          .locator(".extra-skills")
+          .evaluate((element) => element.hidden),
         false,
       );
       if (await button.isVisible()) {
@@ -274,7 +300,9 @@ async function main() {
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("End");
     await page.keyboard.press("Enter");
-    await page.waitForFunction(() => document.documentElement.lang === "zh-Hant");
+    await page.waitForFunction(
+      () => document.documentElement.lang === "zh-Hant",
+    );
     assert.equal(await page.locator("html").getAttribute("lang"), "zh-Hant");
     await page.reload();
     await page.waitForFunction(

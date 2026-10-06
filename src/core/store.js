@@ -1,6 +1,8 @@
 /** Own direct portfolio responses and loaded pages without exposing mock fixtures. */
 Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   const {
+    pageMetadata,
+    categorySnapshot,
     validateJourney,
     validateExperiences,
     validateProjects,
@@ -30,7 +32,11 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   /** Notify features about one completed store lifecycle change. */
   const emit = (name, detail) =>
     document.dispatchEvent(new CustomEvent(name, { detail }));
-  const emptySnapshot = freeze({ schemaVersion: 1, skills: [], skillCategories: [] });
+  const emptySnapshot = freeze({
+    schemaVersion: 1,
+    skills: [],
+    skillCategories: [],
+  });
   const siteByLocale = new Map();
   const journeyByLocale = new Map();
   const experiencesByLocale = new Map();
@@ -59,15 +65,16 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
   const pending = new Map();
   let changeVersion = 0;
 
-  /** Create an empty locale-owned category snapshot and cursor state. */
+  /** Create an empty locale-owned category snapshot and numbered page state. */
   function emptyCategoryState() {
     return {
       snapshot: emptySnapshot,
       page: {
         ids: [],
-        limit: PORTFOLIO_RUNTIME.pagination.categories,
+        page: 0,
+        pages: 0,
+        size: PORTFOLIO_RUNTIME.pagination.categories,
         total: 0,
-        nextCursor: null,
         hasMore: true,
         loaded: false,
         loading: false,
@@ -97,7 +104,11 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     Object.assign(state.page, {
       ids: next.skillCategories.map((row) => row.id),
       total: next.skillCategories.length,
-      nextCursor: null,
+      page: Math.max(
+        1,
+        Math.ceil(next.skillCategories.length / state.page.size),
+      ),
+      pages: Math.ceil(next.skillCategories.length / state.page.size),
       hasMore: false,
       loaded: true,
     });
@@ -151,44 +162,49 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     }
     return [...rows.values()];
   }
-  /** Append a category page into a private or active locale state. */
+  /** Append a validated numbered category page without duplicating nested skill labels. */
   function acceptCategoryPage(state, response, query) {
     validateCategoriesPage(response);
     if (
-      response.page.limit !== query.limit ||
-      (state.page.loaded && response.page.total !== state.page.total) ||
-      (response.page.hasMore &&
-        response.page.nextCursor === state.page.nextCursor)
+      response.size !== query.size ||
+      response.page !== state.page.page + 1 ||
+      response.page !== query.page ||
+      (state.page.loaded && response.total !== state.page.total)
     )
       throw new Error("Category pagination changed");
     const oldIds = new Set(state.page.ids);
     if (response.items.some((row) => oldIds.has(row.id)))
       throw new Error("Duplicate category across pages");
+    const incoming = categorySnapshot(response);
     const next = {
       schemaVersion: 1,
-      skills: mergeSkills(state.snapshot.skills, response.included.skills),
-      skillCategories: [...state.snapshot.skillCategories, ...response.items],
+      skills: mergeSkills(state.snapshot.skills, incoming.skills),
+      skillCategories: [
+        ...state.snapshot.skillCategories,
+        ...incoming.skillCategories,
+      ],
     };
     validate(next);
-    if (next.skillCategories.length > response.page.total)
+    if (next.skillCategories.length > response.total)
       throw new Error("Category count exceeds total");
     state.snapshot = freeze(copy(next));
-    Object.assign(state.page, response.page, {
+    Object.assign(state.page, pageMetadata(response), {
       ids: next.skillCategories.map((row) => row.id),
+      hasMore: response.page < response.pages,
       loaded: true,
       error: null,
     });
   }
-  /** Append a category's next skill page with the cursor from that same locale. */
+  /** Append the next numbered skill page while preserving prior content on validation failure. */
   function acceptSkillPage(state, id, response, query) {
     validateSkillsPage(response);
     const old = state.snapshot.skillCategories.find((row) => row.id === id);
     if (!old) throw new Error("Unknown skill category: " + id);
     if (
-      response.page.limit !== query.limit ||
-      response.page.total !== old.skillsPage?.total ||
-      (response.page.hasMore &&
-        response.page.nextCursor === old.skillsPage?.nextCursor)
+      response.size !== query.size ||
+      response.page !== query.page ||
+      response.page !== old.skillsPage.page + 1 ||
+      response.total !== old.skillsPage.total
     )
       throw new Error("Skill pagination changed");
     const known = new Set(old.skillIds);
@@ -197,7 +213,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     const updated = {
       ...old,
       skillIds: [...old.skillIds, ...response.items.map((row) => row.id)],
-      skillsPage: response.page,
+      skillsPage: pageMetadata(response),
     };
     const next = {
       schemaVersion: 1,
@@ -217,9 +233,10 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     const locale = I18n.locale;
     const key = `${name}:${locale}`;
     if (pending.has(key)) return pending.get(key);
-    const state = name === "categories"
-      ? categoriesByLocale.get(locale) || emptyCategoryState()
-      : numberedPages[name];
+    const state =
+      name === "categories"
+        ? categoriesByLocale.get(locale) || emptyCategoryState()
+        : numberedPages[name];
     if (name === "categories" && !categoriesByLocale.has(locale))
       categoriesByLocale.set(locale, state);
     const page = name === "categories" ? state.page : state;
@@ -227,17 +244,11 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     page.loading = true;
     page.error = null;
     emit("portfolio:pagechange", name);
-    const query = name === "categories"
-      ? {
-          locale,
-          limit: PORTFOLIO_RUNTIME.pagination.categories,
-          cursor: page.nextCursor || undefined,
-        }
-      : {
-          locale,
-          page: page.page + 1,
-          size: PORTFOLIO_RUNTIME.pagination[name],
-        };
+    const query = {
+      locale,
+      page: page.page + 1,
+      size: PORTFOLIO_RUNTIME.pagination[name],
+    };
     const promise = read(resource, query, (response) => {
       if (name === "categories") {
         acceptCategoryPage(state, response, query);
@@ -292,7 +303,7 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
       ),
     );
   }
-  /** Rebuild category pages with the target locale's own opaque cursors. */
+  /** Rebuild category pages with the target locale's numbered category pages. */
   async function stageCategories(locale, source) {
     const staged = emptyCategoryState();
     if (!source.page.loaded) return staged;
@@ -304,8 +315,8 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
           throw new Error("Localized category page ended early");
         const query = {
           locale,
-          limit: PORTFOLIO_RUNTIME.pagination.categories,
-          cursor: staged.page.nextCursor || undefined,
+          page: staged.page.page + 1,
+          size: PORTFOLIO_RUNTIME.pagination.categories,
         };
         queried.push([paths.categories, query]);
         await read(paths.categories, query, (response) =>
@@ -328,15 +339,20 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
           staged.snapshot.skillCategories.find((row) => row.id === id).skillIds
             .length < sourceCategory.skillIds.length
         ) {
-          const record = staged.snapshot.skillCategories.find((row) => row.id === id);
-          if (!record.skillsPage?.hasMore)
+          const record = staged.snapshot.skillCategories.find(
+            (row) => row.id === id,
+          );
+          if (
+            !record.skillsPage ||
+            record.skillsPage.page >= record.skillsPage.pages
+          )
             throw new Error("Localized skill page ended early: " + id);
           const query = {
             locale,
             ownerType: "category",
             ownerId: id,
-            cursor: record.skillsPage.nextCursor,
-            limit: PORTFOLIO_RUNTIME.pagination.skills,
+            page: record.skillsPage.page + 1,
+            size: record.skillsPage.size,
           };
           queried.push([paths.skills, query]);
           await read(paths.skills, query, (response) =>
@@ -344,16 +360,22 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
           );
           loaded++;
         }
-        const target = staged.snapshot.skillCategories.find((row) => row.id === id);
+        const target = staged.snapshot.skillCategories.find(
+          (row) => row.id === id,
+        );
         if (
           target.skillIds.length !== sourceCategory.skillIds.length ||
-          target.skillIds.some((skillId, index) =>
-            skillId !== sourceCategory.skillIds[index]) ||
+          target.skillIds.some(
+            (skillId, index) => skillId !== sourceCategory.skillIds[index],
+          ) ||
           (sourceCategory.skillsPage &&
             (target.skillsPage.total !== sourceCategory.skillsPage.total ||
-              target.skillsPage.hasMore !== sourceCategory.skillsPage.hasMore))
+              target.skillsPage.page !== sourceCategory.skillsPage.page ||
+              target.skillsPage.pages !== sourceCategory.skillsPage.pages))
         )
-          throw new Error("Localized skill identity, order or total changed: " + id);
+          throw new Error(
+            "Localized skill identity, order or total changed: " + id,
+          );
       }
       return staged;
     } catch (error) {
@@ -409,10 +431,14 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
             rows.length !== sourcePage.ids.length ||
             rows.some((row, index) => row.id !== sourcePage.ids[index])
           )
-            throw new Error("Localized collection identity or order changed: " + name);
+            throw new Error(
+              "Localized collection identity or order changed: " + name,
+            );
           stagedNumbered.push([descriptor.cache, freeze(copy(rows))]);
         } catch (error) {
-          queries.forEach((query) => PortfolioApi.invalidate(paths[name], query));
+          queries.forEach((query) =>
+            PortfolioApi.invalidate(paths[name], query),
+          );
           throw error;
         }
       }
@@ -451,27 +477,33 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
     return {
       ids: [...ids],
       total: record?.skillsPage?.total ?? ids.length,
-      nextCursor: record?.skillsPage?.nextCursor || null,
-      hasMore: record?.skillsPage?.hasMore || false,
+      page: record?.skillsPage?.page ?? 1,
+      pages: record?.skillsPage?.pages ?? 0,
+      size: record?.skillsPage?.size ?? PORTFOLIO_RUNTIME.pagination.skills,
+      hasMore:
+        !!record?.skillsPage &&
+        record.skillsPage.page < record.skillsPage.pages,
     };
   }
-  /** Load one category skill continuation using the visible locale's cursor. */
+  /** Load the next numbered skill page for the visible locale. */
   function loadSkills(owner) {
     if (!owner.startsWith("category-")) return Promise.resolve();
     const id = owner.slice("category-".length);
     const locale = I18n.locale;
     const state = categoriesByLocale.get(locale);
     const record = state?.snapshot.skillCategories.find((row) => row.id === id);
-    if (!record) return Promise.reject(new Error("Unknown skill owner: " + owner));
+    if (!record)
+      return Promise.reject(new Error("Unknown skill owner: " + owner));
     const key = `skills:${locale}:${id}`;
     if (pending.has(key)) return pending.get(key);
-    if (!record.skillsPage?.hasMore) return Promise.resolve();
+    if (!record.skillsPage || record.skillsPage.page >= record.skillsPage.pages)
+      return Promise.resolve();
     const query = {
       locale,
       ownerType: "category",
       ownerId: id,
-      cursor: record.skillsPage.nextCursor,
-      limit: PORTFOLIO_RUNTIME.pagination.skills,
+      page: record.skillsPage.page + 1,
+      size: record.skillsPage.size,
     };
     const promise = read(paths.skills, query, (response) =>
       acceptSkillPage(state, id, response, query),
@@ -526,9 +558,8 @@ Portfolio.register("data", ["dataContracts"], ({ dataContracts }) => {
       return siteByLocale.get(I18n.locale);
     },
     page(name) {
-      const state = name === "categories"
-        ? categoryState().page
-        : numberedPages[name];
+      const state =
+        name === "categories" ? categoryState().page : numberedPages[name];
       if (!state) throw new Error("Unknown page resource: " + name);
       return { ...state, ids: [...state.ids] };
     },

@@ -44,7 +44,7 @@ flowchart TD
 
 | 檔案／註冊名稱                                                | 責任                                         | 公開入口與使用者                                                                                                                                                                                                                                                     |
 | ------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/api/mock-transport.js`／MockPortfolioTransport           | 六支直接回應、技能游標與預覽技能；網站按需讀取片段 | request({method,path,query})；測試可注入完整資料、延遲與失敗                                                                                                                                                                                                       |
+| `src/api/mock-transport.js`／MockPortfolioTransport           | 六支直接回應、共用頁碼分頁與內層技能預覽；網站按需讀取片段 | request({method,path,query})；測試可注入完整資料、延遲與失敗                                                                                                                                                                                                       |
 | `src/api/client.js`／PortfolioApi                             | 同鍵去重、成功快取與回應結構檢查             | request(path,query)、invalidate(path,query)、translate(locale)；store 使用                                                                                                                                                                                           |
 | `src/features/pagination.js`／paging                          | 共用集合的 loading／retry／更多按鈕          | control(name)；content 使用，事件委派呼叫 data.loadPage                                                                                                                                                                                                              |
 | `src/core/registry.js`／Portfolio                             | 註冊、相依解析、一次性初始化與 UI primitives | `register(name, dependencies, factory)`、`get(name)`、`start()`；所有功能使用                                                                                                                                                                                        |
@@ -144,13 +144,13 @@ node scripts/test.mjs
 
 - config/build.json 的 mock.files 登記 18 個三語 API JSON：mock/site、journey、experiences、projects、skill-categories、skills 各三份。frontend 區另登記 localization／navigation／runtime、UI 字典來源及靜態 SVG。scripts/lib/mock-data.mjs 讀取來源後，由 build 輸出 `dist/mock-pages/` 按頁 JS；`app.js` 僅保存程式、設定與小型片段索引。舊 mock/skills.json 與 mock/locales/ 只供相鄰後端匯入，不進前端輸出。
 - initialize 先取 /portfolio/site，再取完整輕量 /portfolio/journey，然後並行載入經歷、專案與分類的第一頁。所有 UI 在初始化完成後統一啟動。初始失敗提供重新載入入口。
-- store 保留每個集合的 ids／total／nextCursor／hasMore／loading／error。pagechange 只更新載入控制；成功頁面再用 datachange 協調既有功能刷新。
+- store 保留每個集合的 ids／total／pages／page／size／hasMore／loading／error。pagechange 只更新載入控制；成功頁面再用 datachange 協調既有功能刷新。
 - Projects 與 Experience 共用 page／size=6 追加模式；detail 與 skills 隨專案列表完整返回。無獨立詳情路由，失敗不推進頁碼。
-- Experience／Projects 技能隨卡片完整返回；只有分類技能使用 cursor。shared skill 元件仍統一處理寬度預覽與展開；語言切換只重取已讀頁。
+- Experience／Projects 技能隨卡片完整返回；分類技能使用 page／size=6 接續預覽。shared skill 元件仍統一處理寬度預覽與展開；語言切換只重取已讀頁。
 - client 去重與快取成功回應，store 合併前驗證；拒絕的 domain 回應逐出快取。六支回應都沒有 envelope 或 revision，跨頁一致性靠 total、ID 與順序檢查。
 - mock transport 於首次進站載入 Site、Journey 及各列表第一頁；後續專案與分類技能頁在使用者操作時才讀取片段，故首次下載／本地讀取量與 DOM 均隨分頁受限。`file://` 使用本地 classic script，託管版透過 HTTP 取得同一靜態片段；正式後端接線時再替換 transport。沒有列表虛擬化。
 
-前端仍需在相同 request 契約下接相鄰後端的 HTTP transport，無須讓每個 UI 自行 fetch。CMS、前端 HTTP 逾時／快取與遠端離線快照仍待實作。每支 API 的 schema、排序、cursor 與錯誤格式見 [API 文件](api-interface-format.md)。
+前端仍需在相同 request 契約下接相鄰後端的 HTTP transport，無須讓每個 UI 自行 fetch。CMS、前端 HTTP 逾時／快取與遠端離線快照仍待實作。每支 API 的 schema、排序、page／size 與錯誤格式見 [API 文件](api-interface-format.md)。
 
 social 直接以 linkedin／github／medium／email 綁定入口。profile 直接提供文字與姓名／教育欄位；不再使用翻譯鍵或從 Journey 查詢教育摘要。
 
@@ -160,7 +160,7 @@ social 直接以 linkedin／github／medium／email 綁定入口。profile 直�
 
 `data.initialize` 驗證並凍結 /portfolio/site 的四個群組，存入 siteByLocale；data.site 回傳目前語言物件。PORTFOLIO_RUNTIME 由 build 直接提供前端設定，沒有 API 內容轉接或欄位別名。
 
-`I18n.setLanguage` 先等待 loader；loader 經 PortfolioApi.translate 重放已成功取得的資源與已讀頁，使用新 locale 與獨立快取。技能 cursor 綁定語言，分類預覽及技能續頁須使用新語言取得的 cursor。store 暫存目標語言的直接 label 與內容，再切換 UI；失敗不切換。切換期間新增的已讀資源會補齊，序號檢查避免晚到的舊選擇覆蓋最新語言。既有 ID、日期、排序不依語言變化，保留分頁與互動狀態。
+`I18n.setLanguage` 先等待 loader；loader 經 PortfolioApi.translate 重放已成功取得的資源與已讀頁，使用新 locale 與獨立快取。分類與技能同樣按頁碼重播；分類預覽為第 1 頁，已讀技能續頁從第 2 頁重取。store 暫存目標語言的直接 label 與內容，再切換 UI；失敗不切換。切換期間新增的已讀資源會補齊，序號檢查避免晚到的舊選擇覆蓋最新語言。既有 ID、日期、排序不依語言變化，保留分頁與互動狀態。
 
 固定英文 UI fallback 一直隨前端存在；業務 API 使用三語直接文字，必要欄位缺失會被 store 拒絕。維護測試檢查三語 fixture 的 ID、欄位與分類關聯一致性。
 
@@ -195,7 +195,7 @@ Experience、Projects、專案詳情與 Skills 分類全部呼叫 `skills.tags(i
 
 `src/features/collection-disclosure.js` 註冊 `collectionDisclosure`，依賴 data／paging／skills；`render` 接收同名的 id、collection、previewCount、total、title、collapseTitle、contentId、content。模組統一產生入口、數量、plus-circle-dotted 呼吸圖示、內容容器和收合按鈕，並管理原生 details toggle、第一次展開載入、錯誤重試邊界、快取重開及鍵盤焦點。`src/features/projects.js` 僅保留專案 dialog 行為，不再另外實作歷史展開。
 
-Experience 的 previewCount 讀取 runtime.pagination.experiences（目前 6），與每頁 size 保持一致；remaining = page.total - previewCount。Projects 同樣使用 runtime.pagination.projects=6，無 earlier 分頁。每次展開最多觸發一頁請求，後續由 paging 按鈕明確載入；收合移除額外 DOM，但 data-store 保留記錄與 page（Experience／Projects）或 cursor（分類）。語言或資料刷新時，各自依穩定 id 保留 open 狀態。
+Experience 的 previewCount 讀取 runtime.pagination.experiences（目前 6），與每頁 size 保持一致；remaining = page.total - previewCount。Projects 同樣使用 runtime.pagination.projects=6，無 earlier 分頁。每次展開最多觸發一頁請求，後續由 paging 按鈕明確載入；收合移除額外 DOM，但 data-store 保留記錄與 頁碼狀態（所有四種集合）。語言或資料刷新時，各自依穩定 id 保留 open 狀態。
 
 `src/styles/components/collection-disclosure.css` 統一外觀、RWD 與呼吸圖示；Experience 的入口縮排使用既有 --experience-card-start，使卡片及加號區塊對齊。共用圖示 token 已命名為 --collection-icon-\*，不再使用只代表 Projects 的 history 前綴。
 

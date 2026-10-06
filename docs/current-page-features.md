@@ -181,7 +181,7 @@ mock/site/en.json、zh-Hans.json、zh-Hant.json 各提供完整 brand、profile�
 
 這個前端仍沒有網站 CMS、HTTP adapter、網站自有帳號權限、內容編輯／發布後台、搜尋／篩選、表單寄信或 AI 聊天服務。相鄰 `portfolio-modern` 後端已有六支 GET API，但本頁目前使用離線 mock。
 
-目前已實作 mock API、loading／error／retry、成功快取、Experience／Projects 頁碼分頁與分類 cursor 分頁。HTTP adapter、遠端快照／離線策略、翻譯管理及後端資料驗證尚待實作。Profile 自然語言介紹是人工文案；版權年份是集中設定；地圖仍需要正確投影座標，並沒有地理編碼服務。相同 UI 原則不代表任意資料格式都能直接載入。
+目前已實作 mock API、loading／error／retry、成功快取、四種集合共用頁碼分頁與分類內層技能預覽。HTTP adapter、遠端快照／離線策略、翻譯管理及後端資料驗證尚待實作。Profile 自然語言介紹是人工文案；版權年份是集中設定；地圖仍需要正確投影座標，並沒有地理編碼服務。相同 UI 原則不代表任意資料格式都能直接載入。
 
 目前完整 dist 可以 file:// 離線開啟；託管網址、LinkedIn、GitHub 與 Medium 仍需網路，Email 交由裝置 mailto 處理。沒有 Service Worker／PWA。
 
@@ -212,7 +212,7 @@ mock/site/en.json、zh-Hans.json、zh-Hant.json 各提供完整 brand、profile�
 
 18 個三語 mock JSON 是前端 API 資料來源，固定設定與 UI 字典另在 src 維護；元件不讀取 fixtures。六支回應沒有共用 envelope 或 revision。build 將 mock 輸出為 `dist/mock-pages/` 分頁 JS，`app.js` 只帶程式、設定與片段索引；首次僅載入首批資料，後續頁按請求讀取。`file://` 可直接讀本地片段，託管版本才透過 HTTP 下載相同靜態檔案；正式後端的 HTTP adapter 尚未接入。
 
-語言 client 自動附上當前 locale；首次請求前還原 localStorage 偏好。切換只重取曾載入的列表頁面／分類技能頁，並使用目標語言新取得的 cursor 續讀，保持分頁與互動狀態；快取依語言分開。語言 cookie、動態導航與正式後端 HTTP API 接線仍未實作；外觀設定已有獨立 cookie。
+語言 client 自動附上當前 locale；首次請求前還原 localStorage 偏好。切換只重取曾載入的列表頁面／分類技能頁，並使用目標語言逐頁重播已讀頁碼，保持分頁與互動狀態；快取依語言分開。語言 cookie、動態導航與正式後端 HTTP API 接線仍未實作；外觀設定已有獨立 cookie。
 
 ## 維護檢查補充
 

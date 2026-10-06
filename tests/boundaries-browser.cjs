@@ -81,7 +81,7 @@ async function main() {
         assert.equal(await page.locator(".stop").count(), count);
         assert.equal(
           await page.locator(".toolkit-row").count(),
-          Math.min(12, count),
+          Math.min(6, count),
         );
         assert.equal(
           await page.locator("#more-projects").count(),

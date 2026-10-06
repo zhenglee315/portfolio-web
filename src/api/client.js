@@ -3,34 +3,6 @@ window.createPortfolioApi = (transport) => {
   const cache = new Map(),
     pending = new Map(),
     resources = new Map();
-  /** Check a backend cursor page without decoding its opaque continuation token. */
-  function cursorPage(page, items, limit) {
-    return (
-      page &&
-      Number.isSafeInteger(page.limit) &&
-      page.limit === limit &&
-      Number.isSafeInteger(page.total) &&
-      page.total >= 0 &&
-      Array.isArray(items) &&
-      items.length <= page.limit &&
-      items.length <= page.total &&
-      typeof page.hasMore === "boolean" &&
-      (!page.hasMore || items.length > 0) &&
-      (page.hasMore
-        ? typeof page.nextCursor === "string" && !!page.nextCursor
-        : page.nextCursor === null)
-    );
-  }
-  /** Require localized skill labels directly in the item, as in the backend response. */
-  function skill(item) {
-    return (
-      item &&
-      typeof item.id === "string" &&
-      !!item.id &&
-      typeof item.label === "string" &&
-      !!item.label.trim()
-    );
-  }
   /** Resolve one stable cache key regardless of query object property order. */
   function keyFor(path, query) {
     return (
@@ -52,73 +24,29 @@ window.createPortfolioApi = (transport) => {
     const task = Promise.resolve()
       .then(() => transport.request({ method: "GET", path, query }))
       .then((response) => {
-        if (["/portfolio/experiences", "/portfolio/projects"].includes(path)) {
-          const { total, pages, page, size, items } = response || {};
+        const contracts = Portfolio.get("dataContracts");
+        if (
+          [
+            "/portfolio/experiences",
+            "/portfolio/projects",
+            "/portfolio/skill-categories",
+            "/portfolio/skills",
+          ].includes(path)
+        ) {
+          contracts.validatePage(response);
           if (
-            !Number.isSafeInteger(total) ||
-            total < 0 ||
-            size !== 6 ||
-            !Number.isSafeInteger(page) ||
-            page < 1 ||
-            page !== Number(query.page ?? 1) ||
-            size !== Number(query.size ?? 6) ||
-            pages !== Math.ceil(total / size) ||
-            !Array.isArray(items) ||
-            items.length !==
-              Math.min(size, Math.max(0, total - (page - 1) * size))
+            response.page !== Number(query.page ?? 1) ||
+            response.size !== Number(query.size ?? 6)
           )
-            throw new Error("Invalid numbered pagination response.");
+            throw new Error("Unexpected numbered pagination response.");
+          if (path === "/portfolio/skill-categories")
+            contracts.validateCategoriesPage(response);
+          if (path === "/portfolio/skills")
+            contracts.validateSkillsPage(response);
         } else if (path === "/portfolio/site") {
-          if (
-            !response ||
-            Array.isArray(response) ||
-            typeof response !== "object" ||
-            !["brand", "profile", "social", "chatme"].every(
-              (key) => response[key] && typeof response[key] === "object",
-            )
-          )
-            throw new Error("Invalid site response.");
+          contracts.validateSite(response);
         } else if (path === "/portfolio/journey") {
-          if (!Array.isArray(response))
-            throw new Error("Invalid journey response.");
-        } else if (path === "/portfolio/skill-categories") {
-          const { items, page, included } = response || {};
-          if (
-            !cursorPage(page, items, Number(query.limit ?? 12)) ||
-            !Array.isArray(included?.skills) ||
-            !included.skills.every(skill) ||
-            !items.every(
-              (row) =>
-                skill(row) &&
-                Array.isArray(row.skillIds) &&
-                row.skillIds.length <= 6 &&
-                row.skillIds.every((id) => typeof id === "string") &&
-                cursorPage(row.skillsPage, row.skillIds, 6) &&
-                row.skillsPage.hasMore ===
-                  (row.skillsPage.total > row.skillIds.length),
-            )
-          )
-            throw new Error("Invalid skill categories response.");
-          const previewIds = items.flatMap((row) => row.skillIds),
-            includedIds = included.skills.map((row) => row.id);
-          if (
-            new Set(includedIds).size !== includedIds.length ||
-            new Set(previewIds).size !== includedIds.length ||
-            previewIds.some((id) => !includedIds.includes(id))
-          )
-            throw new Error("Invalid category skill references.");
-        } else if (path === "/portfolio/skills") {
-          if (
-            !cursorPage(
-              response?.page,
-              response?.items,
-              Number(query.limit ?? 12),
-            ) ||
-            !response.items.every(skill) ||
-            new Set(response.items.map((row) => row.id)).size !==
-              response.items.length
-          )
-            throw new Error("Invalid skills response.");
+          contracts.validateJourney(response);
         } else {
           throw new Error("Unknown API resource: " + path);
         }
@@ -136,7 +64,7 @@ window.createPortfolioApi = (transport) => {
     cache.delete(key);
     resources.delete(key);
   }
-  /** Re-fetch direct and numbered resources; the store replays locale-bound skill cursors separately. */
+  /** Re-fetch direct and numbered resources; the store stages category-owned numbered pages separately. */
   async function translate(locale) {
     const translated = new Map();
     while (true) {

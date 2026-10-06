@@ -1,13 +1,7 @@
-# Skill category mock 欄位註解
+# Skill categories mock
 
-`en.json`、`zh-Hans.json`、`zh-Hant.json` 各保存完整且有序的分類陣列，供 `GET /portfolio/skill-categories` 建立游標頁。檔案本身不是 API 頁面；mock transport 依 `limit` 取分類，再把每類的 `skillIds` 裁成最多六筆，補上 `skillsPage` 與本頁引用的 `included.skills`。
+`en.json`、`zh-Hans.json`、`zh-Hant.json` 保存完整有序分類來源，不是 API 回應。每項是 `{id,label,skillIds}`；skillIds 維持分類技能順序並引用同語言 [skills](../skills/README.md)。三語分類 ID、排序、技能 ID 順序必須相同，同一分類不得重複技能，同一技能可屬於多個分類。
 
-| 欄位       | 型別       | English field comment                                                     |
-| ---------- | ---------- | ------------------------------------------------------------------------- |
-| `id`       | string     | Stable category slug shared by all three languages.                       |
-| `label`    | string     | Category title already localized for this fixture.                        |
-| `skillIds` | `string[]` | Complete ordered membership; the API response previews at most six IDs.  |
+`GET /portfolio/skill-categories?locale=en&page=1&size=6` 將此正規化來源投影為 `{items,total,pages,page,size}`。每項是 `{id,label,skills}`，skills 亦為同一五欄位分頁，固定第 1 頁、最多六筆 `{id,label}`，total 為該分類完整技能數，pages 為 ceil(total/6)。空分類的內層 items=[]、total=0、pages=0、page=1、size=6。回應不使用 included、skillIds 或 skillsPage。
 
-三份資料須保留相同分類 ID、分類順序及每類的技能 ID 順序。`skillIds` 中每個 ID 都要出現在同語言的 [技能資料](../skills/README.md)；同一技能可出現在不同分類，但不可在同一分類重複。分類回應直接提供 `label`，只有本頁預覽引用到的技能標籤才進入 `included.skills`，且每個技能只出現一次。
-
-分類的 `page.nextCursor` 繼續下一批分類；單一分類的 `skillsPage.nextCursor` 改由 `/portfolio/skills?ownerId=<分類 ID>` 繼續其技能。游標只屬於發出它的資源、分類與語言，不可跨語言共用。完整契約見 [API 規格](../../docs/api-interface-format.md)。
+目前七個分類按六筆加一筆載入。分類下一頁使用外層 page+1；分類技能預覽後續使用 `/portfolio/skills?ownerType=category&ownerId=<分類 ID>&locale=en&page=2&size=6`。store 內部會再正規化為 skillIds 與去重技能查找表，避免重複維護實體。完整契約見 [API 規格](../../docs/api-interface-format.md)。

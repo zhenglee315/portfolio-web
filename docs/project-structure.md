@@ -194,7 +194,7 @@ portfolio-web/
 | scripts/package.mjs            | 驗證後以 manifest 白名單產生網站封裝及離線 ZIP                                                           |
 | scripts/vendor-icons.mjs       | 從官方固定版本同步 SVG／授權，產生 src/core/icons.js；只有這個維護動作需要網路                           |
 | tests/fixtures.cjs             | 共用讀取真實 JSON fixture 與建立完整測試快照                                                             |
-| tests/api.test.cjs             | API 契約案例：路由、cursor、快取、重試、空集合及原子合併                                                   |
+| tests/api.test.cjs             | API 契約案例：路由、共用頁碼、快取、重試、空集合及原子合併                                                   |
 | tests/api-browser.cjs          | 大量資料的實際 UI 分頁、失敗重試、detail 按需載入、三語及離線驗證                                        |
 | tests/helpers.cjs              | 以 VM 建立隔離的資料／服務測試環境                                                                       |
 | tests/data.test.cjs            | 三語契約、關聯驗證、原子更新、重排／空集合、月份業務規則、模組生命週期                                   |
@@ -212,8 +212,8 @@ portfolio-web/
 | mock/README.md                 | 全部 mock 檔案責任、資料界線與維護流程                                                                   |
 | mock/site/README.md            | SiteData 逐欄用途、型別及英文註解                                                                        |
 | mock/journey/README.md         | 旅程逐欄英文註解、順序、座標與可空欄位說明                                                               |
-| mock/skill-categories/README.md | 分類來源、六筆預覽與 `included.skills` 去重規則                                                         |
-| mock/skills/README.md         | 直接技能標籤、分類內順序與游標接續規則                                                                  |
+| mock/skill-categories/README.md | 分類來源、六筆內層 skills 預覽與來源 skillIds 正規化                                                         |
+| mock/skills/README.md         | 直接技能標籤、分類內順序與頁碼接續規則                                                                  |
 | docs/journey-development.md    | 第 2 支 API 與地圖模組、命名及自動布局對照                                                               |
 | docs/site-development.md       | 第 1 支 API 與 DOM／模組命名對照、資料流及修改步驟                                                       |
 | docs/api-interface-format.md   | 6 支 `/portfolio` GET 的完整輸入／回應、欄位、錯誤及 lazy loading 契約                                  |

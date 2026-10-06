@@ -36,7 +36,28 @@ async function main() {
     );
     assert(mockPageRequests.some((url) => url.endsWith("/projects/en/0.js")));
     assert(!mockPageRequests.some((url) => url.endsWith("/projects/en/1.js")));
-    assert(!mockPageRequests.some((url) => /\/skills\/en\/[^/]+\/1\.js$/.test(url)));
+    assert(
+      !mockPageRequests.some((url) => /\/skills\/en\/[^/]+\/1\.js$/.test(url)),
+    );
+    // Canonical seven-category fixtures load as six plus one, through the real offline chunks.
+    assert.equal(await page.locator(".toolkit-row").count(), 6);
+    assert(
+      !mockPageRequests.some((url) =>
+        url.endsWith("/skill-categories/en/1.js"),
+      ),
+    );
+    await page.locator('.load-page[data-page="categories"]').click();
+    await page.waitForFunction(
+      () => Portfolio.get("data").page("categories").page === 2,
+    );
+    assert.equal(await page.locator(".toolkit-row").count(), 7);
+    assert(
+      mockPageRequests.some((url) => url.endsWith("/skill-categories/en/1.js")),
+    );
+    assert.equal(
+      await page.locator('.load-page[data-page="categories"]').count(),
+      0,
+    );
     const original = snapshot(),
       catalogs = fullCatalogs();
     const experiences = fixture().experiences.en;

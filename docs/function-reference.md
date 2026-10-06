@@ -11,12 +11,10 @@ This index covers named functions and directly assigned arrow helpers in src, sc
 | Function / 函式 | Responsibility / 英文註解 |
 | --- | --- |
 | `window.createPortfolioApi` | Transport-independent resource client with response checks, request deduplication and successful-response caching. |
-| `cursorPage` | Check a backend cursor page without decoding its opaque continuation token. |
-| `skill` | Require localized skill labels directly in the item, as in the backend response. |
 | `keyFor` | Resolve one stable cache key regardless of query object property order. |
 | `request` | Fetch or reuse a bounded response; failures remain retryable and never advance a page. |
 | `invalidate` | Evict a structurally valid response that the domain store rejected, allowing a corrected retry. |
-| `translate` | Re-fetch direct and numbered resources; the store replays locale-bound skill cursors separately. |
+| `translate` | Re-fetch direct and numbered resources; the store stages category-owned numbered pages separately. |
 
 ## src/api/mock-transport.js
 
@@ -24,34 +22,30 @@ This index covers named functions and directly assigned arrow helpers in src, sc
 
 | Function / 函式 | Responsibility / 英文註解 |
 | --- | --- |
-| `window.MockPortfolioTransport` | In-memory GET transport matching the six public Portfolio response shapes. |
-| `clone` | Detach fixtures and responses so consumers cannot mutate the transport database. |
-| `create` | Create an isolated transport for the embedded site or injectable test datasets. |
-| `fail` | Match FastAPI's public error body while preserving fields useful to callers. |
-| `cursorFor` | Encode the same scoped keyset fields as the backend's skill cursor. |
-| `parseCursor` | Reject malformed or cross-resource/language cursors before fetching a page. |
-| `paginate` | Return a bounded keyset page and the full collection's authoritative total. |
-| `localized` | Read a localized fixture; all supported languages are authored independently. |
-| `route` | Dispatch the public paths with their direct, resource-specific responses. |
-| `request` | Keep requests asynchronous so a real HTTP transport can replace this one. |
+| `window.MockPortfolioTransport` | Local mock transports matching the shared numbered Portfolio responses. |
+| `clone` | Detach fixtures and responses from the authored mock database. |
+| `pagination` | Validate the same one-based page and fixed size used by the backend. |
+| `records` | Build the five-field response, including empty and beyond-end pages. |
+| `paginate` | Select one numbered slice without decoding or creating cursor tokens. |
+| `create` | Create a detached in-memory mock with optional delay and failure injection. |
+| `fail` | Report safe API errors, including FastAPI's missing-query detail array. |
+| `localized` | Read exactly one authored language without merging localized content. |
+| `categorySkills` | Resolve a category's ordered skill IDs into directly localized items. |
+| `route` | Project normalized authoring fixtures into the six public response shapes. |
+| `request` | Keep local requests asynchronous and retain retryable failure behavior. |
 | `get requests` | Return a detached request history for diagnostics and tests. |
-| `createLazy` | Load generated page scripts on demand; script tags also work under file://. |
-| `fault` | Create an API-shaped error for failed local resource reads. |
-| `fail` | Stop a request with a status and error code matching the mock API. |
+| `createLazy` | Load only requested local scripts, preserving direct file:// mock delivery. |
+| `fault` | Build an API-shaped fault without exposing private runtime information. |
+| `fail` | Stop invalid requests before accepting or caching any chunk data. |
 | `window.PortfolioMockChunks` | Generated chunks register only while their matching script is loading. |
 | `chunk` | Deduplicate an in-flight script, retain successful chunks and retry failures. |
 | `invalid` | An invalid chunk is evicted, so a corrected file can be loaded on retry. |
-| `numbered` | Load one numbered chunk only when the requested page exists. |
-| `cursorFor` | Encode the backend-compatible resource, language and position scope. |
-| `parseCursor` | Validate an opaque continuation against its resource and language. |
-| `limitFor` | Enforce the backend's allowed cursor page size. |
-| `pageFor` | Describe one requested slice with a continuation token when needed. |
-| `rowsFor` | Materialize only chunks intersecting the selected positions. |
-| `keyFor` | Resolve a category or skill chunk from one record position. |
-| `categoryPage` | Assemble category previews from one bounded category slice and skill labels. |
-| `skillsPage` | Assemble one category's requested skill slice. |
-| `request` | Dispatch one lazy GET request to the matching local chunks. |
-| `request` | Clone every response before exposing it to the caller. |
+| `numbered` | Load one requested numbered data chunk; beyond-end pages require no script. |
+| `ownerPage` | Read one category's skill page and require its authored identity order. |
+| `categoryPage` | Materialize a category page with nested first skill pages and no included envelope. |
+| `skillsPage` | Validate owner aliases before selecting a numbered skill page. |
+| `request` | Dispatch lazy GETs without requesting unneeded locales, categories or later pages. |
+| `request` | Clone every response before exposing it to the consumer. |
 | `get requests` | Return a detached request history for diagnostics and tests. |
 
 ## src/app.js
@@ -94,11 +88,14 @@ This index covers named functions and directly assigned arrow helpers in src, sc
 | `validateExperiences` | Validate direct Experience cards without entity or translation-key lookup tables. |
 | `validateProjects` | Validate Projects without renaming API fields or resolving legacy translation keys. |
 | `validateSite` | Validate required fields and safe link/asset formats before committing site content. Empty social values are supported. Additional keys are not rejected or auto-rendered. This check does not resolve assets on disk or define the backend database schema. |
-| `validateCursorPage` | Validate the shared cursor metadata used by category and skill pages. |
+| `pageMetadata` | Select numbered metadata without copying item arrays into normalized state. |
+| `validatePageMetadata` | Validate numbered metadata shared by responses and normalized collection state. |
+| `validatePage` | Require exactly one complete numbered response, including empty and beyond-end pages. |
 | `validate` | Validate identifiers and category-to-skill references before publishing content. |
 | `reference` | Reject missing relations rather than silently rendering mismatched cards or markers. |
-| `validateCategoriesPage` | Validate one category page and the exact labels referenced by its previews. |
-| `validateSkillsPage` | Validate one category-owned skill continuation page. |
+| `categorySnapshot` | Normalize nested category previews while storing each localized skill label once. |
+| `validateCategoriesPage` | Validate a numbered category page and each directly embedded first skill page. |
+| `validateSkillsPage` | Validate one category-owned numbered page of localized skills. |
 
 ## src/core/dates.js
 
@@ -181,7 +178,7 @@ This index covers named functions and directly assigned arrow helpers in src, sc
 | `freeze` | Freeze records at the store boundary so views cannot change canonical content. |
 | `copy` | Detach incoming records before keeping them in the immutable store. |
 | `emit` | Notify features about one completed store lifecycle change. |
-| `emptyCategoryState` | Create an empty locale-owned category snapshot and cursor state. |
+| `emptyCategoryState` | Create an empty locale-owned category snapshot and numbered page state. |
 | `categoryState` | Read one locale's category state without publishing a missing state. |
 | `activeSnapshot` | Select category and skill labels for the visible locale. |
 | `find` | Resolve a loaded skill or category by stable ID. |
@@ -192,14 +189,14 @@ This index covers named functions and directly assigned arrow helpers in src, sc
 | `replaceJourney` | Replace only the active language's ordered journey records. |
 | `read` | A failed domain validation must not leave a successful client response cached. |
 | `mergeSkills` | Merge repeated skill references while requiring one label per locale. |
-| `acceptCategoryPage` | Append a category page into a private or active locale state. |
-| `acceptSkillPage` | Append a category's next skill page with the cursor from that same locale. |
+| `acceptCategoryPage` | Append a validated numbered category page without duplicating nested skill labels. |
+| `acceptSkillPage` | Append the next numbered skill page while preserving prior content on validation failure. |
 | `loadPage` | Load one numbered or category page without advancing state on failure. |
 | `initialize` | Load only the first visible page of each collection on startup. |
-| `stageCategories` | Rebuild category pages with the target locale's own opaque cursors. |
+| `stageCategories` | Rebuild category pages with the target locale's numbered category pages. |
 | `prepareLocale` | Stage every loaded resource before I18n commits the new visible locale. |
 | `skillsState` | Report the visible locale's skill labels, IDs, and continuation metadata. |
-| `loadSkills` | Load one category skill continuation using the visible locale's cursor. |
+| `loadSkills` | Load the next numbered skill page for the visible locale. |
 | `get snapshot` | Read immutable categories and skills for the visible locale. |
 | `replaceExperiences` | Import complete Experience records with their direct API fields. |
 | `replaceProjects` | Import complete Project records with their direct API fields. |

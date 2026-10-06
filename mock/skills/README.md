@@ -1,12 +1,7 @@
-# Skill mock 欄位註解
+# Skills mock
 
-`en.json`、`zh-Hans.json`、`zh-Hant.json` 各保存完整技能陣列。`GET /portfolio/skills?ownerType=category&ownerId=<分類 ID>` 依分類中的 `skillIds` 順序查出技能，再以游標分頁直接回傳 `{items,page}`。檔案本身不帶頁面資訊。
+`en.json`、`zh-Hans.json`、`zh-Hant.json` 保存完整 `{id,label}` 技能來源，檔案不帶分頁資訊。三語須有相同 ID 集合與順序，每個 ID 在單份檔案只出現一次；label 是指定語言文字，不需翻譯鍵。
 
-| 欄位    | 型別   | English field comment                                   |
-| ------- | ------ | ------------------------------------------------------- |
-| `id`    | string | Stable skill slug shared by all three languages.        |
-| `label` | string | Display-ready label in this fixture's requested locale. |
+`GET /portfolio/skills?ownerType=category&ownerId=<分類 ID>&locale=en&page=1&size=6` 依分類來源的 skillIds 順序取技能，回傳共用 `{items,total,pages,page,size}`。page 從 1 開始，size 固定 6，pages=ceil(total/6)；末頁不足六筆仍保留 size=6，空分類 pages=0，超頁 items=[]。
 
-三語須有相同 ID 集合與順序；每個 ID 在一份檔案只出現一次。前端直接顯示 `label`，無需翻譯鍵。`/portfolio/skills` 回應只包含 `items` 與 `page`，不重複附帶分類預覽使用的 `included.skills`。分類預覽的 `skillsPage.nextCursor` 可以接到同一分類、同一語言的技能頁。
-
-舊 [skills.json](../skills.json) 和 `mock/locales/*.json` 只供後端種子匯入，不是前端 API 回應來源。完整契約見 [API 規格](../../docs/api-interface-format.md)。
+分類 skills 預覽已是第 1 頁，展開從 page=2 接續。無效 page／size 回 400，未知分類回 404，缺少 ownerId 回 422。沒有 included、cursor 或另一層 page 物件。完整定義見 [API 規格](../../docs/api-interface-format.md)。

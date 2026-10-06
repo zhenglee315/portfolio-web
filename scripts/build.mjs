@@ -113,7 +113,10 @@ function mockManifest(locales) {
       if (!Array.isArray(rows))
         throw new Error(`Missing ${name} mock for ${locale}.`);
     for (const name of ["experiences", "projects", "skills"]) {
-      if (JSON.stringify(ids(mock[name][locale])) !== JSON.stringify(ids(reference[name])))
+      if (
+        JSON.stringify(ids(mock[name][locale])) !==
+        JSON.stringify(ids(reference[name]))
+      )
         throw new Error(`${name} mock IDs or order differ in ${locale}.`);
     }
     const categories = mock.skillCategories[locale].map(({ id, skillIds }) => ({
@@ -130,7 +133,9 @@ function mockManifest(locales) {
         throw new Error(`Duplicate skills in ${category.id} for ${locale}.`);
       for (const id of category.skillIds)
         if (!referenceSkillIds.has(id) || !localeSkillIds.has(id))
-          throw new Error(`Unknown skill ${id} in ${category.id} for ${locale}.`);
+          throw new Error(
+            `Unknown skill ${id} in ${category.id} for ${locale}.`,
+          );
     }
   }
 
@@ -163,13 +168,16 @@ function mockChunks(locales, manifest) {
       pages(mock[resource][locale], 6).forEach((items, index) =>
         add(`${resource}/${locale}/${index}`, items),
       );
-    pages(mock.skillCategories[locale], 12).forEach((items, index) =>
+    pages(mock.skillCategories[locale], 6).forEach((items, index) =>
       add(`skill-categories/${locale}/${index}`, items),
     );
     const skills = new Map(mock.skills[locale].map((item) => [item.id, item]));
     for (const category of manifest.categories)
-      pages(category.skillIds.map((id) => skills.get(id)), 6).forEach(
-        (items, index) => add(`skills/${locale}/${category.id}/${index}`, items),
+      pages(
+        category.skillIds.map((id) => skills.get(id)),
+        6,
+      ).forEach((items, index) =>
+        add(`skills/${locale}/${category.id}/${index}`, items),
       );
   }
 }

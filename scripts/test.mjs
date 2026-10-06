@@ -1,6 +1,7 @@
 /** Run the documented regression suites and retain a machine-readable execution report. */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const unitOnly = process.argv.includes("--unit");
@@ -52,9 +53,12 @@ for (const [suite, args] of suites) {
     error: result.error?.message,
   });
 }
-fs.mkdirSync(new URL("../artifacts/", import.meta.url), { recursive: true });
+const outputDirectory = path.resolve(
+  process.env.TEST_OUTPUT_DIR || path.join(root, "artifacts"),
+);
+fs.mkdirSync(outputDirectory, { recursive: true });
 fs.writeFileSync(
-  new URL("../artifacts/test-results.json", import.meta.url),
+  path.join(outputDirectory, "test-results.json"),
   JSON.stringify(
     {
       completedAt: new Date().toISOString(),

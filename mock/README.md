@@ -2,7 +2,7 @@
 
 本目錄保存網站的模擬業務資料。JSON 必須維持標準格式，不加入 `//`、`/* */` 或 `_comment` 欄位；本文件及 [site 欄位註解](site/README.md) 是資料的伴隨註解，不會被打包進 API 回應。
 
-六支 `/portfolio` GET API 的資料格式均已確認。`site`、`journey` 直接回傳完整資料；`experiences`、`projects` 使用頁碼分頁；`skill-categories`、`skills` 使用游標分頁。
+六支 `/portfolio` GET API 的資料格式均已確認。`site`、`journey` 直接回傳完整資料；四種集合 `experiences`、`projects`、`skill-categories`、`skills` 共用 `{items,total,pages,page,size}` 頁碼分頁，size 固定 6。
 
 ## 檔案與資料用途
 
@@ -61,4 +61,4 @@ Experience 欄位英文註解與分頁規則見 [experiences/README.md](experien
 
 Projects 欄位英文註解見 [projects/README.md](projects/README.md)，接線見 [Projects 開發文件](../docs/projects-development.md)。已移除無使用者的舊 entities 與 project 翻譯鍵來源。
 
-技能分類與技能的完整來源、六筆預覽、直接標籤及游標接續分別見 [skill-categories/README.md](skill-categories/README.md) 和 [skills/README.md](skills/README.md)。
+技能分類與技能的完整來源、六筆預覽、直接標籤及頁碼接續分別見 [skill-categories/README.md](skill-categories/README.md) 和 [skills/README.md](skills/README.md)。

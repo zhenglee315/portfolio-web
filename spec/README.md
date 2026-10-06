@@ -10,12 +10,12 @@
 | GET /portfolio/journey          | Direct localized array / 直接回傳旅程陣列        |
 | GET /portfolio/experiences      | Numbered page, six items / 六筆頁碼分頁          |
 | GET /portfolio/projects         | Numbered page, full details / 六筆完整專案分頁   |
-| GET /portfolio/skill-categories | Cursor page and six-skill previews / 游標與預覽  |
-| GET /portfolio/skills           | Cursor page of localized labels / 分類技能游標頁 |
+| GET /portfolio/skill-categories | Numbered categories with nested skill pages / 分類與內層技能頁  |
+| GET /portfolio/skills           | Numbered page of localized labels / 分類技能頁碼分頁 |
 
-Read [API interface format](../docs/api-interface-format.md) for pagination, locale and error behavior. Successful responses contain direct data or page objects: category previews alone include `included.skills`, while `/skills` returns labels in `items`.
+Read [API interface format](../docs/api-interface-format.md) for pagination, locale and error behavior. Successful responses contain direct data or page objects: all four collections share `{items,total,pages,page,size}`, category previews use nested `skills` pages, and `/skills` returns labels in `items`.
 
-分頁、語系與錯誤規則見 [API interface format](../docs/api-interface-format.md)。成功回應直接提供資料或頁面物件；只有分類預覽另外提供 `included.skills`，技能列表在 `items` 直接帶文字。
+分頁、語系與錯誤規則見 [API interface format](../docs/api-interface-format.md)。成功回應直接提供資料或頁面物件；四種集合共用 `{items,total,pages,page,size}`，分類預覽以內層 `skills` 分頁提供文字，技能列表在 `items` 直接帶文字。
 
 After a contract or fixture change, update schemas and the matching English examples. The local spec test checks references, paths, parameters, required fields and examples against the fixtures. The backend's live `/openapi.json` remains the runtime source for deployment-specific metadata.
 

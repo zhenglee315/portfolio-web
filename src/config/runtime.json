@@ -11,22 +11,11 @@
     "holdMs": 1500,
     "arrivalMs": 500,
     "finalHoldMs": 3000,
-    "viewBox": [
-      0,
-      0,
-      1080,
-      490
-    ],
+    "viewBox": [0, 0, 1080, 490],
     "projection": {
       "scale": 365,
-      "center": [
-        58,
-        34
-      ],
-      "translate": [
-        540,
-        245
-      ]
+      "center": [58, 34],
+      "translate": [540, 245]
     }
   },
   "categoryIcons": {
@@ -36,7 +25,7 @@
   "pagination": {
     "experiences": 6,
     "projects": 6,
-    "categories": 12,
-    "skills": 12
+    "categories": 6,
+    "skills": 6
   }
 }

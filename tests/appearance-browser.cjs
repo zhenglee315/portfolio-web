@@ -5,6 +5,10 @@ const fs = require("node:fs"),
   path = require("node:path"),
   http = require("node:http");
 const { pathToFileURL } = require("node:url");
+const outputDirectory = path.resolve(
+  process.env.TEST_OUTPUT_DIR || path.join(__dirname, "../artifacts"),
+);
+require("node:fs").mkdirSync(outputDirectory, { recursive: true });
 const root = path.resolve(__dirname, "../dist");
 const fileURL = pathToFileURL(path.join(root, "index.html")).href;
 const key = "portfolio-appearance";
@@ -231,12 +235,12 @@ async function main() {
     for (const theme of ["mint", "blue", "amber", "mist"]) {
       await page.locator(`[data-theme-option="${theme}"]`).click();
       await page.screenshot({
-        path: path.resolve(__dirname, `../artifacts/appearance-${theme}.png`),
+        path: path.join(outputDirectory, `appearance-${theme}.png`),
       });
     }
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({
-      path: path.resolve(__dirname, "../artifacts/appearance-mobile.png"),
+      path: path.join(outputDirectory, "appearance-mobile.png"),
     });
     assert.deepEqual(errors, []);
     assert.deepEqual(external, []);

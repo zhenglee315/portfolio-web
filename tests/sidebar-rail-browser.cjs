@@ -3,6 +3,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
 const assert = require("node:assert/strict"),
   path = require("node:path");
 const { pathToFileURL } = require("node:url");
+const outputDirectory = path.resolve(
+  process.env.TEST_OUTPUT_DIR || path.join(__dirname, "../artifacts"),
+);
+require("node:fs").mkdirSync(outputDirectory, { recursive: true });
 /** Exercise desktop rail transitions, tooltips, themes and mobile isolation. */
 async function main() {
   const browser = await chromium.launch({
@@ -154,13 +158,13 @@ async function main() {
     );
     await first.hover();
     await page.screenshot({
-      path: path.resolve(__dirname, "../artifacts/sidebar-compact.png"),
+      path: path.join(outputDirectory, "sidebar-compact.png"),
     });
     await page.evaluate(() =>
       Portfolio.get("appearanceSettings").update({ theme: "mist" }),
     );
     await page.screenshot({
-      path: path.resolve(__dirname, "../artifacts/sidebar-compact-light.png"),
+      path: path.join(outputDirectory, "sidebar-compact-light.png"),
     });
     // Mobile keeps the full drawer; desktop compact state is restored when returning.
     await page.setViewportSize({ width: 390, height: 844 });

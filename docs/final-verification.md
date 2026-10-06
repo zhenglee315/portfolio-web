@@ -1,8 +1,8 @@
 # Final verification / 最後驗證
 
-The current mock contract uses all six `/portfolio/*` routes, three localized skill/category fixtures, direct responses and locale-bound cursors without revision. A backend HTTP adapter has not yet been verified here. / 現行 mock 契約為六支 `/portfolio/*`、三語分類與技能直接文字、無包裝回應及綁定語言的 cursor；尚未驗證後端 HTTP adapter。
+The current mock contract uses all six `/portfolio/*` routes, three localized skill/category fixtures, direct responses and numbered pages with nested skill previews without revision. A backend HTTP adapter has not yet been verified here. / 現行 mock 契約為六支 `/portfolio/*`、三語分類與技能直接文字、無包裝回應及頁碼分頁與內層技能預覽；尚未驗證後端 HTTP adapter。
 
-## Latest: on-demand offline mock pages / 最新：離線按需分頁（2026-10-05）
+## Previous: on-demand offline mock pages / 前次：離線按需分頁（2026-10-05）
 
 **13/13 suites and 40 contract/maintenance cases passed.** The deterministic build generated 126 files, including 69 localized mock page chunks. Opening `dist/index.html` with `file://` loaded the initial pages; the browser requested later project pages only after paging and category skill continuations only after expansion. The offline ZIP contains the chunks and passed its build check. / **13／13 組、40 個契約與維護案例通過。** 建置產生 126 個檔案，包含 69 個三語 mock 分頁片段。以 `file://` 開啟時先載入首頁所需頁，後續專案及分類技能片段在操作後才讀取；離線 ZIP 也包含這些片段並通過建置檢查。
 
@@ -55,7 +55,7 @@ node scripts/test.mjs
 node scripts/document-functions.mjs --check
 ```
 
-Browser setup is in [README](../README.md). The latest machine-readable run is written to ignored artifacts/test-results.json. / 瀏覽器工具設定見 README，當次報告輸出至未加入版控的 artifacts/test-results.json。
+Browser setup is in [README](../README.md). The latest machine-readable run is written to ignored artifacts/test-results.json, or TEST_OUTPUT_DIR when set. / 瀏覽器工具設定見 README，當次報告輸出至未加入版控的 artifacts/test-results.json，可用 TEST_OUTPUT_DIR 覆寫。
 
 ## Limits / 範圍限制
 

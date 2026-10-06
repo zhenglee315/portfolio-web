@@ -176,7 +176,7 @@ mock JSON → transport → API client → validated store → feature modules �
 CSS: theme → base → motion → layout → components
 ```
 
-Six mock GET resources match the sibling backend's `/portfolio/*` paths. Site returns an object, Journey an array, Experiences and Projects use `{total, pages, page, size, items}` with `size=6`, and the two skill resources use cursor pages. Responses have no shared envelope or revision. Project details and skills arrive with each page.
+Six mock GET resources match the sibling backend's `/portfolio/*` paths. Site returns an object, Journey an array, Experiences and Projects use `{total, pages, page, size, items}` with `size=6`, and both skill resources use the same numbered pages, with a nested skills page in each category. Responses have no shared envelope or revision. Project details and skills arrive with each page.
 
 The build turns localized mock JSON into separate JS response chunks under `dist/mock-pages/`. `app.js` contains the frontend code, configuration and a small chunk manifest, rather than every mock record. On first view the transport loads Site, Journey and only the initial Experience, Project and skill-category pages. Opening more projects or a category's remaining skills loads the corresponding chunk when needed; the client caches loaded responses. Classic local scripts allow this to work when `dist/index.html` is opened with `file://`, without an HTTP server. Hosted previews load the same static chunks over HTTP. A future backend integration can replace the mock transport while keeping the API client and response shapes.
 
@@ -221,7 +221,7 @@ npx playwright install chromium
 node scripts/test.mjs
 ```
 
-Every suite runs through `scripts/test.mjs`; any failure returns a nonzero exit code. Results are saved to `artifacts/test-results.json`. See [final verification](docs/final-verification.md) for actual coverage and browser limitations.
+Every suite runs through `scripts/test.mjs`; any failure returns a nonzero exit code. Results are saved to `artifacts/test-results.json`; `TEST_OUTPUT_DIR` overrides the report and browser screenshot directory. See [final verification](docs/final-verification.md) for actual coverage and browser limitations.
 
 After changing named functions or comments, regenerate the index. To refresh the real README screenshots, use the same optional browser tooling:
 
@@ -280,7 +280,7 @@ node scripts/serve.cjs
 
 [完整資料夾與檔案說明](docs/project-structure.md) 列出每個維護中檔案的用途；[函式索引](docs/function-reference.md) 由英文註解產生，測試會檢查是否過期。
 
-六支 mock GET API 對齊相鄰後端的 `/portfolio/*` 路徑與直接回應格式，沒有共用 envelope 或 revision。Experience／Projects 使用 page、size=6；分類與技能使用綁定語言、資源及分類的 cursor。專案詳情與技能隨列表完整返回，欄位一路保持同名。
+六支 mock GET API 對齊相鄰後端的 `/portfolio/*` 路徑與直接回應格式，沒有共用 envelope 或 revision。Experience／Projects 使用 page、size=6；分類與技能同樣使用 page、size=6，分類內的 skills 也是完整五欄位分頁。專案詳情與技能隨列表完整返回，欄位一路保持同名。
 
 建置時會把三種語言的 mock JSON 產生為 `dist/mock-pages/` 下的獨立 JS 回應片段；`app.js` 保留前端程式、設定及小型片段索引，不再嵌入全部資料。首次顯示只載入 Site、Journey，以及經歷、專案、技能分類的第一頁；使用者展開後續專案或分類中剩餘技能時，才載入對應片段，已載入的回應則由 client 快取。這些本地腳本可在 `file://` 下按需載入，無須 HTTP 伺服器；託管版本則透過 HTTP 取得相同靜態檔案。接上正式後端時，可替換 mock transport，保留 API client 與回應格式。
 

@@ -67,11 +67,11 @@
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -248,10 +248,6 @@
                 "examples": {
                   "en": {
                     "value": {
-                      "total": 6,
-                      "pages": 1,
-                      "page": 1,
-                      "size": 6,
                       "items": [
                         {
                           "id": 6,
@@ -445,7 +441,11 @@
                             "content": "Python Instructor / Teaching Assistant"
                           }
                         }
-                      ]
+                      ],
+                      "total": 6,
+                      "pages": 1,
+                      "page": 1,
+                      "size": 6
                     }
                   }
                 }
@@ -492,10 +492,6 @@
                 "examples": {
                   "en": {
                     "value": {
-                      "total": 15,
-                      "pages": 3,
-                      "page": 1,
-                      "size": 6,
                       "items": [
                         {
                           "id": 4,
@@ -693,7 +689,11 @@
                             "Feature selection"
                           ]
                         }
-                      ]
+                      ],
+                      "total": 15,
+                      "pages": 3,
+                      "page": 1,
+                      "size": 6
                     }
                   }
                 }
@@ -713,17 +713,17 @@
       "get": {
         "operationId": "getSkillCategories",
         "summary": "Get localized skill categories with previews",
-        "description": "Return a cursor page of categories. Each item previews at most six ordered skill IDs; included.skills contains only referenced localized labels without duplicates. Continue each category through /portfolio/skills.",
+        "description": "Return a numbered category page in saved order. Each item contains id, label and a nested skills page using the same items/total/pages/page/size response. Previews contain page 1 with at most six localized skills; continue with /portfolio/skills?ownerId=<id>&page=2&size=6.",
         "x-contract-status": "confirmed",
         "parameters": [
           {
             "$ref": "#/components/parameters/Locale"
           },
           {
-            "$ref": "#/components/parameters/Limit"
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "$ref": "#/components/parameters/Cursor"
+            "$ref": "#/components/parameters/Size"
           },
           {
             "$ref": "#/components/parameters/IsCaching"
@@ -744,308 +744,224 @@
                         {
                           "id": "backend-apis",
                           "label": "Backend & APIs",
-                          "skillIds": [
-                            "python",
-                            "fastapi",
-                            "django",
-                            "django-rest-framework",
-                            "flask",
-                            "rest"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "python",
+                                "label": "Python"
+                              },
+                              {
+                                "id": "fastapi",
+                                "label": "FastAPI"
+                              },
+                              {
+                                "id": "django",
+                                "label": "Django"
+                              },
+                              {
+                                "id": "django-rest-framework",
+                                "label": "Django REST Framework"
+                              },
+                              {
+                                "id": "flask",
+                                "label": "Flask"
+                              },
+                              {
+                                "id": "rest",
+                                "label": "REST"
+                              }
+                            ],
                             "total": 8,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6YmFja2VuZC1hcGlzIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJyZXN0In0"
+                            "pages": 2,
+                            "page": 1,
+                            "size": 6
                           }
                         },
                         {
                           "id": "ai-agents",
                           "label": "AI & agents",
-                          "skillIds": [
-                            "mcp",
-                            "fastmcp",
-                            "rag",
-                            "langchain",
-                            "ollama",
-                            "chroma"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "mcp",
+                                "label": "MCP"
+                              },
+                              {
+                                "id": "fastmcp",
+                                "label": "FastMCP"
+                              },
+                              {
+                                "id": "rag",
+                                "label": "RAG"
+                              },
+                              {
+                                "id": "langchain",
+                                "label": "LangChain"
+                              },
+                              {
+                                "id": "ollama",
+                                "label": "Ollama"
+                              },
+                              {
+                                "id": "chroma",
+                                "label": "Chroma"
+                              }
+                            ],
                             "total": 8,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6YWktYWdlbnRzIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJjaHJvbWEifQ"
+                            "pages": 2,
+                            "page": 1,
+                            "size": 6
                           }
                         },
                         {
                           "id": "platform-security",
                           "label": "Platform & security",
-                          "skillIds": [
-                            "kubernetes",
-                            "docker",
-                            "linux",
-                            "jwt",
-                            "rbac",
-                            "sso"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "kubernetes",
+                                "label": "Kubernetes"
+                              },
+                              {
+                                "id": "docker",
+                                "label": "Docker"
+                              },
+                              {
+                                "id": "linux",
+                                "label": "Linux"
+                              },
+                              {
+                                "id": "jwt",
+                                "label": "JWT"
+                              },
+                              {
+                                "id": "rbac",
+                                "label": "RBAC"
+                              },
+                              {
+                                "id": "sso",
+                                "label": "SSO"
+                              }
+                            ],
                             "total": 10,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6cGxhdGZvcm0tc2VjdXJpdHkiLCJsb2NhbGUiOiJlbiIsInBvc2l0aW9uIjo1LCJpZCI6InNzbyJ9"
+                            "pages": 2,
+                            "page": 1,
+                            "size": 6
                           }
                         },
                         {
                           "id": "data-storage",
                           "label": "Data & storage",
-                          "skillIds": [
-                            "postgresql",
-                            "sql",
-                            "redis",
-                            "kafka",
-                            "apache-nifi",
-                            "sqlalchemy"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "postgresql",
+                                "label": "PostgreSQL"
+                              },
+                              {
+                                "id": "sql",
+                                "label": "SQL"
+                              },
+                              {
+                                "id": "redis",
+                                "label": "Redis"
+                              },
+                              {
+                                "id": "kafka",
+                                "label": "Kafka"
+                              },
+                              {
+                                "id": "apache-nifi",
+                                "label": "Apache NiFi"
+                              },
+                              {
+                                "id": "sqlalchemy",
+                                "label": "SQLAlchemy"
+                              }
+                            ],
                             "total": 13,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6ZGF0YS1zdG9yYWdlIiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJzcWxhbGNoZW15In0"
+                            "pages": 3,
+                            "page": 1,
+                            "size": 6
                           }
                         },
                         {
                           "id": "workflows-delivery",
                           "label": "Workflows & delivery",
-                          "skillIds": [
-                            "celery",
-                            "rabbitmq",
-                            "airflow",
-                            "gitlab",
-                            "jenkins-ci-cd",
-                            "kettle-etl"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "celery",
+                                "label": "Celery"
+                              },
+                              {
+                                "id": "rabbitmq",
+                                "label": "RabbitMQ"
+                              },
+                              {
+                                "id": "airflow",
+                                "label": "Airflow"
+                              },
+                              {
+                                "id": "gitlab",
+                                "label": "GitLab"
+                              },
+                              {
+                                "id": "jenkins-ci-cd",
+                                "label": "Jenkins CI/CD"
+                              },
+                              {
+                                "id": "kettle-etl",
+                                "label": "Kettle-ETL"
+                              }
+                            ],
                             "total": 7,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6d29ya2Zsb3dzLWRlbGl2ZXJ5IiwibG9jYWxlIjoiZW4iLCJwb3NpdGlvbiI6NSwiaWQiOiJrZXR0bGUtZXRsIn0"
+                            "pages": 2,
+                            "page": 1,
+                            "size": 6
                           }
                         },
                         {
                           "id": "ml-research",
                           "label": "ML & research",
-                          "skillIds": [
-                            "training-orchestration",
-                            "mlflow-integration",
-                            "xgboost",
-                            "lstm",
-                            "random-forest",
-                            "svm"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
+                          "skills": {
+                            "items": [
+                              {
+                                "id": "training-orchestration",
+                                "label": "Training orchestration"
+                              },
+                              {
+                                "id": "mlflow-integration",
+                                "label": "MLflow integration"
+                              },
+                              {
+                                "id": "xgboost",
+                                "label": "XGBoost"
+                              },
+                              {
+                                "id": "lstm",
+                                "label": "LSTM"
+                              },
+                              {
+                                "id": "random-forest",
+                                "label": "Random forest"
+                              },
+                              {
+                                "id": "svm",
+                                "label": "SVM"
+                              }
+                            ],
                             "total": 14,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6bWwtcmVzZWFyY2giLCJsb2NhbGUiOiJlbiIsInBvc2l0aW9uIjo1LCJpZCI6InN2bSJ9"
-                          }
-                        },
-                        {
-                          "id": "web-integrations",
-                          "label": "Web & integrations",
-                          "skillIds": [
-                            "vue-3",
-                            "echarts",
-                            "html",
-                            "smtp",
-                            "slack",
-                            "google-translate"
-                          ],
-                          "skillsPage": {
-                            "limit": 6,
-                            "total": 7,
-                            "hasMore": true,
-                            "nextCursor": "eyJ2IjoxLCJyZXNvdXJjZSI6InBvcnRmb2xpbzpza2lsbHM6Y2F0ZWdvcnk6d2ViLWludGVncmF0aW9ucyIsImxvY2FsZSI6ImVuIiwicG9zaXRpb24iOjUsImlkIjoiZ29vZ2xlLXRyYW5zbGF0ZSJ9"
+                            "pages": 3,
+                            "page": 1,
+                            "size": 6
                           }
                         }
                       ],
-                      "page": {
-                        "limit": 12,
-                        "total": 7,
-                        "hasMore": false,
-                        "nextCursor": null
-                      },
-                      "included": {
-                        "skills": [
-                          {
-                            "id": "python",
-                            "label": "Python"
-                          },
-                          {
-                            "id": "fastapi",
-                            "label": "FastAPI"
-                          },
-                          {
-                            "id": "django",
-                            "label": "Django"
-                          },
-                          {
-                            "id": "django-rest-framework",
-                            "label": "Django REST Framework"
-                          },
-                          {
-                            "id": "flask",
-                            "label": "Flask"
-                          },
-                          {
-                            "id": "rest",
-                            "label": "REST"
-                          },
-                          {
-                            "id": "mcp",
-                            "label": "MCP"
-                          },
-                          {
-                            "id": "fastmcp",
-                            "label": "FastMCP"
-                          },
-                          {
-                            "id": "rag",
-                            "label": "RAG"
-                          },
-                          {
-                            "id": "langchain",
-                            "label": "LangChain"
-                          },
-                          {
-                            "id": "ollama",
-                            "label": "Ollama"
-                          },
-                          {
-                            "id": "chroma",
-                            "label": "Chroma"
-                          },
-                          {
-                            "id": "kubernetes",
-                            "label": "Kubernetes"
-                          },
-                          {
-                            "id": "docker",
-                            "label": "Docker"
-                          },
-                          {
-                            "id": "linux",
-                            "label": "Linux"
-                          },
-                          {
-                            "id": "jwt",
-                            "label": "JWT"
-                          },
-                          {
-                            "id": "rbac",
-                            "label": "RBAC"
-                          },
-                          {
-                            "id": "sso",
-                            "label": "SSO"
-                          },
-                          {
-                            "id": "postgresql",
-                            "label": "PostgreSQL"
-                          },
-                          {
-                            "id": "sql",
-                            "label": "SQL"
-                          },
-                          {
-                            "id": "redis",
-                            "label": "Redis"
-                          },
-                          {
-                            "id": "kafka",
-                            "label": "Kafka"
-                          },
-                          {
-                            "id": "apache-nifi",
-                            "label": "Apache NiFi"
-                          },
-                          {
-                            "id": "sqlalchemy",
-                            "label": "SQLAlchemy"
-                          },
-                          {
-                            "id": "celery",
-                            "label": "Celery"
-                          },
-                          {
-                            "id": "rabbitmq",
-                            "label": "RabbitMQ"
-                          },
-                          {
-                            "id": "airflow",
-                            "label": "Airflow"
-                          },
-                          {
-                            "id": "gitlab",
-                            "label": "GitLab"
-                          },
-                          {
-                            "id": "jenkins-ci-cd",
-                            "label": "Jenkins CI/CD"
-                          },
-                          {
-                            "id": "kettle-etl",
-                            "label": "Kettle-ETL"
-                          },
-                          {
-                            "id": "training-orchestration",
-                            "label": "Training orchestration"
-                          },
-                          {
-                            "id": "mlflow-integration",
-                            "label": "MLflow integration"
-                          },
-                          {
-                            "id": "xgboost",
-                            "label": "XGBoost"
-                          },
-                          {
-                            "id": "lstm",
-                            "label": "LSTM"
-                          },
-                          {
-                            "id": "random-forest",
-                            "label": "Random forest"
-                          },
-                          {
-                            "id": "svm",
-                            "label": "SVM"
-                          },
-                          {
-                            "id": "vue-3",
-                            "label": "Vue 3"
-                          },
-                          {
-                            "id": "echarts",
-                            "label": "ECharts"
-                          },
-                          {
-                            "id": "html",
-                            "label": "HTML"
-                          },
-                          {
-                            "id": "smtp",
-                            "label": "SMTP"
-                          },
-                          {
-                            "id": "slack",
-                            "label": "Slack"
-                          },
-                          {
-                            "id": "google-translate",
-                            "label": "Google Translate"
-                          }
-                        ]
-                      }
+                      "total": 7,
+                      "pages": 2,
+                      "page": 1,
+                      "size": 6
                     }
                   }
                 }
@@ -1065,7 +981,7 @@
       "get": {
         "operationId": "getSkills",
         "summary": "Get localized skills in a category",
-        "description": "Return ordered localized {id,label} skills for ownerType=category and ownerId. A preview nextCursor can continue after its first six skills.",
+        "description": "Return a numbered page of localized {id,label} skills for ownerType=category and the required ownerId. Page 1 matches the category preview; request page 2 to continue. Page size is fixed at six.",
         "x-contract-status": "confirmed",
         "parameters": [
           {
@@ -1078,10 +994,10 @@
             "$ref": "#/components/parameters/OwnerId"
           },
           {
-            "$ref": "#/components/parameters/Limit"
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "$ref": "#/components/parameters/Cursor"
+            "$ref": "#/components/parameters/Size"
           },
           {
             "$ref": "#/components/parameters/IsCaching"
@@ -1122,22 +1038,12 @@
                         {
                           "id": "rest",
                           "label": "REST"
-                        },
-                        {
-                          "id": "grpc",
-                          "label": "gRPC"
-                        },
-                        {
-                          "id": "groovy",
-                          "label": "Groovy"
                         }
                       ],
-                      "page": {
-                        "limit": 12,
-                        "total": 8,
-                        "hasMore": false,
-                        "nextCursor": null
-                      }
+                      "total": 8,
+                      "pages": 2,
+                      "page": 1,
+                      "size": 6
                     }
                   }
                 }
@@ -1161,11 +1067,7 @@
     "schemas": {
       "Locale": {
         "type": "string",
-        "enum": [
-          "en",
-          "zh-Hans",
-          "zh-Hant"
-        ]
+        "enum": ["en", "zh-Hans", "zh-Hant"]
       },
       "PositiveId": {
         "type": "integer",
@@ -1207,11 +1109,7 @@
                 "description": "Explicit display year."
               }
             },
-            "required": [
-              "title",
-              "titleSub",
-              "copyrightYear"
-            ],
+            "required": ["title", "titleSub", "copyrightYear"],
             "additionalProperties": true
           },
           "profile": {
@@ -1286,12 +1184,7 @@
                 "description": "Plain email address; empty string hides this link. No Markdown."
               }
             },
-            "required": [
-              "linkedin",
-              "github",
-              "medium",
-              "email"
-            ],
+            "required": ["linkedin", "github", "medium", "email"],
             "additionalProperties": true
           },
           "chatme": {
@@ -1315,21 +1208,11 @@
                 "description": "Bundled local asset path; parent traversal is rejected."
               }
             },
-            "required": [
-              "title",
-              "titleSub",
-              "content",
-              "icon"
-            ],
+            "required": ["title", "titleSub", "content", "icon"],
             "additionalProperties": true
           }
         },
-        "required": [
-          "brand",
-          "profile",
-          "social",
-          "chatme"
-        ],
+        "required": ["brand", "profile", "social", "chatme"],
         "additionalProperties": true
       },
       "CareerDetail": {
@@ -1359,11 +1242,7 @@
             "description": "Localized secondary role or teaching detail."
           }
         },
-        "required": [
-          "startMonth",
-          "endMonth",
-          "content"
-        ],
+        "required": ["startMonth", "endMonth", "content"],
         "additionalProperties": true
       },
       "JourneyItem": {
@@ -1374,10 +1253,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "work",
-              "education"
-            ]
+            "enum": ["work", "education"]
           },
           "countryCode": {
             "type": "string",
@@ -1473,10 +1349,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "work",
-              "education"
-            ]
+            "enum": ["work", "education"]
           },
           "countryCode": {
             "type": "string",
@@ -1733,79 +1606,12 @@
                   "const": true
                 }
               },
-              "required": [
-                "expected"
-              ]
+              "required": ["expected"]
             },
             "then": {
               "properties": {
                 "endMonth": {
                   "$ref": "#/components/schemas/Month"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "CursorPage": {
-        "type": "object",
-        "properties": {
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 50
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "nextCursor": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 1
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "limit",
-          "total",
-          "hasMore",
-          "nextCursor"
-        ],
-        "additionalProperties": true,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "hasMore": {
-                  "const": true
-                }
-              },
-              "required": [
-                "hasMore"
-              ]
-            },
-            "then": {
-              "properties": {
-                "nextCursor": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            },
-            "else": {
-              "properties": {
-                "nextCursor": {
-                  "type": "null"
                 }
               }
             }
@@ -1823,10 +1629,7 @@
             "description": "Skill label in the requested language."
           }
         },
-        "required": [
-          "id",
-          "label"
-        ],
+        "required": ["id", "label"],
         "additionalProperties": false
       },
       "SkillCategory": {
@@ -1839,158 +1642,99 @@
             "type": "string",
             "description": "Category label in the requested language."
           },
-          "skillIds": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SkillId"
-            },
-            "maxItems": 6,
-            "uniqueItems": true,
-            "description": "Ordered preview IDs; labels are in included.skills."
-          },
-          "skillsPage": {
-            "$ref": "#/components/schemas/SkillPreviewPage"
+          "skills": {
+            "$ref": "#/components/schemas/SkillsResponse"
           }
         },
-        "required": [
-          "id",
-          "label",
-          "skillIds",
-          "skillsPage"
-        ],
-        "additionalProperties": false
+        "required": ["id", "label", "skills"],
+        "additionalProperties": false,
+        "description": "Skills contains page 1; continue through /portfolio/skills using this category ID and page=2."
       },
       "CategoriesResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SkillCategory"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberedPage"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SkillCategory"
+                },
+                "maxItems": 6
+              }
             }
-          },
-          "page": {
-            "$ref": "#/components/schemas/CursorPage"
-          },
-          "included": {
-            "$ref": "#/components/schemas/SkillCategoriesIncluded"
           }
-        },
-        "required": [
-          "items",
-          "page",
-          "included"
-        ],
-        "additionalProperties": false
+        ]
       },
       "SkillsResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Skill"
-            }
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberedPage"
           },
-          "page": {
-            "$ref": "#/components/schemas/CursorPage"
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Skill"
+                },
+                "maxItems": 6
+              }
+            }
           }
-        },
-        "required": [
-          "items",
-          "page"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ExperiencesPage": {
-        "type": "object",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberedPage"
           },
-          "pages": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "page": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "size": {
-            "const": 6
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Experience"
-            },
-            "maxItems": 6
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Experience"
+                },
+                "maxItems": 6
+              }
+            }
           }
-        },
-        "required": [
-          "total",
-          "pages",
-          "page",
-          "size",
-          "items"
-        ],
-        "additionalProperties": true,
-        "description": "Direct numbered page: pages=ceil(total/6), zero for an empty collection; an out-of-range page keeps the requested page and returns items=[]."
+        ]
       },
       "ProjectsPage": {
-        "type": "object",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberedPage"
           },
-          "pages": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "page": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "size": {
-            "const": 6
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Project"
-            },
-            "maxItems": 6
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Project"
+                },
+                "maxItems": 6
+              }
+            }
           }
-        },
-        "required": [
-          "total",
-          "pages",
-          "page",
-          "size",
-          "items"
-        ],
-        "additionalProperties": true,
-        "description": "Direct numbered page: pages=ceil(total/6), zero for an empty collection; an out-of-range page keeps the requested page and returns items=[]."
+        ]
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
           "detail": {
             "type": "string",
-            "description": "Machine-readable error code, for example INVALID_CURSOR."
+            "description": "Machine-readable error code, for example INVALID_PAGE."
           }
         },
-        "required": [
-          "detail"
-        ],
+        "required": ["detail"],
         "additionalProperties": false
       },
       "JourneyResponse": {
@@ -1999,38 +1743,6 @@
           "$ref": "#/components/schemas/JourneyItem"
         },
         "description": "All localized journey stops in saved playback order."
-      },
-      "SkillPreviewPage": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CursorPage"
-          },
-          {
-            "properties": {
-              "limit": {
-                "const": 6
-              }
-            }
-          }
-        ],
-        "description": "First six skills of one category; use nextCursor with /portfolio/skills."
-      },
-      "SkillCategoriesIncluded": {
-        "type": "object",
-        "properties": {
-          "skills": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Skill"
-            },
-            "uniqueItems": true
-          }
-        },
-        "required": [
-          "skills"
-        ],
-        "additionalProperties": false,
-        "description": "Only localized labels referenced by this category page, each skill once."
       },
       "ValidationErrorResponse": {
         "type": "object",
@@ -2043,11 +1755,39 @@
             }
           }
         },
-        "required": [
-          "detail"
-        ],
+        "required": ["detail"],
         "additionalProperties": false,
         "description": "FastAPI request validation errors, including a missing ownerId."
+      },
+      "NumberedPage": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "pages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "size": {
+            "const": 6
+          },
+          "items": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": ["items", "total", "pages", "page", "size"],
+        "additionalProperties": false,
+        "description": "Common numbered response: pages=ceil(total/size), zero for empty collections. Beyond-end pages keep totals and contain items=[]."
       }
     },
     "parameters": {
@@ -2059,7 +1799,7 @@
           "$ref": "#/components/schemas/Locale",
           "default": "en"
         },
-        "description": "Portfolio content language; defaults to en. A cursor belongs to the same locale."
+        "description": "Portfolio content language; defaults to en. Each page contains only the requested locale."
       },
       "Page": {
         "name": "page",
@@ -2079,32 +1819,10 @@
         "required": false,
         "schema": {
           "type": "integer",
-          "enum": [
-            6
-          ],
+          "enum": [6],
           "default": 6
         },
         "description": "Fixed page capacity; final page may have fewer items."
-      },
-      "Limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 50,
-          "default": 12
-        }
-      },
-      "Cursor": {
-        "name": "cursor",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        },
-        "description": "Opaque cursor for this resource, category owner and locale. Omit on the first request; forward nextCursor unchanged."
       },
       "OwnerType": {
         "name": "ownerType",
@@ -2112,9 +1830,7 @@
         "required": false,
         "schema": {
           "type": "string",
-          "enum": [
-            "category"
-          ],
+          "enum": ["category"],
           "default": "category"
         }
       },
@@ -2140,7 +1856,7 @@
     },
     "responses": {
       "BadRequest": {
-        "description": "Invalid locale, page, size, limit, cursor, or skill owner. Body is {\"detail\":\"ERROR_CODE\"}.",
+        "description": "Invalid locale, page, size, or skill owner. Body is {\"detail\":\"ERROR_CODE\"}.",
         "content": {
           "application/json": {
             "schema": {
@@ -2174,8 +1890,8 @@
   "x-backend-notes": [
     "All six GET paths live below /portfolio and return direct content or collection pages.",
     "Locale en, zh-Hans, and zh-Hant select localized text; IDs and ordering remain stable across languages.",
-    "Numbered collections use page and fixed size=6. Category and skill collections use opaque, locale-scoped keyset cursors.",
-    "Category previews contain at most six IDs and batch only their referenced labels in included.skills.",
+    "All four paginated collections use page and fixed size=6 with the shared items,total,pages,page,size response.",
+    "Each category contains a nested skills page with up to six localized id/label records; use skills page=2 to continue.",
     "Project detail and skills return with the project page; no /projects/{id} endpoint.",
     "Read-only errors use FastAPI {detail: code}; missing required ownerId receives request validation status 422."
   ]

@@ -1,4 +1,4 @@
-/** Verify API resource boundaries, cursor contracts, caching, retries and bounded store merges. */
+/** Verify API resource boundaries, numbered pagination contracts, caching, retries and bounded store merges. */
 const test = require("node:test"),
   assert = require("node:assert/strict"),
   fs = require("node:fs"),
@@ -121,9 +121,7 @@ test("site exposes content only; locale is explicit, validated and returned one 
     Object.keys(en).sort(),
     ["brand", "profile", "social", "chatme"].sort(),
   );
-  assert(
-    !("navigation" in en) && !("map" in en) && !("locales" in en),
-  );
+  assert(!("navigation" in en) && !("map" in en) && !("locales" in en));
   const chinese = await api.request("/portfolio/site", { locale: "zh-Hant" });
   assert.deepEqual(Object.keys(en.chatme).sort(), [
     "content",
@@ -150,7 +148,7 @@ test("site exposes content only; locale is explicit, validated and returned one 
   );
 });
 
-test("language switches translate loaded pages only and preserve page cursors with separate caches", async () => {
+test("language switches translate loaded pages only and preserve numbered pages with separate caches", async () => {
   const { ctx, data, transport } = setup();
   await data.initialize();
   await data.loadPage("projects");
@@ -175,7 +173,9 @@ test("language switches translate loaded pages only and preserve page cursors wi
 });
 
 test("failed language loads keep the current language and can be retried", async () => {
-  const { ctx, data } = setup({ failures: { "/portfolio/site?locale=zh-Hant": 1 } });
+  const { ctx, data } = setup({
+    failures: { "/portfolio/site?locale=zh-Hant": 1 },
+  });
   await data.initialize();
   ctx.I18n.setLoader(data.prepareLocale);
   await assert.rejects(ctx.I18n.setLanguage("zh-Hant"));
@@ -224,61 +224,89 @@ test("bootstrap loads six Projects with complete detail and no additional detail
   );
   assert.deepEqual(
     Array.from(transport.requests, (r) => r.path),
-    ["/portfolio/site", "/portfolio/journey", "/portfolio/experiences", "/portfolio/projects", "/portfolio/skill-categories"],
+    [
+      "/portfolio/site",
+      "/portfolio/journey",
+      "/portfolio/experiences",
+      "/portfolio/projects",
+      "/portfolio/skill-categories",
+    ],
   );
 });
-test("category cursors reject invalid owners, cross-locale reuse and invalid limits", async () => {
-  const { api, mock } = setup();
-  const first = await api.request("/portfolio/skill-categories", { limit: 1 });
+test("numbered skill collections reject invalid pages, sizes and owners", async () => {
+  const { api } = setup();
+  for (const path of ["/portfolio/skill-categories", "/portfolio/skills"]) {
+    const owner = path.endsWith("/skills") ? { ownerId: "backend-apis" } : {};
+    for (const query of [
+      { page: 0 },
+      { page: "all" },
+      { page: 1.5 },
+      { page: "1.0" },
+      { page: "1e0" },
+      { page: true },
+      { size: 12 },
+      { size: "6.0" },
+      { size: "6e0" },
+    ])
+      await assert.rejects(
+        api.request(path, { ...owner, ...query }),
+        (e) => e.status === 400,
+      );
+  }
+  await assert.rejects(
+    api.request("/portfolio/skills"),
+    (e) => e.status === 422 && Array.isArray(e.body.detail),
+  );
   await assert.rejects(
     api.request("/portfolio/skills", {
-      ownerType: "category",
-      ownerId: mock.skillCategories.en[0].id,
-      cursor: first.page.nextCursor,
+      ownerType: "project",
+      ownerId: "backend-apis",
     }),
-    (e) => e.code === "INVALID_CURSOR",
+    (e) => e.code === "INVALID_OWNER",
   );
   await assert.rejects(
-    api.request("/portfolio/skill-categories", { cursor: "broken" }),
-    (e) => e.code === "INVALID_CURSOR",
-  );
-  await assert.rejects(
-    api.request("/portfolio/skill-categories", { limit: 51 }),
-    (e) => e.code === "INVALID_LIMIT",
-  );
-  await assert.rejects(
-    api.request("/portfolio/skill-categories", {
-      locale: "zh-Hant",
-      cursor: first.page.nextCursor,
-    }),
-    (e) => e.code === "INVALID_CURSOR",
+    api.request("/portfolio/skills", { ownerId: "missing" }),
+    (e) => e.code === "NOT_FOUND",
   );
 });
-test("three localized skill resources return direct labels and bounded category continuations", async () => {
+test("three languages use the same numbered response for categories and nested skills", async () => {
   const { api, mock } = setup();
+  const keys = ["items", "page", "pages", "size", "total"];
   for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
-    const labels = new Map(mock.skills[locale].map((row) => [row.id, row.label]));
+    const labels = new Map(
+      mock.skills[locale].map((row) => [row.id, row.label]),
+    );
     const categories = [];
-    let cursor;
-    do {
+    for (
+      let page = 1;
+      page <= Math.ceil(mock.skillCategories[locale].length / 6);
+      page++
+    ) {
       const result = await api.request("/portfolio/skill-categories", {
         locale,
-        limit: 3,
-        ...(cursor ? { cursor } : {}),
+        page,
+        size: 6,
       });
-      assert.deepEqual(Object.keys(result).sort(), ["included", "items", "page"]);
-      assert.equal(result.page.total, mock.skillCategories[locale].length);
+      assert.deepEqual(Object.keys(result).sort(), keys);
+      assert.equal(result.total, mock.skillCategories[locale].length);
       for (const row of result.items) {
-        const source = mock.skillCategories[locale].find((item) => item.id === row.id);
+        const source = mock.skillCategories[locale].find(
+          (item) => item.id === row.id,
+        );
+        assert.deepEqual(Object.keys(row).sort(), ["id", "label", "skills"]);
         assert.equal(row.label, source.label);
-        assert.deepEqual(row.skillIds, source.skillIds.slice(0, 6));
-        assert.equal(row.skillsPage.total, source.skillIds.length);
-        const preview = result.included.skills.filter((item) => row.skillIds.includes(item.id));
-        assert(preview.every((item) => item.label === labels.get(item.id)));
+        assert.deepEqual(Object.keys(row.skills).sort(), keys);
+        assert.deepEqual(
+          row.skills.items.map((item) => item.id),
+          source.skillIds.slice(0, 6),
+        );
+        assert.equal(row.skills.total, source.skillIds.length);
+        assert(
+          row.skills.items.every((item) => item.label === labels.get(item.id)),
+        );
       }
       categories.push(...result.items);
-      cursor = result.page.nextCursor;
-    } while (cursor);
+    }
     assert.deepEqual(
       categories.map((row) => row.id),
       mock.skillCategories[locale].map((row) => row.id),
@@ -288,21 +316,31 @@ test("three localized skill resources return direct labels and bounded category 
       locale,
       ownerType: "category",
       ownerId: source.id,
-      cursor: categories[0].skillsPage.nextCursor,
+      page: 2,
+      size: 6,
     });
-    assert.deepEqual(Object.keys(rest).sort(), ["items", "page"]);
+    assert.deepEqual(Object.keys(rest).sort(), keys);
     assert.deepEqual(
       rest.items.map((item) => item.id),
-      source.skillIds.slice(6),
+      source.skillIds.slice(6, 12),
     );
     assert(rest.items.every((item) => item.label === labels.get(item.id)));
+    const beyond = await api.request("/portfolio/skills", {
+      locale,
+      ownerId: source.id,
+      page: 100,
+    });
+    assert.deepEqual(beyond.items, []);
+    assert.equal(beyond.total, source.skillIds.length);
   }
 });
 test("lazy offline transport loads requested chunks and matches in-memory API responses", async () => {
   const { ctx, mock } = setup();
   const root = path.resolve(__dirname, "..");
   const app = fs.readFileSync(path.join(root, "dist/app.js"), "utf8");
-  const manifest = JSON.parse(app.match(/^window\.PORTFOLIO_MOCK = (.+);$/m)[1]);
+  const manifest = JSON.parse(
+    app.match(/^window\.PORTFOLIO_MOCK = (.+);$/m)[1],
+  );
   const accessed = [];
   let failOnce = "mock-pages/projects/en/2.js";
   ctx.document.createElement = () => ({ remove() {} });
@@ -346,7 +384,10 @@ test("lazy offline transport loads requested chunks and matches in-memory API re
   await same("/portfolio/projects", { locale: "en", page: 2, size: 6 });
   assert(accessed.includes("mock-pages/projects/en/1.js"));
   await assert.rejects(
-    lazy.request({ path: "/portfolio/projects", query: { locale: "en", page: 3 } }),
+    lazy.request({
+      path: "/portfolio/projects",
+      query: { locale: "en", page: 3 },
+    }),
     (error) => error.status === 503,
   );
   await same("/portfolio/projects", { locale: "en", page: 3 });
@@ -354,21 +395,31 @@ test("lazy offline transport loads requested chunks and matches in-memory API re
     accessed.filter((name) => name === "mock-pages/projects/en/2.js").length,
     2,
   );
-  const query = { locale: "zh-Hant", limit: 1 };
+  const query = { locale: "zh-Hant", page: 1, size: 6 };
   await same("/portfolio/skill-categories", query);
   assert(accessed.includes("mock-pages/skill-categories/zh-Hant/0.js"));
   assert(accessed.includes("mock-pages/skills/zh-Hant/backend-apis/0.js"));
   assert(!accessed.includes("mock-pages/skills/zh-Hant/backend-apis/1.js"));
-  const first = await lazy.request({ path: "/portfolio/skill-categories", query });
+  assert(!accessed.includes("mock-pages/skill-categories/zh-Hant/1.js"));
+  await same("/portfolio/skill-categories", { ...query, page: 2 });
+  assert(accessed.includes("mock-pages/skill-categories/zh-Hant/1.js"));
+  const beforeBeyond = accessed.length;
+  await same("/portfolio/skill-categories", { ...query, page: 3 });
+  assert.equal(accessed.length, beforeBeyond);
+  const first = await lazy.request({
+    path: "/portfolio/skill-categories",
+    query,
+  });
   await same("/portfolio/skills", {
     locale: "zh-Hant",
     ownerType: "category",
     ownerId: first.items[0].id,
-    cursor: first.items[0].skillsPage.nextCursor,
+    page: first.items[0].skills.page + 1,
+    size: first.items[0].skills.size,
   });
   assert(accessed.includes("mock-pages/skills/zh-Hant/backend-apis/1.js"));
 });
-test("language switching replays loaded skill pages with locale-scoped cursors", async () => {
+test("language switching replays the same numbered category and skill pages", async () => {
   const { ctx, data, mock } = setup();
   for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
     const base = mock.skillCategories[locale][0];
@@ -382,6 +433,7 @@ test("language switching replays loaded skill pages with locale-scoped cursors",
   ctx.PortfolioApi = ctx.createPortfolioApi(transport);
   await data.initialize();
   await data.loadPage("categories");
+  await data.loadPage("categories");
   const owner = "category-category-0";
   await data.loadSkills(owner);
   const loaded = data.skillsState(owner);
@@ -391,15 +443,28 @@ test("language switching replays loaded skill pages with locale-scoped cursors",
   await ctx.I18n.setLanguage("zh-Hant");
   assert.deepEqual(data.skillsState(owner).ids, loaded.ids);
   assert.equal(data.page("categories").ids.length, 17);
-  assert.equal(data.find("skillCategories", "category-0").label,
-    mock.skillCategories["zh-Hant"][0].label);
+  assert.equal(
+    data.find("skillCategories", "category-0").label,
+    mock.skillCategories["zh-Hant"][0].label,
+  );
   const localizedSkill = data.find("skills", loaded.ids[0]);
-  assert.equal(localizedSkill.label,
-    mock.skills["zh-Hant"].find((row) => row.id === loaded.ids[0]).label);
-  assert(transport.requests.some((row) =>
-    row.path === "/portfolio/skills" && row.query.locale === "zh-Hant"));
-  assert(transport.requests.filter((row) =>
-    row.path === "/portfolio/skill-categories" && row.query.locale === "zh-Hant").length === 2);
+  assert.equal(
+    localizedSkill.label,
+    mock.skills["zh-Hant"].find((row) => row.id === loaded.ids[0]).label,
+  );
+  assert(
+    transport.requests.some(
+      (row) =>
+        row.path === "/portfolio/skills" && row.query.locale === "zh-Hant",
+    ),
+  );
+  assert(
+    transport.requests.filter(
+      (row) =>
+        row.path === "/portfolio/skill-categories" &&
+        row.query.locale === "zh-Hant",
+    ).length === 3,
+  );
 });
 test("category skills remain paginated and errors preserve prior content", async () => {
   const { data, ctx, mock } = setup();
@@ -414,14 +479,18 @@ test("category skills remain paginated and errors preserve prior content", async
   const result = await ctx
     .createPortfolioApi(ctx.MockPortfolioTransport.create(empty))
     .request("/portfolio/skill-categories");
-  assert.deepEqual(JSON.parse(JSON.stringify(result.page)), {
-    limit: 12,
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), {
+    items: [],
     total: 0,
-    hasMore: false,
-    nextCursor: null,
+    pages: 0,
+    page: 1,
+    size: 6,
   });
   await assert.rejects(
-    ctx.PortfolioApi.request("/portfolio/skills", { ownerType: "project", ownerId: 1 }),
+    ctx.PortfolioApi.request("/portfolio/skills", {
+      ownerType: "project",
+      ownerId: 1,
+    }),
     (e) => e.code === "INVALID_OWNER",
   );
 });
@@ -458,6 +527,40 @@ test("the client coalesces equivalent queries and rejects malformed direct respo
   malformed = true;
   await assert.rejects(
     client.request("/portfolio/journey"),
-    /Invalid journey response/,
+    /Journey must be an array/,
   );
+});
+
+test("failed and malformed skill pages preserve content and retry the same numbered page", async () => {
+  const { ctx, data, mock } = setup();
+  const raw = ctx.MockPortfolioTransport.create(mock, {
+    failures: { "/portfolio/skills?page=2": 1 },
+  });
+  let malformed = true;
+  ctx.PortfolioApi = ctx.createPortfolioApi({
+    async request(request) {
+      const response = await raw.request(request);
+      if (malformed && request.path === "/portfolio/skills") {
+        malformed = false;
+        response.pages = 99;
+      }
+      return response;
+    },
+  });
+  await data.initialize();
+  const owner = "category-" + mock.skillCategories.en[0].id;
+  const before = data.skillsState(owner);
+  await assert.rejects(data.loadSkills(owner));
+  assert.deepEqual(data.skillsState(owner), before);
+  await assert.rejects(data.loadSkills(owner), /pagination/);
+  assert.deepEqual(data.skillsState(owner), before);
+  await Promise.all([data.loadSkills(owner), data.loadSkills(owner)]);
+  assert.equal(data.skillsState(owner).page, 2);
+  assert.equal(
+    data.skillsState(owner).ids.length,
+    mock.skillCategories.en[0].skillIds.length,
+  );
+  const calls = raw.requests.filter((r) => r.path === "/portfolio/skills");
+  assert.equal(calls.length, 3);
+  assert(calls.every((r) => r.query.page === 2 && r.query.size === 6));
 });
